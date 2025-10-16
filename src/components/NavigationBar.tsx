@@ -4,7 +4,7 @@ const NavigationBar = () => {
   return (
     <nav className="flex items-center justify-between bg-black text-white px-8 py-4">
       
-      {/* Left Side - CORELAB LOGO BILAT*/}
+      {/* Left Side - CORELAB LOGO - Home Button*/}
       <div className="font-bold text-lime-400 text-xl">
         <Button>CORE LAB</Button>
       </div>
