@@ -6,6 +6,7 @@ function App() {
     <>
       <div>
         <NavigationBar />
+        <h1 className="text-4xl font-bold text-brand">Tailwind 4 is working!</h1>
       </div>
     </>
   );
