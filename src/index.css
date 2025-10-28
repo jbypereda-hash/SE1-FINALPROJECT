@@ -1,5 +1,28 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,400;0,700;1,400&display=swap');
 @import "tailwindcss";
 
 @theme {
+    --font-sans: "Inria Sans", sans-serif;
+    
     --color-shrek: #D5FF5F;
+    --color-black-35: #14151A;
+    --color-black-34: #2D2D35;
+    --color-donkey-30: #747474;
+    --color-donkey-20: #989898;
+    --color-donkey-10: #B5B5B5;
+    --color-white: #E8E8E8;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-black-35); /* 👈 Default background */
+  color: var(--color-white); /* optional: make all text light */
+}
+
+
+@layer base {
+  h1 {
+    @apply font-sans font-bold text-shrek text-6xl;
+  }
 }

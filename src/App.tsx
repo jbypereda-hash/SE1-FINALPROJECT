@@ -1,15 +1,18 @@
-import "./App.css";
+import { Routes, Route } from "react-router-dom";
 import NavigationBar from "./components/NavigationBar";
+import Home from "./pages/Home";
+import Memberships from "./pages/Memberships";
 
-function App() {
+const App = () => {
   return (
     <>
-      <div>
-        <NavigationBar />
-        <h1 className="text-4xl font-bold text-brand">Tailwind 4 is working!</h1>
-      </div>
+      <NavigationBar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/memberships" element={<Memberships />} />
+      </Routes>
     </>
   );
-}
+};
 
 export default App;
