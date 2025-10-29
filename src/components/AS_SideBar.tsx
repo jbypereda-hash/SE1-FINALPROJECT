@@ -125,10 +125,14 @@ export const AS_SideBar = (): JSX.Element => {
       {/* Spacer for bottom */}
       <div className="flex-1" />
 
-      {/* Log Out Button */}
-      <button className="flex items-center justify-center gap-2 px-14 py-3 bg-[#d5ff5f] rounded-[30px] hover:bg-[#c0ff55]">
+      {/* LOG OUT BUTTON */}
+      <Link
+        to="/"
+        className="flex items-center justify-center gap-2 px-14 py-3 bg-[#d5ff5f] rounded-[30px] hover:bg-[#c0ff55]"
+      >
         <span className="font-bold text-black text-[28px]">LOG OUT</span>
-      </button>
+      </Link>
+
     </div>
   );
 };
