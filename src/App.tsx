@@ -4,9 +4,10 @@ import Home from "./pages/Home";
 import Memberships from "./pages/Memberships";
 import AS_PendingMemberships from "./pages/AS_PendingMemberships";
 import AS_AdminDirectory from "./pages/AS_AdminDirectory";
-import AS_PendingMemberships from "./pages/AS_PendingMemberships";
-import AS_PendingMemberships from "./pages/AS_PendingMemberships";
-import AS_PendingMemberships from "./pages/AS_PendingMemberships";
+import AS_MemberDirectory from "./pages/AS_MemberDirectory";
+import AS_CoachDirectory from "./pages/AS_CoachDirectory";
+import AS_AddCoach from "./pages/AS_AddCoach";
+import AS_EditCoach from "./pages/AS_EditCoach";
 
 
 const App = () => {
