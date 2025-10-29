@@ -11,7 +11,7 @@ const NavigationBar = () => {
         <Button to="/">HOME</Button>
         <Button to="/memberships">MEMBERSHIPS</Button>
         <Button>CLASSES</Button>
-        <Button>COACHES</Button>
+        <Button to="/coaches">COACHES</Button>
       </div>
       <div>
         <Button>MY PROFILE</Button>
