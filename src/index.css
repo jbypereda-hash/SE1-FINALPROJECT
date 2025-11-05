@@ -23,13 +23,13 @@ body {
 /* CUSTOM COMPONENT STYLES */
 @layer components {
   .shrek-btn {
-    @apply bg-shrek text-black-35 text-xs font-sans py-[5px] px-2 rounded-full 
+    @apply bg-shrek text-black-35 text-2xl font-sans py-2 px-5 rounded-full 
            border border-transparent transition-colors 
            hover:bg-transparent hover:text-white hover:border-shrek;
   }
 
   .nobg-btn {
-    @apply px-3 py-2 text-white text-xs hover:text-shrek transition-colors;
+    @apply px-3 py-2 text-white text-2xl hover:text-shrek transition-colors;
   }
 }
 
