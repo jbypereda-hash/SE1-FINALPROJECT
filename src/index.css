@@ -20,6 +20,18 @@ body {
   color: var(--color-white); /* optional: make all text light */
 }
 
+/* CUSTOM COMPONENT STYLES */
+@layer components {
+  .shrek-btn {
+    @apply bg-shrek text-black-35 text-xs font-sans py-[5px] px-2 rounded-full 
+           border border-transparent transition-colors 
+           hover:bg-transparent hover:text-white hover:border-shrek;
+  }
+
+  .nobg-btn {
+    @apply px-3 py-2 text-white text-xs hover:text-shrek transition-colors;
+  }
+}
 
 @layer base {
   h1 {

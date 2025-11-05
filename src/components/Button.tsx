@@ -2,30 +2,27 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 
 interface Props {
-  children: ReactNode;
+  children: ReactNode; //ang text sa button(?)
+  className?: string; //optional styling class
   to?: string; // optional navigation path
   onClick?: () => void; // optional function
 }
 
-const Button = ({ children, to, onClick }: Props) => {
-  // If there's a "to" prop, render a <Link> (for navigation)
+const Button = ({ children, className = "", to, onClick }: Props) => {
+  const baseClasses = className || "nobg-btn"; // default
+
   if (to) {
+    // If "to" exists, render as Link (navigation)
     return (
-      <Link
-        to={to}
-        className="px-4 py-2 text-white hover:text-shrek transition-colors"
-      >
+      <Link to={to} className={baseClasses}>
         {children}
       </Link>
     );
   }
 
-  // Otherwise, render a normal button
+  // Otherwise, render as button (action)
   return (
-    <button
-      onClick={onClick}
-      className="px-4 py-2 text-white hover:text-shrek transition-colors"
-    >
+    <button onClick={onClick} className={baseClasses}>
       {children}
     </button>
   );
