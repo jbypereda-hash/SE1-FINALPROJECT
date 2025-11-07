@@ -1,18 +1,18 @@
 import React from "react";
 import AS_SideBar from "../../components/AS_SideBar";
-import AS_AdminDirectoryTile from "./AS_AdminDirectoryTile";
+import AS_MemberDirectoryTile from "./AS_MemberDirectoryTile";
 
 // SAMPLE DATA
 const users = [
-  { id: 1, name: "Precious Kyle Pagute", position: "CEO", phone: "09952837465", email: "precious@example.com" },
-  { id: 2, name: "Ben Joshua Dizon", position: "Manager", phone: "09475863723", email: "ben@example.com" },
-  { id: 3, name: "Gabriel Ryne Ledres", position: "Manager", phone: "09712654387", email: "gabriel@example.com" },
-  { id: 4, name: "Krishea Joanne Tare", position: "Manager", phone: "09914367583", email: "krishea@example.com" },
-  { id: 5, name: "Rowena Montante", position: "Owner", phone: "09959877456", email: "rowena@example.com" },
-  { id: 6, name: "Yen Vasquez", position: "Assistant", phone: "09273647891", email: "yen@example.com" },
+  { id: 1, name: "Lucas Martinez", packageType: "Pro Package", phone: "09123456789", email: "lucas@example.com" },
+  { id: 2, name: "Sofia Delgado", packageType: "Starter Package", phone: "09234567890", email: "sofia@example.com" },
+  { id: 3, name: "Ethan Rivera", packageType: "Flex Package", phone: "09345678901", email: "ethan@example.com" },
+  { id: 4, name: "Isabella Cruz", packageType: "Pro Package", phone: "09456789012", email: "isabella@example.com" },
+  { id: 5, name: "Mason Lee", packageType: "Starter Package", phone: "09567890123", email: "mason@example.com" },
+  { id: 6, name: "Olivia Reyes", packageType: "Flex Package", phone: "09678901234", email: "olivia@example.com" },
 ];
 
-const AS_AdminDirectory: React.FC = () => {
+const AS_MemberDirectory: React.FC = () => {
   return (
     <div className="flex w-screen h-screen">
       <AS_SideBar />
@@ -30,25 +30,17 @@ const AS_AdminDirectory: React.FC = () => {
           <div className="flex flex-row items-center justify-between w-full h-[60px] mt-1">
             {/* Page Title */}
             <div className="text-[#d5ff5f] font-bold text-[28px] font-['Inter-Bold',_sans-serif] tracking-tight">
-              ADMIN DIRECTORY
+              MEMBER DIRECTORY
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-row gap-3 items-center justify-center shrink-0">
-              {/* ADD ADMIN Button */}
-              <button className="bg-[#d5ff5f] rounded-[24px] w-[130px] h-[40px] flex items-center justify-center hover:bg-[#c9f255] transition-colors">
-                <span className="text-[#000000] font-bold text-[16px] font-['Inter-Bold',_sans-serif]">
-                  ADD ADMIN
-                </span>
-              </button>
 
-              {/* DELETE ADMIN Button */}
+              {/* DELETE MEMBER Button */}
               <button className="bg-[#d5ff5f] rounded-[24px] w-[165px] h-[40px] flex items-center justify-center hover:bg-[#c9f255] transition-colors">
                 <span className="text-[#000000] font-bold text-[16px] font-['Inter-Bold',_sans-serif]">
-                  DELETE ADMIN
+                  DELETE MEMBER
                 </span>
               </button>
-            </div>
           </div>
         </header>
 
@@ -67,7 +59,7 @@ const AS_AdminDirectory: React.FC = () => {
             "
           >
             {users.map((user) => (
-              <AS_AdminDirectoryTile key={user.id} user={user} />
+              <AS_MemberDirectoryTile key={user.id} user={user} />
             ))}
           </div>
         </div>
@@ -76,4 +68,4 @@ const AS_AdminDirectory: React.FC = () => {
   );
 };
 
-export default AS_AdminDirectory;
+export default AS_MemberDirectory;
