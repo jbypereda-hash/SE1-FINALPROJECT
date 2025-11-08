@@ -25,12 +25,6 @@ const AS_AdminDirectoryTile: React.FC<Props> = ({ user }) => {
           <h1 className="text-[18px] font-bold text-[#040404] truncate">
             {user.name}
           </h1>
-
-          <div className="relative w-[28px] h-2">
-            <div className="absolute top-0 left-0 w-2 h-2 bg-[#212121] rounded-[4px]" />
-            <div className="absolute top-0 left-[10px] w-2 h-2 bg-[#212121] rounded-[4px]" />
-            <div className="absolute top-0 left-[20px] w-2 h-2 bg-[#212121] rounded-[4px]" />
-          </div>
         </div>
 
         {/* packageType */}

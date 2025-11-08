@@ -2,9 +2,7 @@
 import { Link } from "react-router-dom";
 import personIcon from "../assets/icons/person.svg";
 import gearIcon from "../assets/icons/gear.svg";
-import dumbbellIcon from "../assets/icons/dumbbell.svg";
 import clockIcon from "../assets/icons/clock.svg";
-import homeIcon from "../assets/icons/home.svg";
 import listIcon from "../assets/icons/list.svg";
 import type { JSX } from "react";
 import Button from "./Button";
@@ -57,57 +55,6 @@ export const AS_SideBar = (): JSX.Element => {
             <img src={personIcon} alt="Coach Directory" className="w-5 h-5" />
             <span className="text-[#e8e8e8] text-[18px] font-medium">
               Coach Directory
-            </span>
-          </Button>
-        </div>
-
-        {/* CONTENT MANAGEMENT Header */}
-        <div className="flex items-center gap-2 mt-6 mb-2">
-          <img src={gearIcon} alt="Content Management" className="w-6 h-6" />
-          <div className="text-[#d5ff5f] font-bold text-[18px] uppercase">
-            Content Management
-          </div>
-        </div>
-
-        {/* Management Buttons */}
-        <div className="flex flex-col gap-1.5">
-          <Button
-            to="/AS_Homepage"
-            className="flex items-center gap-2 p-2 rounded-lg hover:bg-[#3a3a45]"
-          >
-            <img src={homeIcon} alt="Homepage" className="w-5 h-5" />
-            <span className="text-[#e8e8e8] text-[18px] font-medium">
-              Homepage
-            </span>
-          </Button>
-
-          <Button
-            to="/AS_Memberships"
-            className="flex items-center gap-2 p-2 rounded-lg hover:bg-[#3a3a45]"
-          >
-            <img src={personIcon} alt="Memberships Page" className="w-5 h-5" />
-            <span className="text-[#e8e8e8] text-[18px] font-medium">
-              Memberships Page
-            </span>
-          </Button>
-
-          <Button
-            to="/AS_Classes"
-            className="flex items-center gap-2 p-2 rounded-lg hover:bg-[#3a3a45]"
-          >
-            <img src={dumbbellIcon} alt="Classes Page" className="w-5 h-5" />
-            <span className="text-[#e8e8e8] text-[18px] font-medium">
-              Classes Page
-            </span>
-          </Button>
-
-          <Button
-            to="/AS_Coaches"
-            className="flex items-center gap-2 p-2 rounded-lg hover:bg-[#3a3a45]"
-          >
-            <img src={personIcon} alt="Coaches Page" className="w-5 h-5" />
-            <span className="text-[#e8e8e8] text-[18px] font-medium">
-              Coaches Page
             </span>
           </Button>
         </div>

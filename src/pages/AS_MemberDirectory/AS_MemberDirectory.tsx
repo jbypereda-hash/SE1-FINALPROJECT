@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "../../components/Button";
 import AS_SideBar from "../../components/AS_SideBar";
 import AS_MemberDirectoryTile from "./AS_MemberDirectoryTile";
 
@@ -36,11 +37,13 @@ const AS_MemberDirectory: React.FC = () => {
             {/* Action Buttons */}
 
               {/* DELETE MEMBER Button */}
-              <button className="bg-[#d5ff5f] rounded-[24px] w-[165px] h-[40px] flex items-center justify-center hover:bg-[#c9f255] transition-colors">
+              <Button
+                to="#"
+                className="bg-[#d5ff5f] rounded-[24px] w-[165px] h-[40px] flex items-center justify-center hover:bg-[#c9f255] transition-colors">
                 <span className="text-[#000000] font-bold text-[16px] font-['Inter-Bold',_sans-serif]">
                   DELETE MEMBER
                 </span>
-              </button>
+              </Button>
           </div>
         </header>
 

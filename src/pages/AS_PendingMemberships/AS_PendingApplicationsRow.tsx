@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "../../components/Button";
 import Check from "../../assets/icons/check.svg";
 import X from "../../assets/icons/x.svg";
 
@@ -24,18 +25,20 @@ const AS_PendingApplicationsRow: React.FC<AS_PendingApplicationsRowProps> = ({
     <div className="flex w-full bg-[#b5b5b5] rounded-[30px] px-4 py-2.5 items-center gap-3">
       {/* ACTION BUTTONS */}
       <div className="flex flex-1 justify-center gap-2">
-        <button
+        <Button
+          to="#"
           onClick={() => onApprove(user.id)}
           className="w-19 h-11 bg-[#d5ff5f] rounded-full flex items-center justify-center hover:opacity-90 transition-opacity"
         >
           <img src={Check} alt="Approve" className="w-9 h-9" />
-        </button>
-        <button
+        </Button>
+        <Button
+          to="#"
           onClick={() => onReject(user.id)}
           className="w-19 h-11 bg-[#d5ff5f] rounded-full flex items-center justify-center hover:opacity-90 transition-opacity"
         >
           <img src={X} alt="Reject" className="w-9 h-9" />
-        </button>
+        </Button>
       </div>
 
       {/* NAME */}

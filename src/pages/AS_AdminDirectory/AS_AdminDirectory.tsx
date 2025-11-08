@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "../../components/Button";
 import AS_SideBar from "../../components/AS_SideBar";
 import AS_AdminDirectoryTile from "./AS_AdminDirectoryTile";
 
@@ -36,18 +37,23 @@ const AS_AdminDirectory: React.FC = () => {
             {/* Action Buttons */}
             <div className="flex flex-row gap-3 items-center justify-center shrink-0">
               {/* ADD ADMIN Button */}
-              <button className="bg-[#d5ff5f] rounded-[24px] w-[130px] h-[40px] flex items-center justify-center hover:bg-[#c9f255] transition-colors">
+              <Button
+                to="#"
+                className="bg-[#d5ff5f] rounded-[24px] w-[130px] h-[40px] flex items-center justify-center hover:bg-[#c9f255] transition-colors"
+              >
                 <span className="text-[#000000] font-bold text-[16px] font-['Inter-Bold',_sans-serif]">
                   ADD ADMIN
                 </span>
-              </button>
+              </Button>
 
               {/* DELETE ADMIN Button */}
-              <button className="bg-[#d5ff5f] rounded-[24px] w-[165px] h-[40px] flex items-center justify-center hover:bg-[#c9f255] transition-colors">
+              <Button 
+                to="#"
+                className="bg-[#d5ff5f] rounded-[24px] w-[165px] h-[40px] flex items-center justify-center hover:bg-[#c9f255] transition-colors">
                 <span className="text-[#000000] font-bold text-[16px] font-['Inter-Bold',_sans-serif]">
                   DELETE ADMIN
                 </span>
-              </button>
+              </Button>
             </div>
           </div>
         </header>

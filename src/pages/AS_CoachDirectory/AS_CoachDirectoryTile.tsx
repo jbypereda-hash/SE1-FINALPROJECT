@@ -1,6 +1,8 @@
 import React from "react";
+import Button from "../../components/Button";
 import Phone from "../../assets/icons/phone.svg";
 import Mail from "../../assets/icons/mail.svg";
+import EditGreyBG from "../../assets/icons/edit-greybg.svg?react";
 
 interface AdminUser {
   id: number;
@@ -20,17 +22,19 @@ const AS_AdminDirectoryTile: React.FC<Props> = ({ user }) => {
       {/* Tile container */}
       <article className="flex flex-col items-center gap-2 p-4 bg-[#b5b5b5] rounded-[20px] overflow-hidden w-[290px] h-[150px]">
         
-        {/* Header: Name + Menu Dots */}
+        {/* Header: Name + Edit Button */}
         <div className="flex items-center justify-between w-full h-5">
           <h1 className="text-[18px] font-bold text-[#040404] truncate">
             {user.name}
           </h1>
 
-          <div className="relative w-[28px] h-2">
-            <div className="absolute top-0 left-0 w-2 h-2 bg-[#212121] rounded-[4px]" />
-            <div className="absolute top-0 left-[10px] w-2 h-2 bg-[#212121] rounded-[4px]" />
-            <div className="absolute top-0 left-[20px] w-2 h-2 bg-[#212121] rounded-[4px]" />
-          </div>
+          {/* Edit Button using Button component */}
+          <Button
+            to="/AS_EditCoach"
+            className="flex items-center p-1 rounded-lg hover:bg-[#3a3a45] transition-colors"
+          >
+            <EditGreyBG className="w-5 h-5" aria-label="Edit" />
+          </Button>
         </div>
 
         {/* Title */}
