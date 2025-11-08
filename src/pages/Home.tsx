@@ -162,11 +162,11 @@ const Home = () => {
 
         <section className="flex flex-wrap justify-center">
           {/* CORE CRUSHER */}
-          <div className="relative w-[340px] h-[220px] overflow-hidden m-5">
+          <div className="relative w-[340px] h-[220px] overflow-hidden m-5 group">
             <img
               src={CoreCrusher}
               alt="Core Crusher"
-              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black-34 to-transparent"></div>
             <div className="absolute bottom-0 left-0 text-white p-3">
@@ -178,11 +178,11 @@ const Home = () => {
           </div>
 
           {/* POWER FLOW YOGA */}
-          <div className="relative w-[340px] h-[220px] overflow-hidden m-5">
+          <div className="relative w-[340px] h-[220px] overflow-hidden m-5 group">
             <img
               src={CoreCrusher}
               alt="Core Crusher"
-              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black-34 to-transparent"></div>
             <div className="absolute bottom-0 left-0 text-white p-3">
@@ -196,11 +196,11 @@ const Home = () => {
           </div>
 
           {/* HIIT BLAST */}
-          <div className="relative w-[340px] h-[220px] overflow-hidden m-5">
+          <div className="relative w-[340px] h-[220px] overflow-hidden m-5 group">
             <img
               src={CoreCrusher}
               alt="Core Crusher"
-              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black-34 to-transparent"></div>
             <div className="absolute bottom-0 left-0 text-white p-3">
@@ -212,11 +212,11 @@ const Home = () => {
           </div>
 
           {/* KICKBOXING CARDIO */}
-          <div className="relative w-[340px] h-[220px] overflow-hidden m-5">
+          <div className="relative w-[340px] h-[220px] overflow-hidden m-5 group">
             <img
               src={CoreCrusher}
               alt="Core Crusher"
-              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black-34 to-transparent"></div>
             <div className="absolute bottom-0 left-0 text-white p-3">
@@ -230,11 +230,11 @@ const Home = () => {
           </div>
 
           {/* PILATES */}
-          <div className="relative w-[340px] h-[220px] overflow-hidden m-5">
+          <div className="relative w-[340px] h-[220px] overflow-hidden m-5 group">
             <img
               src={CoreCrusher}
               alt="Core Crusher"
-              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black-34 to-transparent"></div>
             <div className="absolute bottom-0 left-0 text-white p-3">
