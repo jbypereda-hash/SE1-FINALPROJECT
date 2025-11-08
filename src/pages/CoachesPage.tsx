@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import arrowLeft from "../assets/icons/arrow-left.svg";
 import { CoachCard } from "../components/CoachCard";
+import BackButton from "../components/BackButton";
 import type { JSX } from "react";
 
 interface Coach {
@@ -53,9 +52,7 @@ export const CoachesPage = (): JSX.Element => {
     <div className="min-h-screen bg-[#1c1c22] text-white px-8 py-10 flex flex-col items-center">
       {/* Header + Back Arrow */}
       <div className="w-full max-w-5xl flex items-center mb-10">
-        <Link to="/" className="mr-4 hover:opacity-80 transition">
-          <img src={arrowLeft} alt="Back" className="w-6 h-6" />
-        </Link>
+        <BackButton />
         <div>
           <h1 className="text-[#d5ff5f] text-4xl font-extrabold">
             MEET OUR COACHES
