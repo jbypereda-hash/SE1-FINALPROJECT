@@ -1,4 +1,5 @@
 import Button from "../components/Button";
+import Toni from "../assets/images/toni-fowler.jpg"
 import TiktokIcon from "../assets/icons/tiktok.svg?react";
 import InstagramIcon from "../assets/icons/instagram.svg?react";
 import FacebookIcon from "../assets/icons/facebook.svg?react";
@@ -8,6 +9,13 @@ const Home = () => {
     <div className="text-white flex-col">
       {/* WELCOME TO CORE LAB */}
       <div className="bg-black-35">
+        
+        <img
+        src={Toni}
+        alt="Logo"
+        className="w-40 h-auto rounded-xl shadow-md hover:scale-105 transition-transform"
+      />
+
         <h1>CORE LAB</h1>
         <p>
           At Core Lab, we believe that fitness is a personal journey, and we're
