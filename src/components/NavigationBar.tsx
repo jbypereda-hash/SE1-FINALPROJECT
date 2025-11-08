@@ -5,7 +5,7 @@ const NavigationBar = () => {
     <nav className="relative mx-auto flex justify-between items-center px-20 py-[13px] bg-black-34">
       {/* Left Side: CORELAB LOGO - Home Button*/}
       <div>
-        <Button className="font-bold text-shrek text-5xl" to="/">
+        <Button className="inline-block font-bold text-shrek text-5xl transition-transform duration-400 hover:scale-110" to="/">
           CORE LAB
         </Button>
       </div>

@@ -24,12 +24,16 @@ body {
 @layer components {
   .shrek-btn {
     @apply bg-shrek text-black-35 text-2xl font-sans py-2 px-5 rounded-full 
-           border border-transparent transition-colors 
+           border-2 border-transparent transition-colors duration-300
            hover:bg-transparent hover:text-white hover:border-shrek;
   }
 
   .nobg-btn {
-    @apply px-3 py-2 text-white text-2xl hover:text-shrek transition-colors;
+    @apply inline-block px-3 py-2 text-white text-2xl hover:text-shrek transition-all hover:scale-105 duration-300;
+  }
+
+  .blackicon-btn {
+    @apply p-2 text-black-35 hover:scale-110 transition-transform duration-300
   }
 }
 

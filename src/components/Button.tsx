@@ -4,11 +4,12 @@ import { Link } from "react-router-dom";
 interface Props {
   children: ReactNode; //ang text sa button(?)
   className?: string; //optional styling class
-  to?: string; // optional navigation path
+  to?: string; // optional internal navigation 
+  href?: string; // optional external link
   onClick?: () => void; // optional function
 }
 
-const Button = ({ children, className = "", to, onClick }: Props) => {
+const Button = ({ children, className = "", to, href, onClick }: Props) => {
   const baseClasses = className || "nobg-btn"; // default
 
   if (to) {
@@ -17,6 +18,20 @@ const Button = ({ children, className = "", to, onClick }: Props) => {
       <Link to={to} className={baseClasses}>
         {children}
       </Link>
+    );
+  }
+
+  if (href) {
+    // If "href" exists, render as External Link
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={baseClasses}
+      >
+        {children}
+      </a>
     );
   }
 
