@@ -1,11 +1,11 @@
 // src/components/AS_SideBar.tsx
 import { Link } from "react-router-dom";
-import personIcon from "../assets/person.svg";
-import gearIcon from "../assets/gear.svg";
-import dumbbellIcon from "../assets/dumbbell.svg";
-import clockIcon from "../assets/clock.svg";
-import homeIcon from "../assets/home.svg";
-import listIcon from "../assets/list.svg";
+import personIcon from "../assets/icons/person.svg";
+import gearIcon from "../assets/icons/gear.svg";
+import dumbbellIcon from "../assets/icons/dumbbell.svg";
+import clockIcon from "../assets/icons/clock.svg";
+import homeIcon from "../assets/icons/home.svg";
+import listIcon from "../assets/icons/list.svg";
 import type { JSX } from "react";
 import Button from "./Button";
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import arrowLeft from "../assets/arrow-left.svg";
+import arrowLeft from "../assets/icons/arrow-left.svg";
 import { CoachCard } from "../components/CoachCard";
 import type { JSX } from "react";
 

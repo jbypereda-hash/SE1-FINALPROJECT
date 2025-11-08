@@ -16,6 +16,7 @@ const NavigationBar = () => {
         <Button to="/memberships">MEMBERSHIPS</Button>
         <Button>CLASSES</Button>
         <Button to="/coaches">COACHES</Button>
+        <Button to="/AS_AdminDirectory">ADMIN</Button>
       </div>
 
       {/* Right: Profile + GET STARTED / LOGIN / LOGOUT */}

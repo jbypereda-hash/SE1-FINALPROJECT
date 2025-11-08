@@ -1,6 +1,6 @@
 import React from "react";
-import Check from "../../assets/check.svg";
-import X from "../../assets/x.svg";
+import Check from "../../assets/icons/check.svg";
+import X from "../../assets/icons/x.svg";
 
 interface UserData {
   id: number;
