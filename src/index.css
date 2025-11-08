@@ -23,7 +23,7 @@ body {
 /* CUSTOM COMPONENT STYLES */
 @layer components {
   .shrek-btn {
-    @apply bg-shrek text-black-35 text-2xl font-sans py-2 px-5 rounded-full 
+    @apply bg-shrek text-black-35 text-2xl font-sans py-2 px-5 rounded-full w-fit mx-auto
            border-2 border-transparent transition-colors duration-300
            hover:bg-transparent hover:text-white hover:border-shrek;
   }
@@ -32,8 +32,12 @@ body {
     @apply inline-block px-3 py-2 text-white text-2xl hover:text-shrek transition-all hover:scale-105 duration-300;
   }
 
+  .plain-btn {
+    @apply text-white;
+  }
+
   .blackicon-btn {
-    @apply p-2 text-black-35 hover:scale-110 transition-transform duration-300
+    @apply p-2 text-black-35 hover:scale-110 transition-transform duration-300;
   }
 }
 
