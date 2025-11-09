@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "../../components/Button";
 import AS_SideBar from "../../components/AS_SideBar";
 import AS_AdminDirectoryTile from "./AS_AdminDirectoryTile";
+import AS_AdminSignUpDialogBox from "./AS_AdminSignUpDialogBox";
 
 // SAMPLE DATA
 const users = [
@@ -14,6 +15,8 @@ const users = [
 ];
 
 const AS_AdminDirectory: React.FC = () => {
+  const [showDialog, setShowDialog] = useState(false);
+
   return (
     <div className="flex w-screen h-screen">
       <AS_SideBar />
@@ -38,7 +41,7 @@ const AS_AdminDirectory: React.FC = () => {
             <div className="flex flex-row gap-3 items-center justify-center shrink-0">
               {/* ADD ADMIN Button */}
               <Button
-                to="#"
+                onClick={() => setShowDialog(true)}
                 className="bg-[#d5ff5f] rounded-[24px] w-[130px] h-[40px] flex items-center justify-center hover:bg-[#c9f255] transition-colors"
               >
                 <span className="text-[#000000] font-bold text-[16px] font-['Inter-Bold',_sans-serif]">
@@ -78,6 +81,9 @@ const AS_AdminDirectory: React.FC = () => {
           </div>
         </div>
       </main>
+
+      {/* Admin Sign Up Dialog */}
+      {showDialog && <AS_AdminSignUpDialogBox onClose={() => setShowDialog(false)} />}
     </div>
   );
 };

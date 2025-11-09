@@ -7,6 +7,8 @@ interface Props {
   to?: string; // optional internal navigation 
   href?: string; // optional external link
   onClick?: () => void; // optional function
+  type?: "button" | "submit" | "reset"; //new line added by yen | for the dialog boxes
+  variant?: "ghost" | "primary" | "secondary"; //new line added by yen | for the dropdown arrow
 }
 
 const Button = ({ children, className = "", to, href, onClick }: Props) => {
