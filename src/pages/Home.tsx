@@ -1,6 +1,10 @@
 import Button from "../components/Button";
 import Toni from "../assets/images/toni-fowler.jpg";
 import CoreCrusher from "../assets/images/corecrusher-class.jpg";
+import PowerFlowYoga from "../assets/images/powerflowyoga-class.png";
+import HIITBlast from "../assets/images/hiitblast-class.png";
+import KickboxingCardio from "../assets/images/kickboxingcardio-class.png";
+import Pilates from "../assets/images/pilates-class.png";
 import Ben from "../assets/images/ben-coach.png";
 import Gab from "../assets/images/gab-coach.png";
 import Precious from "../assets/images/precious-coach.png";
@@ -180,8 +184,8 @@ const Home = () => {
           {/* POWER FLOW YOGA */}
           <div className="relative w-[340px] h-[220px] overflow-hidden m-5 group">
             <img
-              src={CoreCrusher}
-              alt="Core Crusher"
+              src={PowerFlowYoga}
+              alt="Power Flow Yoga"
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black-34 to-transparent"></div>
@@ -198,8 +202,8 @@ const Home = () => {
           {/* HIIT BLAST */}
           <div className="relative w-[340px] h-[220px] overflow-hidden m-5 group">
             <img
-              src={CoreCrusher}
-              alt="Core Crusher"
+              src={HIITBlast}
+              alt="HIIT Blast"
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black-34 to-transparent"></div>
@@ -214,8 +218,8 @@ const Home = () => {
           {/* KICKBOXING CARDIO */}
           <div className="relative w-[340px] h-[220px] overflow-hidden m-5 group">
             <img
-              src={CoreCrusher}
-              alt="Core Crusher"
+              src={KickboxingCardio}
+              alt="Kickboxing Cardio"
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black-34 to-transparent"></div>
@@ -232,8 +236,8 @@ const Home = () => {
           {/* PILATES */}
           <div className="relative w-[340px] h-[220px] overflow-hidden m-5 group">
             <img
-              src={CoreCrusher}
-              alt="Core Crusher"
+              src={Pilates}
+              alt="Pilates"
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black-34 to-transparent"></div>
