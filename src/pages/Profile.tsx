@@ -1,50 +1,23 @@
-import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebaseConfig";
 import ProfileCard from "../components/ProfileCard";
 import HealthInfoCard from "../components/HealthInfoCard";
 import Calendar from "../components/Calendar";
 import QrCodeCard from "../components/QrCodeCard";
-import { getAuth } from "firebase/auth";
-
-interface MemberData {
-  name: string;
-  status: string;
-  membershipType: string;
-  validUntil: string;
-  goals: string[];
-  health: {
-    startingWeight: number;
-    currentWeight: number;
-    goalWeight: number;
-    bmiCategory: string;
-    bmiValue: number;
-    height: number;
-    age: number;
-    medicalConditions: string;
-  };
-}
+import { useMemberProfile } from "../hooks/useMemberProfile";
 
 export const ProfilePage = () => {
-  const [member, setMember] = useState<MemberData | null>(null);
+  const { member, loading } = useMemberProfile();
 
-  useEffect(() => {
-    const fetchMember = async () => {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      if (!user) return; //please login message
-
-      const ref = doc(db, "members", user.uid);
-      const snap = await getDoc(ref);
-      if (snap.exists()) setMember(snap.data() as MemberData);
-    };
-    fetchMember();
-  }, []);
+  if (loading)
+    return (
+      <div className="min-h-screen bg-[#1c1c22] flex items-center justify-center text-white">
+        Loading profile...
+      </div>
+    );
 
   if (!member)
     return (
       <div className="min-h-screen bg-[#1c1c22] flex items-center justify-center text-white">
-        Loading profile...
+        No profile found.
       </div>
     );
 
