@@ -11,8 +11,12 @@ import Precious from "../assets/images/precious-coach.png";
 import TiktokIcon from "../assets/icons/tiktok.svg?react";
 import InstagramIcon from "../assets/icons/instagram.svg?react";
 import FacebookIcon from "../assets/icons/facebook.svg?react";
+import SignupModal from "../components/SignupModal";
+import { useState } from "react";
 
 const Home = () => {
+  const [showModal, setShowModal] = useState(false);
+
   return (
     <div className="text-white flex flex-col">
       {/* WELCOME TO CORE LAB */}
@@ -39,9 +43,17 @@ const Home = () => {
               and motivating environment.
             </p>
 
-            <Button className="shrek-btn text-4xl px-8 py-4">
+            <Button
+              onClick={() => setShowModal(true)}
+              className="shrek-btn text-4xl px-8 py-4"
+            >
               GET STARTED
             </Button>
+
+            <SignupModal
+              isOpen={showModal}
+              onClose={() => setShowModal(false)}
+            />
           </div>
         </section>
 
