@@ -48,7 +48,7 @@ const NavigationBar = () => {
 
       {/* Right: Profile + GET STARTED / LOGIN / LOGOUT */}
       <div className="space-x-2">
-        <Button>MY PROFILE</Button>
+        <Button to="/profile">MY PROFILE</Button>
         <Button className="shrek-btn">GET STARTED</Button>
       </div>
     </nav>
