@@ -10,11 +10,13 @@ import AS_MemberDirectory from "./pages/AS_MemberDirectory/AS_MemberDirectory";
 import AS_CoachDirectory from "./pages/AS_CoachDirectory/AS_CoachDirectory";
 import AS_AddCoach from "./pages/AS_AddCoach";
 import AS_EditCoach from "./pages/AS_EditCoach";
+import AuthModals from "./components/AuthModals";
 
 const App = () => {
   return (
     <>
       <NavigationBar />
+      <AuthModals />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/memberships" element={<Memberships />} />

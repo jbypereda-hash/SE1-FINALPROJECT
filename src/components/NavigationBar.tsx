@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import Button from "./Button";
-import SignupModal from "../components/SignupModal";
 
 const NavigationBar = () => {
   const [hidden, setHidden] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,12 +50,11 @@ const NavigationBar = () => {
         {/* Right: Profile + GET STARTED / LOGIN / LOGOUT */}
         <div className="space-x-2">
           <Button to="/profile">MY PROFILE</Button>
-          <Button onClick={() => setShowModal(true)} className="shrek-btn">
+          <Button onClick={() => window.dispatchEvent(new Event("open-signup"))} className="shrek-btn">
             GET STARTED
           </Button>
         </div>
       </nav>
-      <SignupModal isOpen={showModal} onClose={() => setShowModal(false)} />
     </>
   );
 };

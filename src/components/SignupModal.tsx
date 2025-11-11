@@ -19,9 +19,10 @@ interface FormData {
 interface SignupModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSwitchToLogin: () => void;
 }
 
-const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
+const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose, onSwitchToLogin }) => {
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -83,7 +84,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
       setShowConfirmPassword(false);
       setSuccess(false);
       setAuthError(null);
-      setLoading(false)
+      setLoading(false);
     }
   }, [isOpen]);
 
@@ -395,7 +396,10 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
         <p className="text-sm text-gray-300 mt-2">
           Already have an account?{" "}
           <Button
-            href="/login"
+            onClick={() => {
+              onClose(); // close signup modal
+              onSwitchToLogin(); // open login modal
+            }}
             className="underline hover:text-shrek transition-colors duration-300"
           >
             Log in

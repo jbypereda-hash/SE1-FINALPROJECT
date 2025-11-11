@@ -11,11 +11,8 @@ import Precious from "../assets/images/precious-coach.png";
 import TiktokIcon from "../assets/icons/tiktok.svg?react";
 import InstagramIcon from "../assets/icons/instagram.svg?react";
 import FacebookIcon from "../assets/icons/facebook.svg?react";
-import SignupModal from "../components/SignupModal";
-import { useState } from "react";
 
 const Home = () => {
-  const [showModal, setShowModal] = useState(false);
 
   return (
     <div className="text-white flex flex-col">
@@ -44,16 +41,11 @@ const Home = () => {
             </p>
 
             <Button
-              onClick={() => setShowModal(true)}
+              onClick={() => window.dispatchEvent(new Event("open-signup"))}
               className="shrek-btn text-4xl px-8 py-4"
             >
               GET STARTED
             </Button>
-
-            <SignupModal
-              isOpen={showModal}
-              onClose={() => setShowModal(false)}
-            />
           </div>
         </section>
 
