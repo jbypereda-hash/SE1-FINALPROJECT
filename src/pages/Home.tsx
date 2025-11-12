@@ -57,14 +57,8 @@ const Home = () => {
             </p>
 
             {isLoggedIn ? (
-              <Button
-                className="shrek-btn text-4xl px-8 py-4"
-                onClick={async () => {
-                  await signOut(auth);
-                  setIsLoggedIn(false);
-                }}
-              >
-                LOG OUT
+              <Button className="shrek-btn text-4xl px-8 py-4" to="/profile">
+                MANAGE HEALTH INFO
               </Button>
             ) : (
               <Button
