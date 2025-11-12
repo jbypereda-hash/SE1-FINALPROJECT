@@ -88,10 +88,10 @@ export const AS_SideBar = (): JSX.Element => {
 
       {/* LOG OUT BUTTON */}
       <Button
-        to="/"
-        className="flex items-center justify-center gap-2 px-10 py-2.5 bg-[#d5ff5f] rounded-[25px] hover:bg-[#c0ff55] transition-colors mb-4"
+        className="shrek-btn"
+        onClick={() => window.dispatchEvent(new Event("open-logout-confirm"))}
       >
-        <span className="font-bold text-black text-[20px]">LOG OUT</span>
+        LOG OUT
       </Button>
     </div>
   );

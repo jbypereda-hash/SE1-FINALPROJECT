@@ -11,8 +11,24 @@ import Precious from "../assets/images/precious-coach.png";
 import TiktokIcon from "../assets/icons/tiktok.svg?react";
 import InstagramIcon from "../assets/icons/instagram.svg?react";
 import FacebookIcon from "../assets/icons/facebook.svg?react";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "../firebaseConfig";
 
 const Home = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   return (
     <div className="text-white flex flex-col">
@@ -40,12 +56,24 @@ const Home = () => {
               and motivating environment.
             </p>
 
-            <Button
-              onClick={() => window.dispatchEvent(new Event("open-signup"))}
-              className="shrek-btn text-4xl px-8 py-4"
-            >
-              GET STARTED
-            </Button>
+            {isLoggedIn ? (
+              <Button
+                className="shrek-btn text-4xl px-8 py-4"
+                onClick={async () => {
+                  await signOut(auth);
+                  setIsLoggedIn(false);
+                }}
+              >
+                LOG OUT
+              </Button>
+            ) : (
+              <Button
+                onClick={() => window.dispatchEvent(new Event("open-signup"))}
+                className="shrek-btn text-4xl px-8 py-4"
+              >
+                GET STARTED
+              </Button>
+            )}
           </div>
         </section>
 

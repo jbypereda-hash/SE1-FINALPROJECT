@@ -2,16 +2,51 @@ import React, { useState } from "react";
 import Button from "../../components/Button";
 import AS_SideBar from "../../components/AS_SideBar";
 import AS_AdminDirectoryTile from "./AS_AdminDirectoryTile";
-import AS_AdminSignUpDialogBox from "./AS_AdminSignUpDialogBox";
 
 // SAMPLE DATA
 const users = [
-  { id: 1, name: "Precious Kyle Pagute", position: "CEO", phone: "09952837465", email: "precious@example.com" },
-  { id: 2, name: "Ben Joshua Dizon", position: "Manager", phone: "09475863723", email: "ben@example.com" },
-  { id: 3, name: "Gabriel Ryne Ledres", position: "Manager", phone: "09712654387", email: "gabriel@example.com" },
-  { id: 4, name: "Krishea Joanne Tare", position: "Manager", phone: "09914367583", email: "krishea@example.com" },
-  { id: 5, name: "Rowena Montante", position: "Owner", phone: "09959877456", email: "rowena@example.com" },
-  { id: 6, name: "Yen Vasquez", position: "Assistant", phone: "09273647891", email: "yen@example.com" },
+  {
+    id: 1,
+    name: "Precious Kyle Pagute",
+    position: "CEO",
+    phone: "09952837465",
+    email: "precious@example.com",
+  },
+  {
+    id: 2,
+    name: "Ben Joshua Dizon",
+    position: "Manager",
+    phone: "09475863723",
+    email: "ben@example.com",
+  },
+  {
+    id: 3,
+    name: "Gabriel Ryne Ledres",
+    position: "Manager",
+    phone: "09712654387",
+    email: "gabriel@example.com",
+  },
+  {
+    id: 4,
+    name: "Krishea Joanne Tare",
+    position: "Manager",
+    phone: "09914367583",
+    email: "krishea@example.com",
+  },
+  {
+    id: 5,
+    name: "Rowena Montante",
+    position: "Owner",
+    phone: "09959877456",
+    email: "rowena@example.com",
+  },
+  {
+    id: 6,
+    name: "Yen Vasquez",
+    position: "Assistant",
+    phone: "09273647891",
+    email: "yen@example.com",
+  },
 ];
 
 const AS_AdminDirectory: React.FC = () => {
@@ -38,24 +73,20 @@ const AS_AdminDirectory: React.FC = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-row gap-3 items-center justify-center shrink-0">
+            <div className="flex gap-3 items-center justify-center shrink-0">
               {/* ADD ADMIN Button */}
               <Button
-                onClick={() => setShowDialog(true)}
-                className="bg-[#d5ff5f] rounded-[24px] w-[130px] h-[40px] flex items-center justify-center hover:bg-[#c9f255] transition-colors"
+                onClick={() =>
+                  window.dispatchEvent(new Event("open-signup-admin"))
+                }
+                className="shrek-btn py-1 text-xl"
               >
-                <span className="text-[#000000] font-bold text-[16px] font-['Inter-Bold',_sans-serif]">
-                  ADD ADMIN
-                </span>
+                ADD ADMIN
               </Button>
 
               {/* DELETE ADMIN Button */}
-              <Button 
-                to="#"
-                className="bg-[#d5ff5f] rounded-[24px] w-[165px] h-[40px] flex items-center justify-center hover:bg-[#c9f255] transition-colors">
-                <span className="text-[#000000] font-bold text-[16px] font-['Inter-Bold',_sans-serif]">
-                  DELETE ADMIN
-                </span>
+              <Button to="#" className="shrek-btn py-1 text-xl">
+                DELETE ADMIN
               </Button>
             </div>
           </div>
@@ -83,7 +114,9 @@ const AS_AdminDirectory: React.FC = () => {
       </main>
 
       {/* Admin Sign Up Dialog */}
-      {showDialog && <AS_AdminSignUpDialogBox onClose={() => setShowDialog(false)} />}
+      {showDialog && (
+        <AS_AdminSignUpDialogBox onClose={() => setShowDialog(false)} />
+      )}
     </div>
   );
 };

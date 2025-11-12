@@ -26,32 +26,42 @@ const LoginModal: React.FC<LoginModalProps> = ({
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // 🆕 added closing animation state
-  const [isClosing, setIsClosing] = useState(false);
+  // 🧩 Added for smooth open/close animation
+  const [showContent, setShowContent] = useState(false);
+  const [renderModal, setRenderModal] = useState(false);
 
-  // when modal closes, reset form data
+  // Handle modal mount/unmount and animation states
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
+      setRenderModal(true);
+      const timer = setTimeout(() => setShowContent(true), 10);
+      return () => clearTimeout(timer);
+    } else {
+      setShowContent(false);
+    }
+  }, [isOpen]);
+
+  // Remove from DOM after animation ends
+  useEffect(() => {
+    if (!showContent && !isOpen) {
+      const timer = setTimeout(() => setRenderModal(false), 400);
+      return () => clearTimeout(timer);
+    }
+  }, [showContent, isOpen]);
+
+  // Reset form when modal closes
+  useEffect(() => {
+    if (isOpen) {
       setEmail("");
       setPassword("");
       setErrors({});
       setLoading(false);
+      setShowPassword(false);
       setSuccess(false);
     }
   }, [isOpen]);
 
-  // 🆕 handle closing animation before unmount
-  const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setIsClosing(false);
-      onClose();
-    }, 300); // must match transition duration
-  };
-
-  // don’t render unless open or closing (so animation can play)
-  if (!isOpen && !isClosing) return null;
-
+  // Validation
   const validate = () => {
     const newErrors: typeof errors = {};
     if (!email.trim()) newErrors.email = "Email is required";
@@ -64,6 +74,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
+  // Submit handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
@@ -77,7 +88,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
       setTimeout(() => {
         setSuccess(false);
-        handleClose();
+        onClose();
       }, 1500);
     } catch (error: any) {
       console.error("Login error:", error);
@@ -96,24 +107,26 @@ const LoginModal: React.FC<LoginModalProps> = ({
     }
   };
 
+  if (!renderModal) return null;
+
   return (
     <div
-      onClick={handleClose}
-      className={`fixed inset-0 bg-black/70 flex justify-center items-center z-50 transition-opacity duration-300 ${
-        isClosing ? "opacity-0" : "opacity-100"
+      onClick={onClose}
+      className={`fixed inset-0 bg-black/70 flex justify-center items-center z-50 transition-opacity duration-500 ${
+        showContent ? "opacity-100" : "opacity-0"
       }`}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className={`bg-black-35 px-20 py-5 rounded-2xl w-[550px] text-center text-white relative transform transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-          isClosing
-            ? "opacity-0 scale-90 translate-y-6"
-            : "opacity-100 scale-100 translate-y-0"
+        className={`bg-black-35 px-20 py-5 rounded-2xl w-[550px] text-center text-white relative transform transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          showContent
+            ? "opacity-100 scale-100 translate-y-0"
+            : "opacity-0 scale-90 translate-y-6"
         }`}
       >
         {/* Back Button */}
         <Button
-          onClick={handleClose}
+          onClick={onClose}
           className="absolute top-5 left-5 hover:scale-110 transition-all duration-200"
         >
           <BackButton className="w-12 h-12" />
@@ -125,9 +138,10 @@ const LoginModal: React.FC<LoginModalProps> = ({
         )}
 
         <h2 className="text-shrek text-6xl font-bold">CORE LAB</h2>
-        <p className="mb-10 text-xl">Log in to continue your fitness journey!</p>
+        <p className="mb-10 text-xl">
+          Log in to continue your fitness journey!
+        </p>
 
-        {/* Login Form */}
         <form onSubmit={handleSubmit} className="text-left">
           <div>
             <p>Email:</p>
@@ -138,7 +152,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
               className="w-full px-3 py-1.5 rounded-4xl bg-donkey-10 text-black-35 focus:outline-black-35"
             />
             {errors.email && (
-              <p className="text-red-400 text-xs ml-3">{errors.email}</p>
+              <p className="text-red-400 text-xs ml-3 italic">{errors.email}</p>
             )}
           </div>
 
@@ -160,15 +174,11 @@ const LoginModal: React.FC<LoginModalProps> = ({
               </button>
             </div>
             {errors.password && (
-              <p className="text-red-400 text-xs ml-3">{errors.password}</p>
+              <p className="text-red-400 text-xs ml-3 italic">
+                {errors.password}
+              </p>
             )}
           </div>
-
-          {errors.firebase && (
-            <p className="text-red-400 text-sm text-center mt-2">
-              {errors.firebase}
-            </p>
-          )}
 
           <div className="flex justify-center">
             <Button className="shrek-btn font-bold py-1 border-3 hover:border-3 mt-15 w-60">
@@ -177,16 +187,22 @@ const LoginModal: React.FC<LoginModalProps> = ({
           </div>
         </form>
 
-        {success && (
-          <p className="text-green-400 text-sm mt-3">Login successful!</p>
+        {errors.firebase && (
+            <p className="text-red-400 text-sm text-center mt-2">
+              {errors.firebase}
+            </p>
+          )}
+          
+          {success && (
+          <p className="text-green-400 text-sm text-center mt-3">Login successful!</p>
         )}
 
         <p className="text-sm text-gray-300 mt-2">
           Don’t have an account?{" "}
           <Button
             onClick={() => {
-              handleClose();
-              setTimeout(onSwitchToSignup, 300); // wait for fade out
+              onClose();
+              setTimeout(onSwitchToSignup, 450);
             }}
             className="underline hover:text-shrek transition-colors duration-300"
           >

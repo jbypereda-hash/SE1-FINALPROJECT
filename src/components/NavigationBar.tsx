@@ -1,9 +1,24 @@
 import { useEffect, useState } from "react";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "../firebaseConfig";
 import Button from "./Button";
 
 const NavigationBar = () => {
   const [hidden, setHidden] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -50,9 +65,24 @@ const NavigationBar = () => {
         {/* Right: Profile + GET STARTED / LOGIN / LOGOUT */}
         <div className="space-x-2">
           <Button to="/profile">MY PROFILE</Button>
-          <Button onClick={() => window.dispatchEvent(new Event("open-signup"))} className="shrek-btn">
-            GET STARTED
-          </Button>
+
+          {isLoggedIn ? (
+            <Button
+              className="shrek-btn"
+              onClick={() =>
+                window.dispatchEvent(new Event("open-logout-confirm"))
+              }
+            >
+              LOG OUT
+            </Button>
+          ) : (
+            <Button
+              onClick={() => window.dispatchEvent(new Event("open-signup"))}
+              className="shrek-btn"
+            >
+              GET STARTED
+            </Button>
+          )}
         </div>
       </nav>
     </>

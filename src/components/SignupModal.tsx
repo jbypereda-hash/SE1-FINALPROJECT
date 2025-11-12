@@ -13,16 +13,22 @@ interface FormData {
   gender: string;
   password: string;
   confirmPassword: string;
-  role: string;
+  role: "member" | "admin";
 }
 
 interface SignupModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSwitchToLogin: () => void;
+  defaultRole?: "member" | "admin"; // optional
 }
 
-const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose, onSwitchToLogin }) => {
+const SignupModal: React.FC<SignupModalProps> = ({
+  isOpen,
+  onClose,
+  onSwitchToLogin,
+  defaultRole,
+}) => {
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -31,7 +37,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose, onSwitchToLo
     gender: "",
     password: "",
     confirmPassword: "",
-    role: "member",
+    role: defaultRole || "member",
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>(
@@ -68,7 +74,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose, onSwitchToLo
 
   // Reset form when modal closes
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
       setFormData({
         firstName: "",
         lastName: "",
@@ -77,7 +83,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose, onSwitchToLo
         gender: "",
         password: "",
         confirmPassword: "",
-        role: "member",
+        role: defaultRole || "member",
       });
       setErrors({});
       setShowPassword(false);
@@ -174,12 +180,13 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose, onSwitchToLo
         gender: "",
         password: "",
         confirmPassword: "",
-        role: "member",
+        role: defaultRole || "member",
       });
 
       setTimeout(() => {
         setSuccess(false);
-        onClose();
+        onClose(); // close signup modal
+        setTimeout(onSwitchToLogin, 450); // open login modal
       }, 1500);
     } catch (error: any) {
       console.error("Error creating user:", error);
@@ -231,7 +238,11 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose, onSwitchToLo
         )}
 
         <h2 className="text-shrek text-6xl font-bold">CORE LAB</h2>
-        <p className="mb-6 text-2xl">Join our fitness community today!</p>
+        <p className="mb-6 text-2xl">
+          {defaultRole === "admin"
+            ? "Create a new admin account."
+            : "Join our fitness community today!"}
+        </p>
 
         {/* form fields */}
         <form onSubmit={handleSubmit} className=" text-left">
@@ -378,7 +389,9 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose, onSwitchToLo
           </div>
           <div className="flex">
             <Button className="shrek-btn font-bold py-1 border-3 hover:border-3 mt-6 w-60">
-              REGISTER
+              {defaultRole === "admin"
+            ? "CREATE ADMIN"
+            : "REGISTER"}
             </Button>
           </div>
         </form>
@@ -393,18 +406,20 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose, onSwitchToLo
           <p className="text-red-400 text-xs ml-3 italic">{authError}</p>
         )}
 
-        <p className="text-sm text-gray-300 mt-2">
-          Already have an account?{" "}
-          <Button
-            onClick={() => {
-              onClose(); // close signup modal
-              onSwitchToLogin(); // open login modal
-            }}
-            className="underline hover:text-shrek transition-colors duration-300"
-          >
-            Log in
-          </Button>
-        </p>
+        {formData.role !== "admin" && (
+          <p className="text-sm text-gray-300 mt-2">
+            Already have an account?{" "}
+            <Button
+              onClick={() => {
+                onClose(); // close signup modal
+                setTimeout(onSwitchToLogin, 450); // open login modal
+              }}
+              className="underline hover:text-shrek transition-colors duration-300"
+            >
+              Log in
+            </Button>
+          </p>
+        )}
       </div>
     </div>
   );
