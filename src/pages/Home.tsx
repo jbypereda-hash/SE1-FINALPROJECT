@@ -12,18 +12,21 @@ import TiktokIcon from "../assets/icons/tiktok.svg?react";
 import InstagramIcon from "../assets/icons/instagram.svg?react";
 import FacebookIcon from "../assets/icons/facebook.svg?react";
 import { useEffect, useState } from "react";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 
 const Home = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setIsLoggedIn(true);
+        setLoading(true);
       } else {
         setIsLoggedIn(false);
+        setLoading(true);
       }
     });
 

@@ -1,24 +1,23 @@
-import React from "react";
 import type { JSX } from "react";
-import BackButton from "../components/BackButton";
-import Button from "../components/Button";
-import EditWhiteBG from "../assets/icons/edit-whitebg.svg?react";
-import EditDarkGreyBG from "../assets/icons/edit-darkgreybg.svg?react";
-import Bold from "../assets/icons/bold.svg?react";
-import Italicized from "../assets/icons/italicized.svg?react";
-import ListBlack from "../assets/icons/list-black.svg?react";
-import TextColor from "../assets/icons/textcolor.svg?react";
-import AlignLeft from "../assets/icons/alignleft.svg?react";
-import AlignCenter from "../assets/icons/aligncenter.svg?react";
-import AlignRight from "../assets/icons/alignright.svg?react";
-import AlignJustify from "../assets/icons/alignjustify.svg?react";
-import Mail from "../assets/icons/mail.svg";
-import Phone from "../assets/icons/phone.svg";
-import EmptyPhoto from "../assets/icons/emptyphoto.svg"
-import Line2 from "../assets/icons/line2.svg";
-import Line1 from "../assets/icons/line1.svg";
+import BackButton from "../../components/BackButton";
+import Button from "../../components/Button";
+import EditWhiteBG from "../../assets/icons/edit-whitebg.svg?react";
+import EditDarkGreyBG from "../../assets/icons/edit-darkgreybg.svg?react";
+import Bold from "../../assets/icons/bold.svg?react";
+import Italicized from "../../assets/icons/italicized.svg?react";
+import ListBlack from "../../assets/icons/list-black.svg?react";
+import TextColor from "../../assets/icons/textcolor.svg?react";
+import AlignLeft from "../../assets/icons/alignleft.svg?react";
+import AlignCenter from "../../assets/icons/aligncenter.svg?react";
+import AlignRight from "../../assets/icons/alignright.svg?react";
+import AlignJustify from "../../assets/icons/alignjustify.svg?react";
+import Mail from "../../assets/icons/mail.svg";
+import Phone from "../../assets/icons/phone.svg";
+import EmptyPhoto from "../../assets/icons/emptyphoto.svg";
+import Line2 from "../../assets/icons/line2.svg";
+import Line1 from "../../assets/icons/line1.svg";
 
-export const AS_EditCoach = (): JSX.Element => {
+export const AS_AddCoach = (): JSX.Element => {
   return (
     <div className="flex flex-col items-center justify-start w-full min-h-screen bg-[#1a1a1a]">
       {/* ========== TOP SECTION ========== */}
@@ -26,7 +25,7 @@ export const AS_EditCoach = (): JSX.Element => {
         <BackButton />
         <div className="flex flex-col gap-2.5 items-center justify-center h-[75px] flex-1">
           <div className="text-[#d5ff5f] text-center font-['InriaSans-Bold',_sans-serif] text-[32px] font-bold w-full flex items-center justify-center">
-            EDIT COACH PROFILE
+            ADD COACH PROFILE
           </div>
         </div>
       </div>
@@ -52,19 +51,19 @@ export const AS_EditCoach = (): JSX.Element => {
           <div className="px-[50px] flex flex-col gap-[5px] items-start justify-center w-full">
             <div className="flex flex-row items-center h-[35px]">
               <div className="text-[#d5ff5f] font-['InriaSans-Bold',_sans-serif] text-4xl font-bold">
-                Toni Fowler
+                Name
               </div>
               <Button>
-               <EditDarkGreyBG className="w-[25px] h-6" />
+                <EditDarkGreyBG className="w-[25px] h-6" />
               </Button>
             </div>
 
             <div className="flex flex-row items-center">
               <div className="text-[#e8e8e8] font-['InriaSans-Regular',_sans-serif] text-2xl font-normal">
-                Strength &amp; Conditioning Coach
+                Specialty
               </div>
               <Button>
-               <EditDarkGreyBG className="w-[25px] h-6" />
+                <EditDarkGreyBG className="w-[25px] h-6" />
               </Button>
             </div>
 
@@ -78,7 +77,7 @@ export const AS_EditCoach = (): JSX.Element => {
               <div className="flex flex-row gap-2 items-center w-full">
                 <img src={Mail} alt="Email" className="w-[30px] h-[30px]" />
                 <div className="text-[#222] font-['Inter-Bold',_sans-serif] text-base font-bold">
-                  tFowler@gmail.com
+                  Email
                 </div>
                 <Button>
                   <EditWhiteBG className="w-5 h-5" />
@@ -88,11 +87,11 @@ export const AS_EditCoach = (): JSX.Element => {
               <div className="flex flex-row gap-2.5 items-center w-full">
                 <img src={Phone} alt="Phone" className="w-[30px] h-[30px]" />
                 <div className="text-[#222] font-['Inter-Bold',_sans-serif] text-base font-bold">
-                  0945 658 3925
+                  Contact Number
                 </div>
                 <Button>
                   <EditWhiteBG className="w-5 h-5" />
-                </Button>              
+                </Button>
               </div>
             </div>
           </div>
@@ -106,19 +105,43 @@ export const AS_EditCoach = (): JSX.Element => {
               Description
             </div>
             <Button>
-               <EditDarkGreyBG className="w-[25px] h-6" />
+              <EditDarkGreyBG className="w-[25px] h-6" />
             </Button>
           </div>
 
           {/* === DESCRIPTION TOOLBAR === */}
           <div className="bg-[#b5b5b5] rounded-[20px] flex flex-col items-center justify-start w-[485px] h-[172px] relative overflow-hidden">
             <div className="relative w-[500px] h-[52px]">
-              <img className="top-[38px] left-0 w-[500px] h-px absolute object-cover" alt="" src={Line1} />
-              <img className="top-0 left-[50px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
-              <img className="top-0 left-[100px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
-              <img className="top-0 left-[150px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
-              <img className="top-0 left-[200px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
-              <img className="top-0 left-[400px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
+              <img
+                className="top-[38px] left-0 w-[500px] h-px absolute object-cover"
+                alt=""
+                src={Line1}
+              />
+              <img
+                className="top-0 left-[50px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
+              <img
+                className="top-0 left-[100px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
+              <img
+                className="top-0 left-[150px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
+              <img
+                className="top-0 left-[200px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
+              <img
+                className="top-0 left-[400px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
 
               <Button className="absolute top-2.5 left-[20px] w-5 h-5">
                 <Bold className="w-full h-full" />
@@ -146,11 +169,12 @@ export const AS_EditCoach = (): JSX.Element => {
               </Button>
             </div>
 
-            <div className="pt-2.5 pb-0 flex items-end justify-center h-[107px] w-full">
-              <div className="text-[#000] text-center font-['InriaSans-Regular',_sans-serif] text-xl font-normal w-[434px]">
-                Specializing in strength and conditioning, Mommy Oni has a knack
-                for pushing members past their perceived limits with safe and
-                effective techniques.
+            <div className="pt-2.5 pb-20 flex items-end justify-center h-[107px] w-full">
+              <div
+                className="text-[#000] text-center font-['InriaSans-Italic',_sans-serif] text-xl font-normal w-[409px]"
+                style={{ fontStyle: "italic" }}
+              >
+                Insert description here...
               </div>
             </div>
           </div>
@@ -168,12 +192,36 @@ export const AS_EditCoach = (): JSX.Element => {
           {/* === FEEDBACK TOOLBAR === */}
           <div className="bg-[#b5b5b5] rounded-[20px] flex flex-col items-center justify-start w-[485px] h-[172px] relative overflow-hidden">
             <div className="relative w-[500px] h-[52px]">
-              <img className="top-[38px] left-0 w-[500px] h-px absolute object-cover" alt="" src={Line1} />
-              <img className="top-0 left-[50px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
-              <img className="top-0 left-[100px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
-              <img className="top-0 left-[150px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
-              <img className="top-0 left-[200px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
-              <img className="top-0 left-[400px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
+              <img
+                className="top-[38px] left-0 w-[500px] h-px absolute object-cover"
+                alt=""
+                src={Line1}
+              />
+              <img
+                className="top-0 left-[50px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
+              <img
+                className="top-0 left-[100px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
+              <img
+                className="top-0 left-[150px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
+              <img
+                className="top-0 left-[200px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
+              <img
+                className="top-0 left-[400px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
 
               <Button className="absolute top-2.5 left-[20px] w-5 h-5">
                 <Bold className="w-full h-full" />
@@ -205,7 +253,7 @@ export const AS_EditCoach = (): JSX.Element => {
               className="text-[#000] text-center font-['InriaSans-Italic',_sans-serif] text-xl font-normal w-[409px]"
               style={{ fontStyle: "italic" }}
             >
-              Top rated coach in 1998!
+              Insert feedback/review here...
             </div>
           </div>
         </div>
@@ -230,4 +278,4 @@ export const AS_EditCoach = (): JSX.Element => {
   );
 };
 
-export default AS_EditCoach;
+export default AS_AddCoach;

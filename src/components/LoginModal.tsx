@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import Button from "./Button";
 import BackButton from "../assets/icons/arrow-left.svg?react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import { auth, db } from "../firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -26,7 +27,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // 🧩 Added for smooth open/close animation
+  // Animations
   const [showContent, setShowContent] = useState(false);
   const [renderModal, setRenderModal] = useState(false);
 
@@ -49,7 +50,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
     }
   }, [showContent, isOpen]);
 
-  // Reset form when modal closes
+  // Reset form when opened
   useEffect(() => {
     if (isOpen) {
       setEmail("");
@@ -83,13 +84,25 @@ const LoginModal: React.FC<LoginModalProps> = ({
     setErrors({});
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      const userDoc = await getDoc(doc(db, "user", user.uid));
+      const role = userDoc.exists() ? userDoc.data().role : "member";
+
       setSuccess(true);
 
       setTimeout(() => {
-        setSuccess(false);
-        onClose();
-      }, 1500);
+        if (role === "admin") {
+          window.location.assign("/AS_AdminDirectory");
+        } else {
+          window.location.assign("/");
+        }
+      }, 800);
     } catch (error: any) {
       console.error("Login error:", error);
       setErrors({
@@ -103,6 +116,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
             : "Login failed. Please try again.",
       });
     } finally {
+      // don’t close the modal until after reload triggers
       setLoading(false);
     }
   };
@@ -188,13 +202,15 @@ const LoginModal: React.FC<LoginModalProps> = ({
         </form>
 
         {errors.firebase && (
-            <p className="text-red-400 text-sm text-center mt-2">
-              {errors.firebase}
-            </p>
-          )}
-          
-          {success && (
-          <p className="text-green-400 text-sm text-center mt-3">Login successful!</p>
+          <p className="text-red-400 text-sm text-center mt-2">
+            {errors.firebase}
+          </p>
+        )}
+
+        {success && (
+          <p className="text-green-400 text-sm text-center mt-2">
+            Login successful!
+          </p>
         )}
 
         <p className="text-sm text-gray-300 mt-2">

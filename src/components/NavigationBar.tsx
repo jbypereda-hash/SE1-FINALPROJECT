@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import Button from "./Button";
 
@@ -59,7 +59,6 @@ const NavigationBar = () => {
           <Button to="/memberships">MEMBERSHIPS</Button>
           <Button>CLASSES</Button>
           <Button to="/coaches">COACHES</Button>
-          <Button to="/AS_AdminDirectory">ADMIN</Button>
         </div>
 
         {/* Right: Profile + GET STARTED / LOGIN / LOGOUT */}

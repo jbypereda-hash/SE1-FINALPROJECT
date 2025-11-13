@@ -3,9 +3,14 @@ import AS_SideBar from "../components/AS_SideBar";
 
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+        <div className="flex h-screen bg-[#1e1e25] overflow-hidden py-2 pl-2">
+      {/* Sidebar on the left */}
       <AS_SideBar />
-      <main className="flex-1 p-6">{children}</main>
+
+      {/* Main content area */}
+      <main className="flex-1 overflow-y-auto p-6 text-white">
+        {children}
+      </main>
     </div>
   );
 };

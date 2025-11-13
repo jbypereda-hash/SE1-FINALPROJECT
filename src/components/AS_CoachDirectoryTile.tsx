@@ -1,8 +1,8 @@
 import React from "react";
-import Button from "../../components/Button";
-import Phone from "../../assets/icons/phone.svg";
-import Mail from "../../assets/icons/mail.svg";
-import EditGreyBG from "../../assets/icons/edit-greybg.svg?react";
+import Button from "./Button";
+import Phone from "../assets/icons/phone.svg";
+import Mail from "../assets/icons/mail.svg";
+import EditGreyBG from "../assets/icons/edit-greybg.svg?react";
 
 interface AdminUser {
   id: number;

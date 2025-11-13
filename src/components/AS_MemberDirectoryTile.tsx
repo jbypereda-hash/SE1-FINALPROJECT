@@ -1,6 +1,6 @@
 import React from "react";
-import Phone from "../../assets/icons/phone.svg";
-import Mail from "../../assets/icons/mail.svg";
+import Phone from "../assets/icons/phone.svg";
+import Mail from "../assets/icons/mail.svg";
 
 interface AdminUser {
   id: number;

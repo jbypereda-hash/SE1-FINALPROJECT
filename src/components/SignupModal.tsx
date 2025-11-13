@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Button from "./Button";
 import BackButton from "../assets/icons/arrow-left.svg?react";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  addDoc,
+  collection,
+  serverTimestamp,
+} from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
@@ -158,8 +164,8 @@ const SignupModal: React.FC<SignupModalProps> = ({
       const user = userCredential.user;
 
       // 2. Save profile in Firestore WITHOUT the password
-      await addDoc(collection(db, "user"), {
-        uid: user.uid, // Firebase UID
+      await setDoc(doc(db, "user", user.uid), {
+        uid: user.uid, // the document ID and field match the Auth UID
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
@@ -186,7 +192,9 @@ const SignupModal: React.FC<SignupModalProps> = ({
       setTimeout(() => {
         setSuccess(false);
         onClose(); // close signup modal
-        setTimeout(onSwitchToLogin, 450); // open login modal
+        if (formData.role !== "admin") {
+          setTimeout(onSwitchToLogin, 450); // open login modal
+        }
       }, 1500);
     } catch (error: any) {
       console.error("Error creating user:", error);
@@ -389,9 +397,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
           </div>
           <div className="flex">
             <Button className="shrek-btn font-bold py-1 border-3 hover:border-3 mt-6 w-60">
-              {defaultRole === "admin"
-            ? "CREATE ADMIN"
-            : "REGISTER"}
+              {defaultRole === "admin" ? "CREATE ADMIN" : "REGISTER"}
             </Button>
           </div>
         </form>

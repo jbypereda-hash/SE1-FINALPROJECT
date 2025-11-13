@@ -1,22 +1,17 @@
 import React from "react";
 import Button from "../../components/Button";
-import AS_SideBar from "../../components/AS_SideBar";
-import AS_MemberDirectoryTile from "./AS_MemberDirectoryTile";
+import AS_CoachDirectoryTile from "../../components/AS_CoachDirectoryTile";
 
 // SAMPLE DATA
 const users = [
-  { id: 1, name: "Lucas Martinez", packageType: "Pro Package", phone: "09123456789", email: "lucas@example.com" },
-  { id: 2, name: "Sofia Delgado", packageType: "Starter Package", phone: "09234567890", email: "sofia@example.com" },
-  { id: 3, name: "Ethan Rivera", packageType: "Flex Package", phone: "09345678901", email: "ethan@example.com" },
-  { id: 4, name: "Isabella Cruz", packageType: "Pro Package", phone: "09456789012", email: "isabella@example.com" },
-  { id: 5, name: "Mason Lee", packageType: "Starter Package", phone: "09567890123", email: "mason@example.com" },
-  { id: 6, name: "Olivia Reyes", packageType: "Flex Package", phone: "09678901234", email: "olivia@example.com" },
+  { id: 1, name: "Toni Fowler", title: "Strength & Conditioning Coach", phone: "09456583925", email: "tFowler@example.com" },
+  { id: 2, name: "Ash Trevino", title: "Yoga & Core Strength Coach", phone: "09475638729", email: "aTrevino@example.com" },
+  { id: 3, name: "Amberlyn Reid", title: "HIIT Instructor & Dance Fitness Coach", phone: "09856437528", email: "aReid@example.com" },
 ];
 
-const AS_MemberDirectory: React.FC = () => {
+const AS_CoachDirectory: React.FC = () => {
   return (
     <div className="flex w-screen h-screen">
-      <AS_SideBar />
 
       <main className="flex flex-col flex-1 p-4 overflow-auto">
         {/* HEADER */}
@@ -31,19 +26,30 @@ const AS_MemberDirectory: React.FC = () => {
           <div className="flex flex-row items-center justify-between w-full h-[60px] mt-1">
             {/* Page Title */}
             <div className="text-[#d5ff5f] font-bold text-[28px] font-['Inter-Bold',_sans-serif] tracking-tight">
-              MEMBER DIRECTORY
+              COACH DIRECTORY
             </div>
 
             {/* Action Buttons */}
-
-              {/* DELETE MEMBER Button */}
+            <div className="flex flex-row gap-3 items-center justify-center shrink-0">
+              {/* ADD ADMIN Button */}
               <Button
+                to="/AS_AddCoach"
+                className="bg-[#d5ff5f] rounded-[24px] w-[130px] h-[40px] flex items-center justify-center hover:bg-[#c9f255] transition-colors"
+              >
+                <span className="text-[#000000] font-bold text-[16px] font-['Inter-Bold',_sans-serif]">
+                  ADD COACH
+                </span>
+              </Button>
+
+              {/* DELETE ADMIN Button */}
+              <Button 
                 to="#"
                 className="bg-[#d5ff5f] rounded-[24px] w-[165px] h-[40px] flex items-center justify-center hover:bg-[#c9f255] transition-colors">
                 <span className="text-[#000000] font-bold text-[16px] font-['Inter-Bold',_sans-serif]">
-                  DELETE MEMBER
+                  DELETE COACH
                 </span>
               </Button>
+            </div>
           </div>
         </header>
 
@@ -62,7 +68,7 @@ const AS_MemberDirectory: React.FC = () => {
             "
           >
             {users.map((user) => (
-              <AS_MemberDirectoryTile key={user.id} user={user} />
+              <AS_CoachDirectoryTile key={user.id} user={user} />
             ))}
           </div>
         </div>
@@ -71,4 +77,4 @@ const AS_MemberDirectory: React.FC = () => {
   );
 };
 
-export default AS_MemberDirectory;
+export default AS_CoachDirectory;

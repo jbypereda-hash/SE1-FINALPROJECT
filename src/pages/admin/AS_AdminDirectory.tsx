@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Button from "../../components/Button";
-import AS_SideBar from "../../components/AS_SideBar";
-import AS_AdminDirectoryTile from "./AS_AdminDirectoryTile";
+import AS_AdminDirectoryTile from "../../components/AS_AdminDirectoryTile";
 
 // SAMPLE DATA
 const users = [
@@ -54,7 +53,6 @@ const AS_AdminDirectory: React.FC = () => {
 
   return (
     <div className="flex w-screen h-screen">
-      <AS_SideBar />
 
       <main className="flex flex-col flex-1 p-4 overflow-auto">
         {/* HEADER */}

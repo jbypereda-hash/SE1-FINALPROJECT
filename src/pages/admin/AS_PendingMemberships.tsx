@@ -1,6 +1,5 @@
 import React from "react";
-import AS_SideBar from "../../components/AS_SideBar";
-import AS_PendingApplicationsRow from "./AS_PendingApplicationsRow";
+import AS_PendingApplicationsRow from "../../components/AS_PendingApplicationsRow";
 
 // SAMPLE DATA
 const users = [
@@ -13,7 +12,6 @@ const users = [
 const AS_PendingMemberships: React.FC = () => {
   return (
     <div className="flex w-screen h-screen">
-      <AS_SideBar />
 
       <main className="flex flex-col flex-1 p-4 overflow-auto">
         {/* HEADER */}

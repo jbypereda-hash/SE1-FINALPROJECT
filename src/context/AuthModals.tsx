@@ -1,8 +1,8 @@
 // src/components/AuthModals.tsx
 import { useEffect, useState } from "react";
-import SignupModal from "./SignupModal";
-import LoginModal from "./LoginModal";
-import LogoutConfirmModal from "./LogoutConfirmModal";
+import SignupModal from "../components/SignupModal";
+import LoginModal from "../components/LoginModal";
+import LogoutConfirmModal from "../components/LogoutConfirmModal";
 
 const AuthModals = () => {
   const [showSignup, setShowSignup] = useState(false);

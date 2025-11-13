@@ -1,5 +1,3 @@
-// src/components/AS_SideBar.tsx
-import { Link } from "react-router-dom";
 import personIcon from "../assets/icons/person.svg";
 import gearIcon from "../assets/icons/gear.svg";
 import clockIcon from "../assets/icons/clock.svg";

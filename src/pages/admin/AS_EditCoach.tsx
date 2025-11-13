@@ -1,24 +1,23 @@
-import React from "react";
 import type { JSX } from "react";
-import BackButton from "../components/BackButton";
-import Button from "../components/Button";
-import EditWhiteBG from "../assets/icons/edit-whitebg.svg?react";
-import EditDarkGreyBG from "../assets/icons/edit-darkgreybg.svg?react";
-import Bold from "../assets/icons/bold.svg?react";
-import Italicized from "../assets/icons/italicized.svg?react";
-import ListBlack from "../assets/icons/list-black.svg?react";
-import TextColor from "../assets/icons/textcolor.svg?react";
-import AlignLeft from "../assets/icons/alignleft.svg?react";
-import AlignCenter from "../assets/icons/aligncenter.svg?react";
-import AlignRight from "../assets/icons/alignright.svg?react";
-import AlignJustify from "../assets/icons/alignjustify.svg?react";
-import Mail from "../assets/icons/mail.svg";
-import Phone from "../assets/icons/phone.svg";
-import EmptyPhoto from "../assets/icons/emptyphoto.svg"
-import Line2 from "../assets/icons/line2.svg";
-import Line1 from "../assets/icons/line1.svg";
+import BackButton from "../../components/BackButton";
+import Button from "../../components/Button";
+import EditWhiteBG from "../../assets/icons/edit-whitebg.svg?react";
+import EditDarkGreyBG from "../../assets/icons/edit-darkgreybg.svg?react";
+import Bold from "../../assets/icons/bold.svg?react";
+import Italicized from "../../assets/icons/italicized.svg?react";
+import ListBlack from "../../assets/icons/list-black.svg?react";
+import TextColor from "../../assets/icons/textcolor.svg?react";
+import AlignLeft from "../../assets/icons/alignleft.svg?react";
+import AlignCenter from "../../assets/icons/aligncenter.svg?react";
+import AlignRight from "../../assets/icons/alignright.svg?react";
+import AlignJustify from "../../assets/icons/alignjustify.svg?react";
+import Mail from "../../assets/icons/mail.svg";
+import Phone from "../../assets/icons/phone.svg";
+import EmptyPhoto from "../../assets/icons/emptyphoto.svg"
+import Line2 from "../../assets/icons/line2.svg";
+import Line1 from "../../assets/icons/line1.svg";
 
-export const AS_AddCoach = (): JSX.Element => {
+export const AS_EditCoach = (): JSX.Element => {
   return (
     <div className="flex flex-col items-center justify-start w-full min-h-screen bg-[#1a1a1a]">
       {/* ========== TOP SECTION ========== */}
@@ -26,7 +25,7 @@ export const AS_AddCoach = (): JSX.Element => {
         <BackButton />
         <div className="flex flex-col gap-2.5 items-center justify-center h-[75px] flex-1">
           <div className="text-[#d5ff5f] text-center font-['InriaSans-Bold',_sans-serif] text-[32px] font-bold w-full flex items-center justify-center">
-            ADD COACH PROFILE
+            EDIT COACH PROFILE
           </div>
         </div>
       </div>
@@ -52,7 +51,7 @@ export const AS_AddCoach = (): JSX.Element => {
           <div className="px-[50px] flex flex-col gap-[5px] items-start justify-center w-full">
             <div className="flex flex-row items-center h-[35px]">
               <div className="text-[#d5ff5f] font-['InriaSans-Bold',_sans-serif] text-4xl font-bold">
-                Name
+                Toni Fowler
               </div>
               <Button>
                <EditDarkGreyBG className="w-[25px] h-6" />
@@ -61,7 +60,7 @@ export const AS_AddCoach = (): JSX.Element => {
 
             <div className="flex flex-row items-center">
               <div className="text-[#e8e8e8] font-['InriaSans-Regular',_sans-serif] text-2xl font-normal">
-                Specialty
+                Strength &amp; Conditioning Coach
               </div>
               <Button>
                <EditDarkGreyBG className="w-[25px] h-6" />
@@ -78,7 +77,7 @@ export const AS_AddCoach = (): JSX.Element => {
               <div className="flex flex-row gap-2 items-center w-full">
                 <img src={Mail} alt="Email" className="w-[30px] h-[30px]" />
                 <div className="text-[#222] font-['Inter-Bold',_sans-serif] text-base font-bold">
-                  Email
+                  tFowler@gmail.com
                 </div>
                 <Button>
                   <EditWhiteBG className="w-5 h-5" />
@@ -88,7 +87,7 @@ export const AS_AddCoach = (): JSX.Element => {
               <div className="flex flex-row gap-2.5 items-center w-full">
                 <img src={Phone} alt="Phone" className="w-[30px] h-[30px]" />
                 <div className="text-[#222] font-['Inter-Bold',_sans-serif] text-base font-bold">
-                  Contact Number
+                  0945 658 3925
                 </div>
                 <Button>
                   <EditWhiteBG className="w-5 h-5" />
@@ -146,13 +145,12 @@ export const AS_AddCoach = (): JSX.Element => {
               </Button>
             </div>
 
-            <div className="pt-2.5 pb-20 flex items-end justify-center h-[107px] w-full">
-            <div
-              className="text-[#000] text-center font-['InriaSans-Italic',_sans-serif] text-xl font-normal w-[409px]"
-              style={{ fontStyle: "italic" }}
-            >
-              Insert description here...
-            </div>
+            <div className="pt-2.5 pb-0 flex items-end justify-center h-[107px] w-full">
+              <div className="text-[#000] text-center font-['InriaSans-Regular',_sans-serif] text-xl font-normal w-[434px]">
+                Specializing in strength and conditioning, Mommy Oni has a knack
+                for pushing members past their perceived limits with safe and
+                effective techniques.
+              </div>
             </div>
           </div>
 
@@ -206,7 +204,7 @@ export const AS_AddCoach = (): JSX.Element => {
               className="text-[#000] text-center font-['InriaSans-Italic',_sans-serif] text-xl font-normal w-[409px]"
               style={{ fontStyle: "italic" }}
             >
-              Insert feedback/review here...
+              Top rated coach in 1998!
             </div>
           </div>
         </div>
@@ -231,4 +229,4 @@ export const AS_AddCoach = (): JSX.Element => {
   );
 };
 
-export default AS_AddCoach;
+export default AS_EditCoach;
