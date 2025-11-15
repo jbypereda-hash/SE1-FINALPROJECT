@@ -18,8 +18,8 @@ const [loading, setLoading] = useState(true);
 const [saving, setSaving] = useState(false);
 
 useEffect(() => {
-    setLoading(true)
-    
+    setLoading(true);
+
     const exampleItems: Booking[] = [
     {
         id: "client0001",
@@ -112,8 +112,9 @@ return (
     <main className="max-w-7xl mx-auto px-6 py-12">
         <div className="flex items-center gap-4 mb-8">
         <button className="p-2 hover:text-shrek transition-colors">
-            <ArrowLeft size={32} />
+            <img src={ArrowLeft} alt="back" className="w-8 h-8" />
         </button>
+
         <div>
             <h2 className="text-4xl font-bold mb-2 text-shrek">MY CART</h2>
             <p className="text-donkey-10">
@@ -129,9 +130,7 @@ return (
             </div>
         ) : cartItems.length === 0 ? (
             <div className="text-center py-20">
-            <div className="text-2xl text-donkey-10 mb-4">
-                Your cart is empty
-            </div>
+            <div className="text-2xl text-donkey-10 mb-4">Your cart is empty</div>
             <button className="bg-shrek text-black-35 px-10 py-3 rounded-full font-bold hover:bg-opacity-90 transition-all">
                 Explore Classes
             </button>
@@ -140,18 +139,10 @@ return (
             <>
             <div className="bg-donkey-10 rounded-3xl overflow-hidden">
                 <div className="grid grid-cols-12 gap-4 px-8 py-5 bg-donkey-20 border-b-2 border-black-35">
-                <div className="col-span-3 font-bold text-black-35">
-                    CLASS:
-                </div>
-                <div className="col-span-3 font-bold text-black-35">
-                    SCHEDULE:
-                </div>
-                <div className="col-span-2 font-bold text-black-35">
-                    PRICE:
-                </div>
-                <div className="col-span-3 font-bold text-black-35">
-                    NO. OF WEEKS:
-                </div>
+                <div className="col-span-3 font-bold text-black-35">CLASS:</div>
+                <div className="col-span-3 font-bold text-black-35">SCHEDULE:</div>
+                <div className="col-span-2 font-bold text-black-35">PRICE:</div>
+                <div className="col-span-3 font-bold text-black-35">NO. OF WEEKS:</div>
                 <div className="col-span-1"></div>
                 </div>
 
@@ -163,9 +154,7 @@ return (
                     <div className="col-span-3 font-bold text-black-35 text-lg">
                     {item.name}
                     </div>
-                    <div className="col-span-3 text-black-35">
-                    {item.schedule}
-                    </div>
+                    <div className="col-span-3 text-black-35">{item.schedule}</div>
                     <div className="col-span-2 text-black-35 font-bold">
                     ₱ {item.price.toLocaleString()} / week
                     </div>
@@ -175,7 +164,7 @@ return (
                         onClick={() => updateWeeks(item.id, -1)}
                         className="w-10 h-10 rounded-full bg-black-35 flex items-center justify-center hover:bg-opacity-80 transition-all"
                     >
-                        <Minus size={18} className="text-white" />
+                        <img src={Minus} alt="minus" className="w-4 h-4" />
                     </button>
 
                     <span className="text-black-35 font-bold text-xl min-w-[30px] text-center">
@@ -186,7 +175,7 @@ return (
                         onClick={() => updateWeeks(item.id, 1)}
                         className="w-10 h-10 rounded-full bg-black-35 flex items-center justify-center hover:bg-opacity-80 transition-all"
                     >
-                        <Plus size={18} className="text-white" />
+                        <img src={Plus} alt="plus" className="w-4 h-4" />
                     </button>
                     </div>
 
@@ -195,7 +184,7 @@ return (
                         onClick={() => removeItem(item.id)}
                         className="w-10 h-10 rounded-full bg-black-35 flex items-center justify-center hover:bg-opacity-80 transition-all"
                     >
-                        <X size={20} className="text-white" />
+                        <img src={X} alt="remove" className="w-5 h-5" />
                     </button>
                     </div>
                 </div>
