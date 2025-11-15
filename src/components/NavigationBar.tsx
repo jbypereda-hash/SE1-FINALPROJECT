@@ -57,7 +57,7 @@ const NavigationBar = () => {
         <div className="absolute left-1/2 transform -translate-x-1/2 space-x-3">
           <Button to="/">HOME</Button>
           <Button to="/memberships">MEMBERSHIPS</Button>
-          <Button>CLASSES</Button>
+          <Button to="/classes">CLASSES</Button>
           <Button to="/coaches">COACHES</Button>
         </div>
 

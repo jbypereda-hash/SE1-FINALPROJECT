@@ -8,9 +8,10 @@ import ProtectedRoute from "./context/ProtectedRoute";
 
 // User Pages
 import Home from "./pages/Home";
-import Memberships from "./pages/Memberships";
 import { CoachesPage } from "./pages/CoachesPage";
 import { ProfilePage } from "./pages/Profile";
+import MembershipPackages from "./pages/MembershipPackages";
+import Classes from "./pages/Classes";
 
 // Admin Pages
 import AS_PendingMemberships from "./pages/admin/AS_PendingMemberships";
@@ -48,7 +49,15 @@ const App = () => {
           path="/memberships"
           element={
             <UserLayout>
-              <Memberships />
+              <MembershipPackages />
+            </UserLayout>
+          }
+        />
+        <Route
+          path="/classes"
+          element={
+            <UserLayout>
+              <Classes />
             </UserLayout>
           }
         />
