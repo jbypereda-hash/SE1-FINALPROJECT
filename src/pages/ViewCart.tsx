@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, X, Plus, Minus } from "lucide-react";
-//update
+import ArrowLeft from "../../assets/icons/arrow-left.svg";
+import X from "../../assets/icons/x.svg";
+import Minus from "../../assets/icons/minus.svg";
+import Plus from "../../assets/icons/plus.svg";
 
 interface Booking {
 id: string;
@@ -110,7 +112,7 @@ return (
     <main className="max-w-7xl mx-auto px-6 py-12">
         <div className="flex items-center gap-4 mb-8">
         <button className="p-2 hover:text-shrek transition-colors">
-            <ChevronLeft size={32} />
+            <ArrowLeft size={32} />
         </button>
         <div>
             <h2 className="text-4xl font-bold mb-2 text-shrek">MY CART</h2>

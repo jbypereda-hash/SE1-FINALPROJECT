@@ -1,5 +1,6 @@
 import React from "react";
-import { ShoppingCart, ChevronLeft } from "lucide-react";
+import ShoppingCart from "../../assets/icons/shoppingcart.svg";
+import ArrowLeft from "../../assets/icons/arrow-left.svg";
 
 export type ClassItem = {
 title: string;
@@ -40,7 +41,9 @@ return (
         </div>
 
         <div className="absolute top-0 left-0 -translate-x-1 -translate-y-1">
-            <span className="text-white text-xs font-bold tracking-tight">LEVEL</span>
+            <span className="text-white text-xs font-bold tracking-tight">
+            LEVEL
+            </span>
         </div>
         </div>
     </div>
@@ -61,7 +64,9 @@ return (
         </span>
         </div>
 
-        <p className="text-donkey-10 text-sm mb-4 leading-relaxed">{description}</p>
+        <p className="text-donkey-10 text-sm mb-4 leading-relaxed">
+        {description}
+        </p>
 
         <button className="w-full bg-shrek hover:bg-opacity-90 text-black-35 font-bold py-3 rounded-full transition-all duration-200 uppercase text-sm tracking-wide">
         Add to Cart
@@ -72,7 +77,7 @@ return (
 };
 
 const Classes: React.FC = () => {
-const cartItems: unknown[] = []; 
+const cartItems: unknown[] = [];
 
 const classes: ClassItem[] = [
     {
@@ -122,7 +127,6 @@ return (
     className="min-h-screen bg-black-35 text-white"
     style={{ fontFamily: "Inria Sans, sans-serif" }}
     >
-
     <style>{`
         :root {
         --color-shrek: #D5FF5F;
@@ -137,33 +141,31 @@ return (
         .text-shrek { color: var(--color-shrek); }
     `}</style>
 
-    <header className="bg-black-34 border-b border-donkey-10 border-opacity-30">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-wide">
-            <span className="text-shrek">CORE</span> LAB
-        </h1>
+    <main className="max-w-7xl mx-auto px-6 py-12">
+        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-4">
+            <button className="p-2 hover:text-shrek transition-colors">
+            <img src={ArrowLeft} alt="Back" className="w-8 h-8" />
+            </button>
+
+            <div>
+            <h2 className="text-4xl text-shrek font-bold mb-2">
+                OUR CLASSES
+            </h2>
+            <p className="text-donkey-10">
+                Find the perfect workout to match your goals.
+            </p>
+            </div>
+        </div>
 
         <button className="relative p-2 hover:text-shrek transition-colors">
-            <ShoppingCart size={24} />
+            <img src={ShoppingCart} alt="Cart" className="w-7 h-7" />
             {cartItems.length > 0 && (
             <span className="absolute -top-1 -right-1 bg-shrek text-black-35 text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
                 {cartItems.length}
             </span>
             )}
         </button>
-        </div>
-    </header>
-
-    <main className="max-w-7xl mx-auto px-6 py-12">
-        <div className="flex items-center gap-4 mb-8">
-        <button className="p-2 hover:text-shrek transition-colors">
-            <ChevronLeft size={32} />
-        </button>
-
-        <div>
-            <h2 className="text-4xl text-shrek font-bold mb-2">OUR CLASSES</h2>
-            <p className="text-donkey-10">Find the perfect workout to match your goals.</p>
-        </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
