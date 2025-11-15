@@ -1,0 +1,192 @@
+import React from "react";
+import { ShoppingCart, ChevronLeft } from "lucide-react";
+import { useCart, ClassItem } from "../context/CartContext";
+
+const ClassCard: React.FC<ClassItem> = ({
+title,
+price,
+description,
+imagePath,
+level,
+}) => {
+const { addToCart } = useCart();
+
+return (
+    <div className="relative bg-black-34 rounded-lg overflow-hidden group hover:scale-105 transition-all duration-300">
+      {/* Level Badge */}
+    <div className="absolute top-4 right-4 z-10">
+        <div className="relative w-16 h-16">
+        <svg className="w-full h-full" viewBox="0 0 64 64">
+            <circle
+            cx="32"
+            cy="32"
+            r="28"
+            fill="none"
+            stroke="white"
+            strokeWidth="3"
+            strokeDasharray="175.93 43.98"
+            transform="rotate(135 32 32)"
+            opacity="0.9"
+            />
+        </svg>
+
+        <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-white text-2xl font-bold">{level}</span>
+        </div>
+
+        <div className="absolute top-0 left-0 -translate-x-1 -translate-y-1">
+            <span className="text-white text-xs font-bold tracking-tight">
+            LEVEL
+            </span>
+        </div>
+        </div>
+    </div>
+
+    <div className="aspect-video bg-gradient-to-br from-black-34 to-black-35 relative overflow-hidden">
+        <img
+        src={imagePath}
+        alt={title}
+        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"
+        />
+    </div>
+
+      {/* Content */}
+    <div className="p-6">
+        <div className="flex justify-between items-start mb-3">
+        <h3 className="text-xl font-bold text-white">{title}</h3>
+        <span className="text-shrek font-bold whitespace-nowrap ml-4">
+            ₱ {Number(price).toLocaleString()} / week
+        </span>
+        </div>
+
+        <p className="text-donkey-10 text-sm mb-4 leading-relaxed">
+        {description}
+        </p>
+
+        <button
+        onClick={() =>
+            addToCart({
+            title,
+            price: Number(price),
+            description,
+            imagePath,
+            level,
+            })
+        }
+        className="w-full bg-shrek hover:bg-opacity-90 text-black-35 font-bold py-3 rounded-full transition-all duration-200 uppercase text-sm tracking-wide"
+        >
+        Add to Cart
+        </button>
+    </div>
+    </div>
+);
+};
+
+const Classes: React.FC = () => {
+const { cartItems } = useCart();
+
+const classes: ClassItem[] = [
+    {
+    title: "Core Crusher",
+    price: 500,
+    description:
+        "This abs-blasting class targets your abdominal, obliques, and lower back.",
+    imagePath: "/assets/core-crusher.jpg",
+    level: "3",
+    },
+    {
+    title: "Power Flow Yoga",
+    price: 1000,
+    description:
+        "A dynamic yoga flow linking breath with movement for flexibility & focus.",
+    imagePath: "/assets/power-flow-yoga.jpg",
+    level: "1",
+    },
+    {
+    title: "Kickboxing Cardio",
+    price: 500,
+    description:
+        "Kickboxing fundamentals mixed with cardio for coordination and stamina.",
+    imagePath: "/assets/kickboxing-cardio.jpg",
+    level: "3",
+    },
+    {
+    title: "Pilates",
+    price: 1100,
+    description:
+        "Low-impact movements to strengthen your core and improve stability.",
+    imagePath: "/assets/pilates.jpg",
+    level: "2",
+    },
+    {
+    title: "HIIT Blast",
+    price: 300,
+    description:
+        "A fast-paced workout combining intense bursts with short recoveries.",
+    imagePath: "/assets/hiit-blast.jpg",
+    level: "2",
+    },
+];
+
+return (
+    <div
+    className="min-h-screen bg-black-35 text-white"
+    style={{ fontFamily: "Inria Sans, sans-serif" }}
+    >
+      {/* Custom Colors */}
+    <style>{`
+        :root {
+        --color-shrek: #D5FF5F;
+        --color-black-35: #14151A;
+        --color-black-34: #2D2D35;
+        --color-donkey-10: #B5B5B5;
+        }
+        .bg-black-35 { background-color: var(--color-black-35); }
+        .bg-black-34 { background-color: var(--color-black-34); }
+        .text-donkey-10 { color: var(--color-donkey-10); }
+        .bg-shrek { background-color: var(--color-shrek); }
+        .text-shrek { color: var(--color-shrek); }
+    `}</style>
+
+    <header className="bg-black-34 border-b border-donkey-10 border-opacity-30">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <h1 className="text-2xl font-bold tracking-wide">
+            <span className="text-shrek">CORE</span> LAB
+        </h1>
+
+        <button className="relative p-2 hover:text-shrek transition-colors">
+            <ShoppingCart size={24} />
+            {cartItems.length > 0 && (
+            <span className="absolute -top-1 -right-1 bg-shrek text-black-35 text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                {cartItems.length}
+            </span>
+            )}
+        </button>
+        </div>
+    </header>
+
+    <main className="max-w-7xl mx-auto px-6 py-12">
+        <div className="flex items-center gap-4 mb-8">
+        <button className="p-2 hover:text-shrek transition-colors">
+            <ChevronLeft size={32} />
+        </button>
+
+        <div>
+            <h2 className="text-4xl text-shrek font-bold mb-2">OUR CLASSES</h2>
+            <p className="text-donkey-10">
+            Find the perfect workout to match your goals.
+            </p>
+        </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {classes.map((c, index) => (
+            <ClassCard key={index} {...c} />
+        ))}
+        </div>
+    </main>
+    </div>
+);
+};
+
+export default Classes;
