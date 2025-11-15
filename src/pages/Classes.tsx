@@ -1,6 +1,13 @@
 import React from "react";
 import { ShoppingCart, ChevronLeft } from "lucide-react";
-import { useCart, ClassItem } from "../context/CartContext";
+
+export type ClassItem = {
+title: string;
+price: number;
+description: string;
+imagePath: string;
+level: string;
+};
 
 const ClassCard: React.FC<ClassItem> = ({
 title,
@@ -9,8 +16,6 @@ description,
 imagePath,
 level,
 }) => {
-const { addToCart } = useCart();
-
 return (
     <div className="relative bg-black-34 rounded-lg overflow-hidden group hover:scale-105 transition-all duration-300">
       {/* Level Badge */}
@@ -35,9 +40,7 @@ return (
         </div>
 
         <div className="absolute top-0 left-0 -translate-x-1 -translate-y-1">
-            <span className="text-white text-xs font-bold tracking-tight">
-            LEVEL
-            </span>
+            <span className="text-white text-xs font-bold tracking-tight">LEVEL</span>
         </div>
         </div>
     </div>
@@ -50,7 +53,6 @@ return (
         />
     </div>
 
-      {/* Content */}
     <div className="p-6">
         <div className="flex justify-between items-start mb-3">
         <h3 className="text-xl font-bold text-white">{title}</h3>
@@ -59,22 +61,9 @@ return (
         </span>
         </div>
 
-        <p className="text-donkey-10 text-sm mb-4 leading-relaxed">
-        {description}
-        </p>
+        <p className="text-donkey-10 text-sm mb-4 leading-relaxed">{description}</p>
 
-        <button
-        onClick={() =>
-            addToCart({
-            title,
-            price: Number(price),
-            description,
-            imagePath,
-            level,
-            })
-        }
-        className="w-full bg-shrek hover:bg-opacity-90 text-black-35 font-bold py-3 rounded-full transition-all duration-200 uppercase text-sm tracking-wide"
-        >
+        <button className="w-full bg-shrek hover:bg-opacity-90 text-black-35 font-bold py-3 rounded-full transition-all duration-200 uppercase text-sm tracking-wide">
         Add to Cart
         </button>
     </div>
@@ -83,7 +72,7 @@ return (
 };
 
 const Classes: React.FC = () => {
-const { cartItems } = useCart();
+const cartItems: unknown[] = []; 
 
 const classes: ClassItem[] = [
     {
@@ -133,7 +122,7 @@ return (
     className="min-h-screen bg-black-35 text-white"
     style={{ fontFamily: "Inria Sans, sans-serif" }}
     >
-      {/* Custom Colors */}
+
     <style>{`
         :root {
         --color-shrek: #D5FF5F;
@@ -173,9 +162,7 @@ return (
 
         <div>
             <h2 className="text-4xl text-shrek font-bold mb-2">OUR CLASSES</h2>
-            <p className="text-donkey-10">
-            Find the perfect workout to match your goals.
-            </p>
+            <p className="text-donkey-10">Find the perfect workout to match your goals.</p>
         </div>
         </div>
 
