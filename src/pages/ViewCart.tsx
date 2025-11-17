@@ -46,7 +46,9 @@ export default function ViewCart() {
   const updateWeeks = (id: string, delta: number) => {
     setCartItems((items) =>
       items.map((item) =>
-        item.id === id ? { ...item, weeks: Math.max(1, item.weeks + delta) } : item
+        item.id === id
+          ? { ...item, weeks: Math.max(1, item.weeks + delta) }
+          : item
       )
     );
   };
@@ -56,7 +58,10 @@ export default function ViewCart() {
   };
 
   const calculateTotal = () =>
-    cartItems.reduce((total: number, item: Booking) => total + item.price * item.weeks, 0);
+    cartItems.reduce(
+      (total: number, item: Booking) => total + item.price * item.weeks,
+      0
+    );
 
   const handleCheckout = () => {
     if (cartItems.length === 0) return;
@@ -78,92 +83,164 @@ export default function ViewCart() {
   }
 
   return (
-    <div className="min-h-screen bg-black-35 text-white" style={{ fontFamily: "Inria Sans, sans-serif" }}>
-      {/* Styles & header omitted for brevity, same as your version */}
-      <main className="max-w-7xl mx-auto px-6 py-12">
-        {cartItems.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="text-2xl text-donkey-10 mb-4">Your cart is empty</div>
-            <button className="bg-shrek text-black-35 px-10 py-3 rounded-full font-bold hover:bg-opacity-90 transition-all">
-              Explore Classes
-            </button>
+    <div
+      className="min-h-screen bg-black-35 text-white"
+      style={{ fontFamily: "Inria Sans, sans-serif" }}
+    >
+      <style>{`
+        :root {
+        --color-shrek: #D5FF5F;
+        --color-black-35: #14151A;
+        --color-black-34: #2D2D35;
+        --color-donkey-30: #747474;
+        --color-donkey-20: #989898;
+        --color-donkey-10: #B5B5B5;
+        --color-white: #E8E8E8;
+        }
+        .bg-black-35 { background-color: var(--color-black-35); }
+        .bg-black-34 { background-color: var(--color-black-34); }
+        .bg-donkey-30 { background-color: var(--color-donkey-30); }
+        .bg-donkey-20 { background-color: var(--color-donkey-20); }
+        .bg-donkey-10 { background-color: var(--color-donkey-10); }
+        .text-donkey-20 { color: var(--color-donkey-20); }
+        .text-donkey-10 { color: var(--color-donkey-10); }
+        .bg-shrek { background-color: var(--color-shrek); }
+        .text-shrek { color: var(--color-shrek); }
+    `}</style>
+
+      <header className="bg-black-34 border-b border-donkey-30 border-opacity-30">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-8">
+            <h1 className="text-2xl font-bold tracking-wide">
+              <span className="text-shrek">CORE</span> LAB
+            </h1>
           </div>
-        ) : (
-          <>
-            <div className="bg-donkey-10 rounded-3xl overflow-hidden">
-              <div className="grid grid-cols-12 gap-4 px-8 py-5 bg-donkey-20 border-b-2 border-black-35">
-                <div className="col-span-3 font-bold text-black-35">CLASS:</div>
-                <div className="col-span-3 font-bold text-black-35">SCHEDULE:</div>
-                <div className="col-span-2 font-bold text-black-35">PRICE:</div>
-                <div className="col-span-3 font-bold text-black-35">NO. OF WEEKS:</div>
-                <div className="col-span-1"></div>
-              </div>
 
-              {cartItems.map((item: Booking) => (
-                <div
-                  key={item.id}
-                  className="grid grid-cols-12 gap-4 px-8 py-6 border-b-2 border-black-35 items-center"
-                >
-                  <div className="col-span-3 font-bold text-black-35 text-lg">{item.name}</div>
-                  <div className="col-span-3 text-black-35">{item.schedule}</div>
-                  <div className="col-span-2 text-black-35 font-bold">
-                    ₱ {item.price.toLocaleString()} / week
-                  </div>
+          <button className="bg-shrek text-black-35 px-6 py-2 rounded-full font-bold hover:bg-opacity-90 transition-all">
+            GET STARTED
+          </button>
+        </div>
+      </header>
 
-                  <div className="col-span-3 flex items-center gap-3">
-                    <button
-                      onClick={() => updateWeeks(item.id, -1)}
-                      className="w-10 h-10 rounded-full bg-black-35 flex items-center justify-center hover:bg-opacity-80 transition-all"
-                    >
-                      <img src={Minus} alt="minus" className="w-4 h-4" />
-                    </button>
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        <div className="flex items-center gap-4 mb-8">
+          <button className="p-2 hover:text-shrek transition-colors">
+            <img src={ArrowLeft} alt="back" className="w-8 h-8" />
+          </button>
 
-                    <span className="text-black-35 font-bold text-xl min-w-[30px] text-center">
-                      {item.weeks}
-                    </span>
+          <div>
+            <h2 className="text-4xl font-bold mb-2 text-shrek">MY CART</h2>
+            <p className="text-donkey-10">
+              Find the perfect workout to match your goals.
+            </p>
+          </div>
+        </div>
 
-                    <button
-                      onClick={() => updateWeeks(item.id, 1)}
-                      className="w-10 h-10 rounded-full bg-black-35 flex items-center justify-center hover:bg-opacity-80 transition-all"
-                    >
-                      <img src={Plus} alt="plus" className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  <div className="col-span-1 flex justify-center">
-                    <button
-                      onClick={() => removeItem(item.id)}
-                      className="w-10 h-10 rounded-full bg-black-35 flex items-center justify-center hover:bg-opacity-80 transition-all"
-                    >
-                      <img src={X} alt="remove" className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-
-              <div className="px-8 py-6 flex justify-end items-center gap-8 border-t-2 border-black-35">
-                <span className="text-black-35 font-bold text-xl">TOTAL:</span>
-                <span className="text-black-35 font-bold text-3xl">
-                  ₱ {calculateTotal().toLocaleString()}
-                </span>
-              </div>
+        <div className="max-w-5xl mx-auto">
+          {loading ? (
+            <div className="text-center py-20 text-2xl text-donkey-10">
+              Loading cart...
             </div>
-
-            <div className="flex justify-center gap-4 mt-8">
-              <button className="bg-shrek text-black-35 px-10 py-3 rounded-full font-bold hover:bg-opacity-90 transition-all text-base">
+          ) : cartItems.length === 0 ? (
+            <div className="text-center py-20">
+              <div className="text-2xl text-donkey-10 mb-4">
+                Your cart is empty
+              </div>
+              <button className="bg-shrek text-black-35 px-10 py-3 rounded-full font-bold hover:bg-opacity-90 transition-all">
                 Explore Classes
               </button>
-
-              <button
-                onClick={handleCheckout}
-                disabled={saving}
-                className="bg-shrek text-black-35 px-10 py-3 rounded-full font-bold hover:bg-opacity-90 transition-all text-base disabled:opacity-50"
-              >
-                {saving ? "Processing..." : "Proceed to Checkout"}
-              </button>
             </div>
-          </>
-        )}
+          ) : (
+            <>
+              <div className="bg-donkey-10 rounded-3xl overflow-hidden">
+                <div className="grid grid-cols-12 gap-4 px-8 py-5 bg-donkey-20 border-b-2 border-black-35">
+                  <div className="col-span-3 font-bold text-black-35">
+                    CLASS:
+                  </div>
+                  <div className="col-span-3 font-bold text-black-35">
+                    SCHEDULE:
+                  </div>
+                  <div className="col-span-2 font-bold text-black-35">
+                    PRICE:
+                  </div>
+                  <div className="col-span-3 font-bold text-black-35">
+                    NO. OF WEEKS:
+                  </div>
+                  <div className="col-span-1"></div>
+                </div>
+
+                {cartItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="grid grid-cols-12 gap-4 px-8 py-6 border-b-2 border-black-35 items-center"
+                  >
+                    <div className="col-span-3 font-bold text-black-35 text-lg">
+                      {item.name}
+                    </div>
+                    <div className="col-span-3 text-black-35">
+                      {item.schedule}
+                    </div>
+                    <div className="col-span-2 text-black-35 font-bold">
+                      ₱ {item.price.toLocaleString()} / week
+                    </div>
+
+                    <div className="col-span-3 flex items-center gap-3">
+                      <button
+                        onClick={() => updateWeeks(item.id, -1)}
+                        className="w-10 h-10 rounded-full bg-black-35 flex items-center justify-center hover:bg-opacity-80 transition-all"
+                      >
+                        <img src={Minus} alt="minus" className="w-4 h-4" />
+                      </button>
+
+                      <span className="text-black-35 font-bold text-xl min-w-[30px] text-center">
+                        {item.weeks}
+                      </span>
+
+                      <button
+                        onClick={() => updateWeeks(item.id, 1)}
+                        className="w-10 h-10 rounded-full bg-black-35 flex items-center justify-center hover:bg-opacity-80 transition-all"
+                      >
+                        <img src={Plus} alt="plus" className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="col-span-1 flex justify-center">
+                      <button
+                        onClick={() => removeItem(item.id)}
+                        className="w-10 h-10 rounded-full bg-black-35 flex items-center justify-center hover:bg-opacity-80 transition-all"
+                      >
+                        <img src={X} alt="remove" className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                <div className="px-8 py-6 flex justify-end items-center gap-8 border-t-2 border-black-35">
+                  <span className="text-black-35 font-bold text-xl">
+                    TOTAL:
+                  </span>
+                  <span className="text-black-35 font-bold text-3xl">
+                    ₱ {calculateTotal().toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex justify-center gap-4 mt-8">
+                <button className="bg-shrek text-black-35 px-10 py-3 rounded-full font-bold hover:bg-opacity-90 transition-all text-base">
+                  Explore Classes
+                </button>
+
+                <button
+                  onClick={handleCheckout}
+                  disabled={saving}
+                  className="bg-shrek text-black-35 px-10 py-3 rounded-full font-bold hover:bg-opacity-90 transition-all text-base disabled:opacity-50"
+                >
+                  {saving ? "Processing..." : "Proceed to Checkout"}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </main>
     </div>
   );
