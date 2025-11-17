@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import ArrowLeft from "../../assets/icons/arrow-left.svg";
 import X from "../../assets/icons/x.svg";
 import Minus from "../../assets/icons/minus.svg";

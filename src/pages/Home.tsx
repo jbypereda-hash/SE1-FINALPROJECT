@@ -17,16 +17,13 @@ import { auth } from "../firebaseConfig";
 
 const Home = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setIsLoggedIn(true);
-        setLoading(true);
       } else {
         setIsLoggedIn(false);
-        setLoading(true);
       }
     });
 
