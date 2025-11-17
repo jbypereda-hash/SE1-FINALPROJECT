@@ -67,7 +67,7 @@ const NavigationBar = () => {
 
           {isLoggedIn ? (
             <Button
-              className="shrek-btn"
+              className="shrek-btn w-35"
               onClick={() =>
                 window.dispatchEvent(new Event("open-logout-confirm"))
               }
@@ -76,10 +76,10 @@ const NavigationBar = () => {
             </Button>
           ) : (
             <Button
-              onClick={() => window.dispatchEvent(new Event("open-signup"))}
-              className="shrek-btn"
+              onClick={() => window.dispatchEvent(new Event("open-login"))}
+              className="shrek-btn w-35"
             >
-              GET STARTED
+              LOG IN
             </Button>
           )}
         </div>

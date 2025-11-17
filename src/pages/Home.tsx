@@ -121,7 +121,7 @@ const Home = () => {
         {/* PACKAGES */}
         <section className="bg-donkey-10 text-black-35 rounded-[55px] flex items-stretch m-12">
           {/* STARTER PACKAGE */}
-          <div className="flex-1 flex flex-col justify-between space-y-12 py-8">
+          <div className="flex-1 flex flex-col justify-between items-center space-y-12 py-8">
             <div>
               <p className="text-black-35 font-bold text-3xl">
                 Starter Package
@@ -144,7 +144,7 @@ const Home = () => {
           <div className="border-l-2 border-black-35 h-105" />
 
           {/* FLEX PACKAGE */}
-          <div className="flex-1 flex flex-col justify-between space-y-12 py-8">
+          <div className="flex-1 flex flex-col justify-between items-center space-y-12 py-8">
             <div>
               <p className="text-black-35 font-bold text-3xl">Flex Package</p>
               <p className="text-black-35 font-semibold text-xl">
@@ -165,7 +165,7 @@ const Home = () => {
           <div className="border-l-2 border-black-35 h-105" />
 
           {/* PRO PACKAGE */}
-          <div className="flex-1 flex flex-col justify-between space-y-12 py-8">
+          <div className="flex-1 flex flex-col justify-between items-center space-y-12 py-8">
             <div>
               <p className="text-black-35 font-bold text-3xl">Pro Package</p>
 

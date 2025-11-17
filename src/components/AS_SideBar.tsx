@@ -1,59 +1,79 @@
-import personIcon from "../assets/icons/person.svg";
+import PersonIcon from "../assets/icons/person.svg?react";
 import gearIcon from "../assets/icons/gear.svg";
-import clockIcon from "../assets/icons/clock.svg";
+import ClockIcon from "../assets/icons/clock.svg?react";
 import listIcon from "../assets/icons/list.svg";
 import type { JSX } from "react";
 import Button from "./Button";
+import { useLocation } from "react-router-dom";
 
 export const AS_SideBar = (): JSX.Element => {
+  const location = useLocation();
+  const path = location.pathname;
+
   return (
-    <div className="flex flex-col w-[260px] h-full items-center gap-6 px-2 py-6 bg-[#2d2d35] rounded-[40px] overflow-hidden">
+    <div className="flex flex-col w-[260px] h-full items-center gap-6 px-2 py-6 mr-5 bg-[#2d2d35] rounded-[40px] overflow-hidden">
       {/* CORE LAB Logo */}
-      <div className="flex w-full items-center justify-center mb-2">
-        <div className="font-bold text-[#d5ff5f] text-[32px] tracking-[0.5px]">
-          CORE LAB
-        </div>
-      </div>
+      <h1 className="text-[39px] transition-transform duration-400 hover:scale-110 my-3">
+        CORE LAB
+      </h1>
 
       <div className="flex flex-col w-full px-2 overflow-y-auto">
         {/* DIRECTORIES Header */}
-        <div className="flex items-center gap-2 mb-2">
-          <img src={listIcon} alt="Directories" className="w-6 h-6" />
-          <div className="text-[#d5ff5f] font-bold text-[18px] uppercase">
+        <div className="flex items-center gap-1 mb-2">
+          <img src={listIcon} alt="Directories" className="w-10 h-10" />
+          <div className="text-shrek font-bold text-[25px] uppercase">
             Directories
           </div>
         </div>
 
         {/* Directory Links */}
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col">
           <Button
             to="/AS_AdminDirectory"
-            className="flex items-center gap-2 p-2 rounded-lg hover:bg-[#3a3a45] transition-colors"
+            className={`group flex items-center p-2 pl-2 rounded-lg transition-colors
+    ${
+      path === "/AS_AdminDirectory"
+        ? "bg-[#3a3a45]"
+        : "hover:bg-[#3a3a45]"
+    }
+  `}
           >
-            <img src={personIcon} alt="Admin Directory" className="w-5 h-5" />
-            <span className="text-[#e8e8e8] text-[18px] font-medium">
-              Admin Directory
-            </span>
+            <div className="flex gap-1 items-center transform transition-all duration-200 group-hover:scale-105 group-hover:text-shrek">
+              <PersonIcon className="w-6 h-6" />
+              <p className="text-xl">Admin Directory</p>
+            </div>
           </Button>
 
           <Button
             to="/AS_MemberDirectory"
-            className="flex items-center gap-2 p-2 rounded-lg hover:bg-[#3a3a45] transition-colors"
+            className={`group flex items-center p-2 pl-2 rounded-lg transition-colors
+    ${
+      path === "/AS_MemberDirectory"
+        ? "bg-[#3a3a45]"
+        : "hover:bg-[#3a3a45]"
+    }
+  `}
           >
-            <img src={personIcon} alt="Member Directory" className="w-5 h-5" />
-            <span className="text-[#e8e8e8] text-[18px] font-medium">
-              Member Directory
-            </span>
+            <div className="flex gap-1 items-center transform transition-all duration-200 group-hover:scale-105 group-hover:text-shrek">
+              <PersonIcon className="w-6 h-6" />
+              <p className="text-xl">Member Directory</p>
+            </div>
           </Button>
 
           <Button
             to="/AS_CoachDirectory"
-            className="flex items-center gap-2 p-2 rounded-lg hover:bg-[#3a3a45] transition-colors"
+            className={`group flex items-center p-2 pl-2 rounded-lg transition-colors
+    ${
+      path === "/AS_CoachDirectory"
+        ? "bg-[#3a3a45]"
+        : "hover:bg-[#3a3a45]"
+    }
+  `}
           >
-            <img src={personIcon} alt="Coach Directory" className="w-5 h-5" />
-            <span className="text-[#e8e8e8] text-[18px] font-medium">
-              Coach Directory
-            </span>
+            <div className="flex gap-1 items-center transform transition-all duration-200 group-hover:scale-105 group-hover:text-shrek">
+              <PersonIcon className="w-6 h-6" />
+              <p className="text-xl">Coach Directory</p>
+            </div>
           </Button>
         </div>
 
@@ -62,22 +82,27 @@ export const AS_SideBar = (): JSX.Element => {
           <img
             src={gearIcon}
             alt="Membership Applications"
-            className="w-6 h-6"
+            className="w-7 h-7"
           />
-          <span className="text-[#d5ff5f] font-bold text-[15.6px] uppercase">
-            Membership Applications
+          <span className="text-shrek font-bold text-[25px] uppercase">
+            Applications
           </span>
         </div>
 
         {/* Pending */}
         <Button
           to="/AS_PendingMemberships"
-          className="flex items-center gap-2 p-2 rounded-lg hover:bg-[#3a3a45]"
-        >
-          <img src={clockIcon} alt="Pending" className="w-5 h-5" />
-          <span className="text-[#e8e8e8] text-[18px] font-medium">
-            Pending
-          </span>
+          className={`group flex items-center p-2 pl-2 rounded-lg transition-colors
+    ${
+      path === "/AS_PendingMemberships"
+        ? "bg-[#3a3a45]"
+        : "hover:bg-[#3a3a45]"
+    }
+  `}>
+          <div className="flex gap-[6px] items-center transform transition-all duration-200 group-hover:scale-105 group-hover:text-shrek">
+            <ClockIcon className="w-5 h-5 ml-[4px]" />
+            <p className="text-xl">Pending</p>
+          </div>
         </Button>
       </div>
 
@@ -86,7 +111,7 @@ export const AS_SideBar = (): JSX.Element => {
 
       {/* LOG OUT BUTTON */}
       <Button
-        className="shrek-btn"
+        className="shrek-btn w-50 font-bold"
         onClick={() => window.dispatchEvent(new Event("open-logout-confirm"))}
       >
         LOG OUT

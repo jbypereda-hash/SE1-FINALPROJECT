@@ -18,7 +18,7 @@ const AS_AdminDirectoryTile: React.FC<Props> = ({ user }) => {
   return (
     <div className="flex flex-col items-center justify-center gap-2 w-full max-w-[270px]">
       {/* Tile container */}
-      <article className="flex flex-col items-center gap-2 p-4 bg-[#b5b5b5] rounded-[20px] overflow-hidden w-[290px] h-[150px]">
+      <article className="flex flex-col items-center gap-2 p-4 bg-[#b5b5b5] rounded-[20px] overflow-hidden w-full h-full">
         
         {/* Header: Name + Menu Dots */}
         <div className="flex items-center justify-between w-full h-5">

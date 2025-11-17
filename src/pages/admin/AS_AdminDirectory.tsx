@@ -46,59 +46,60 @@ const users = [
     phone: "09273647891",
     email: "yen@example.com",
   },
+  {
+    id: 6,
+    name: "Yen Vasquez",
+    position: "Assistant",
+    phone: "09273647891",
+    email: "yen@example.com",
+  },
+  {
+    id: 6,
+    name: "Yen Vasquez",
+    position: "Assistant",
+    phone: "09273647891",
+    email: "yen@example.com",
+  },
 ];
 
 const AS_AdminDirectory: React.FC = () => {
-  const [showDialog, setShowDialog] = useState(false);
-
   return (
-    <div className="flex w-screen h-screen">
-
-      <main className="flex flex-col flex-1 p-4 overflow-auto">
+    <div className="flex h-full w-full">
+      <main className="flex flex-col flex-1 overflow-hidden">
         {/* HEADER */}
-        <header className="flex flex-col w-full h-[120px] gap-1.5 px-6 pt-6 pb-4">
+        <header className="flex flex-col w-full h-[130px] px-4 pt-6 pb-4">
           {/* Greeting */}
-          <h1 className="text-[26px] font-bold font-['Inter-Bold',Helvetica] leading-tight">
-            <span className="text-neutral-500">Welcome, </span>
-            <span className="text-[#e8e8e8]">Admin!</span>
+          <h1 className="text-[26px] font-bold leading-tight">
+            <span className="text-donkey-30">Welcome, </span>
+            <span className="text-white">Admin!</span>
           </h1>
 
           {/* Title + Action Buttons */}
-          <div className="flex flex-row items-center justify-between w-full h-[60px] mt-1">
-            {/* Page Title */}
-            <div className="text-[#d5ff5f] font-bold text-[28px] font-['Inter-Bold',_sans-serif] tracking-tight">
+          <div className="flex justify-between items-center w-full self-stretch my-1">
+            <p className="text-shrek font-bold text-5xl whitespace-nowrap">
               ADMIN DIRECTORY
-            </div>
+            </p>
 
-            {/* Action Buttons */}
-            <div className="flex gap-3 items-center justify-center shrink-0">
-              {/* ADD ADMIN Button */}
-              <Button
-                onClick={() =>
-                  window.dispatchEvent(new Event("open-signup-admin"))
-                }
-                className="shrek-btn py-1 text-xl"
-              >
-                ADD ADMIN
-              </Button>
-
-              {/* DELETE ADMIN Button */}
-              <Button to="#" className="shrek-btn py-1 text-xl">
-                DELETE ADMIN
-              </Button>
-            </div>
+            <Button
+              onClick={() =>
+                window.dispatchEvent(new Event("open-signup-admin"))
+              }
+              className="shrek-btn py-[8px] text-2xl font-bold inline-flex"
+            >
+              ADD ADMIN
+            </Button>
           </div>
         </header>
 
         {/* TILE CONTAINER */}
-        <div className="flex-1 bg-[#2d2d35] rounded-[30px] p-4 overflow-auto">
+        <div className="flex-1 bg-black-34 rounded-[30px] overflow-auto">
           <div
             className="
               grid
               w-full
-              gap-4
-              p-4
-              bg-[#2d2d35]
+              gap-6
+              p-8
+              bg-black-34
               rounded-[25px]
               auto-rows-[minmax(auto)]
               [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]
@@ -110,11 +111,6 @@ const AS_AdminDirectory: React.FC = () => {
           </div>
         </div>
       </main>
-
-      {/* Admin Sign Up Dialog */}
-      {showDialog && (
-        <AS_AdminSignUpDialogBox onClose={() => setShowDialog(false)} />
-      )}
     </div>
   );
 };

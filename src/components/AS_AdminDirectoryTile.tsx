@@ -1,6 +1,8 @@
 import React from "react";
-import Phone from "../assets/icons/phone.svg";
-import Mail from "../assets/icons/mail.svg";
+import Phone from "../assets/icons/phone.svg?react";
+import Mail from "../assets/icons/mail.svg?react";
+import SeeMore from "../assets/icons/threedots.svg?react";
+import Button from "./Button";
 
 interface AdminUser {
   id: number;
@@ -16,39 +18,36 @@ interface Props {
 
 const AS_AdminDirectoryTile: React.FC<Props> = ({ user }) => {
   return (
-    <div className="flex flex-col items-center justify-center gap-2 w-full max-w-[270px]">
+    <div className="flex flex-col w-full">
       {/* Tile container */}
-      <article className="flex flex-col items-center gap-2 p-4 bg-[#b5b5b5] rounded-[20px] overflow-hidden w-[290px] h-[150px]">
-        
+      <article className="group flex flex-col items-center p-6 bg-donkey-10 rounded-[25px] overflow-hidden w-full h-full hover:bg-[#e0e0e0] transition-colors duration:400">
         {/* Header: Name + Menu Dots */}
-        <div className="flex items-center justify-between w-full h-5">
-          <h1 className="text-[18px] font-bold text-[#040404] truncate">
+        <div className="flex items-center justify-between w-full h-5 mb-1">
+          <h1 className="text-2xl font-bold text-black-35 truncate">
             {user.name}
           </h1>
 
-          <div className="relative w-[28px] h-2">
-            <div className="absolute top-0 left-0 w-2 h-2 bg-[#212121] rounded-[4px]" />
-            <div className="absolute top-0 left-[10px] w-2 h-2 bg-[#212121] rounded-[4px]" />
-            <div className="absolute top-0 left-[20px] w-2 h-2 bg-[#212121] rounded-[4px]" />
-          </div>
+          <Button className="text-black-35 hover:text-donkey-30 transition-colors">
+            <SeeMore className="w-7 h-5" />
+          </Button>
         </div>
 
         {/* Position / Role */}
-        <div className="flex flex-col items-start w-full">
-          <p className="text-[15px] font-semibold text-neutral-600">
+        <div className="flex flex-col items-start w-full mb-7">
+          <p className="text-[17px] font-semibold text-donkey-30">
             {user.position}
           </p>
         </div>
 
         {/* Contact Info Box */}
-        <address className="flex flex-col items-start gap-1 p-2 bg-[#e8e8e8] rounded-[14px] w-full not-italic">
+        <address className="flex flex-col items-start gap-1 p-3 bg-[#e8e8e8] rounded-[15px] w-full not-italic group-hover:bg-donkey-10">
           {/* Email */}
           {user.email && (
-            <div className="flex items-center w-full">
-              <img src={Mail} alt="Email" className="w-[18px] h-[18px]" />
+            <div className="flex items-center w-full text-black-35 hover:text-white transition-colors">
+              <Mail className="w-5 h-5" />
               <a
                 href={`mailto:${user.email}`}
-                className="ml-2 font-semibold text-[#212121] text-[13px] truncate"
+                className="ml-2 font-bold text-[17px] truncate"
               >
                 {user.email}
               </a>
@@ -56,11 +55,11 @@ const AS_AdminDirectoryTile: React.FC<Props> = ({ user }) => {
           )}
 
           {/* Phone */}
-          <div className="flex items-center w-full">
-            <img src={Phone} alt="Phone" className="w-[18px] h-[18px]" />
+          <div className="flex items-center w-full text-black-35 hover:text-white transition-colors">
+            <Phone className="w-5 h-5"/>
             <a
               href={`tel:${user.phone}`}
-              className="ml-2 font-semibold text-[#212121] text-[13px] truncate"
+              className="ml-2 font-bold text-[17px] truncate"
             >
               {user.phone}
             </a>

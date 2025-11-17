@@ -4,8 +4,6 @@ import BackButton from "../assets/icons/arrow-left.svg?react";
 import {
   doc,
   setDoc,
-  addDoc,
-  collection,
   serverTimestamp,
 } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
@@ -396,7 +394,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
             )}
           </div>
           <div className="flex">
-            <Button className="shrek-btn font-bold py-1 border-3 hover:border-3 mt-6 w-60">
+            <Button className="shrek-btn font-bold py-1 border-3 hover:border-3 mt-6 mx-auto w-60">
               {defaultRole === "admin" ? "CREATE ADMIN" : "REGISTER"}
             </Button>
           </div>

@@ -1,6 +1,6 @@
 import React from "react";
-import ShoppingCart from "../../assets/icons/shoppingcart.svg";
-import ArrowLeft from "../../assets/icons/arrow-left.svg";
+import ShoppingCart from "../assets/icons/shoppingcart.svg";
+import ArrowLeft from "../assets/icons/arrow-left.svg";
 
 export type ClassItem = {
 title: string;
