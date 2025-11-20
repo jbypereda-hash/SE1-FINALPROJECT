@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Button from "./Button";
 import BackButton from "../assets/icons/arrow-left.svg?react";
-import {
-  doc,
-  setDoc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
