@@ -1,6 +1,16 @@
 import React from "react";
 import ShoppingCart from "../assets/icons/shoppingcart.svg";
+<<<<<<< Updated upstream
 import ArrowLeft from "../assets/icons/arrow-left.svg";
+=======
+import LevelIcon from "../assets/icons/level.svg";
+
+import CoreCrusherImg from "../assets/images/corecrusher-class.jpg";
+import PowerFlowYogaImg from "../assets/images/powerflowyoga-class.png";
+import KickboxingCardioImg from "../assets/images/kickboxingcardio-class.png";
+import PilatesImg from "../assets/images/pilates-class.png";
+import HIITBlastImg from "../assets/images/hiitblast-class.png";
+>>>>>>> Stashed changes
 
 export type ClassItem = {
 title: string;
@@ -142,6 +152,7 @@ return (
     `}</style>
 
     <main className="max-w-7xl mx-auto px-6 py-12">
+<<<<<<< Updated upstream
         <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
             <button className="p-2 hover:text-shrek transition-colors">
@@ -166,6 +177,32 @@ return (
             </span>
             )}
         </button>
+=======
+        <div className="grid grid-cols-3 items-center mb-12">
+        <div></div>
+
+        <div className="text-center">
+            <h2 className="text-5xl text-shrek font-bold">OUR CLASSES</h2>
+            <p className="text-donkey-10">Find the perfect workout to match your goals.</p>
+        </div>
+
+        <div className="flex justify-end relative">
+<button
+onClick={() => console.log("Cart clicked!")}
+className="relative p-2 rounded-full hover:bg-black-34 transition-colors"
+>
+<img src={ShoppingCart} alt="ViewCart" className="w-7 h-7" />
+
+{cartItems.length > 0 && (
+    <span className="absolute -top-1 -right-1 bg-shrek text-black-35 text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+    {cartItems.length}
+    </span>
+)}
+</button>
+
+        </div>
+
+>>>>>>> Stashed changes
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -23,6 +23,9 @@ import AS_AddCoach from "./pages/admin/AS_AddCoach";
 import AS_EditCoach from "./pages/admin/AS_EditCoach";
 import { useEffect } from "react";
 
+// Dialog Popup Pages
+import MembershipPaymentDialog from "./pages/";
+
 const App = () => {
   const { user, role, loading } = useAuth();
   const location = useLocation();
