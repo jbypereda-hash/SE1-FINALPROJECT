@@ -55,7 +55,7 @@ const AuthModals = () => {
         onClose={() => setShowSignup(false)}
         onSwitchToLogin={() => {
           setShowSignup(false);
-          setTimeout(() => setShowLogin(true), 200);
+          setTimeout(() => setShowLogin(true), 300);
         }}
         defaultRole={signupRole}
       />
@@ -65,7 +65,7 @@ const AuthModals = () => {
         onClose={() => setShowLogin(false)}
         onSwitchToSignup={() => {
           setShowLogin(false);
-          setTimeout(() => setShowSignup(true), 200);
+          setTimeout(() => setShowSignup(true), 300);
         }}
       />
 

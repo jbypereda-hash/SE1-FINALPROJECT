@@ -67,7 +67,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
   // Remove modal from DOM after fade-out
   useEffect(() => {
     if (!showContent && !isOpen) {
-      const timer = setTimeout(() => setRenderModal(false), 400); // match CSS transition duration
+      const timer = setTimeout(() => setRenderModal(false), 200); // match CSS transition duration
       return () => clearTimeout(timer);
     }
   }, [showContent, isOpen]);
@@ -217,7 +217,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
         setSuccess(false);
         onClose(); // close signup modal
         if (formData.role !== "admin") {
-          setTimeout(onSwitchToLogin, 450); // open login modal
+          setTimeout(onSwitchToLogin, 200); // open login modal
         }
       }, 1500);
     } catch (error: any) {
@@ -340,7 +340,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
           </div>
 
           <div>
-            <p>Gender</p>
+            <p>Gender:</p>
             <div className="relative w-full">
               <select
                 name="gender"
@@ -365,6 +365,26 @@ const SignupModal: React.FC<SignupModalProps> = ({
               </p>
             )}
           </div>
+
+          {defaultRole !== "admin" && (
+            <div>
+              <p>Role:</p>
+              <div className="relative w-full">
+                <select
+                  name="role"
+                  value={formData.role}
+                  onChange={handleChange}
+                  className="w-full px-3 py-1.5 rounded-4xl bg-donkey-10 text-black-35 appearance-none"
+                >
+                  <option value="member">Member</option>
+                  <option value="coach">Coach</option>
+                </select>
+                <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-black-34">
+                  ▼
+                </div>
+              </div>
+            </div>
+          )}
 
           <div>
             <p>Password:</p>
@@ -443,7 +463,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
             <Button
               onClick={() => {
                 onClose(); // close signup modal
-                setTimeout(onSwitchToLogin, 450); // open login modal
+                setTimeout(onSwitchToLogin, 200); // open login modal
               }}
               className="underline hover:text-shrek transition-colors duration-300"
             >

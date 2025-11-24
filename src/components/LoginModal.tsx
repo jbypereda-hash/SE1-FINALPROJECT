@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Button from "./Button";
 import BackButton from "../assets/icons/arrow-left.svg?react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from "firebase/auth";
 import { auth, db } from "../firebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 
@@ -26,6 +29,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [resetMessage, setResetMessage] = useState<string | null>(null);
 
   // Animations
   const [showContent, setShowContent] = useState(false);
@@ -45,7 +49,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   // Remove from DOM after animation ends
   useEffect(() => {
     if (!showContent && !isOpen) {
-      const timer = setTimeout(() => setRenderModal(false), 400);
+      const timer = setTimeout(() => setRenderModal(false), 200);
       return () => clearTimeout(timer);
     }
   }, [showContent, isOpen]);
@@ -56,6 +60,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
       setEmail("");
       setPassword("");
       setErrors({});
+      setResetMessage(false);
       setLoading(false);
       setShowPassword(false);
       setSuccess(false);
@@ -73,6 +78,32 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  // FORGOT PASSWORD
+  const handleForgotPassword = async () => {
+    setErrors({});
+    setResetMessage(null);
+
+    if (!email.trim()) {
+      setErrors({ email: "Enter your email to reset your password" });
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setResetMessage("A password reset link has been sent to your email.");
+    } catch (error: any) {
+      console.error("Reset password error:", error);
+
+      if (error.code === "auth/user-not-found") {
+        setErrors({ firebase: "No account found with that email." });
+      } else if (error.code === "auth/invalid-email") {
+        setErrors({ email: "Invalid email address" });
+      } else {
+        setErrors({ firebase: "Failed to send reset email. Try again." });
+      }
+    }
   };
 
   // Submit handler
@@ -196,11 +227,19 @@ const LoginModal: React.FC<LoginModalProps> = ({
                 {showPassword ? "Hide" : "Show"}
               </button>
             </div>
+
             {errors.password && (
               <p className="text-red-400 text-xs ml-3 italic">
                 {errors.password}
               </p>
             )}
+
+            <p
+              onClick={() => handleForgotPassword()}
+              className="text-sm text-right mt-2 mr-2 text-donkey-30 hover:text-shrek cursor-pointer transition-colors"
+            >
+              Forgot Password?
+            </p>
           </div>
 
           <div className="flex justify-center">
@@ -219,6 +258,12 @@ const LoginModal: React.FC<LoginModalProps> = ({
           </p>
         )}
 
+        {resetMessage && (
+          <p className="text-green-400 text-sm text-center mt-2">
+            {resetMessage}
+          </p>
+        )}
+
         {success && (
           <p className="text-green-400 text-sm text-center mt-2">
             Login successful!
@@ -230,7 +275,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
           <Button
             onClick={() => {
               onClose();
-              setTimeout(onSwitchToSignup, 450);
+              setTimeout(onSwitchToSignup, 200);
             }}
             className="underline hover:text-shrek transition-colors duration-300"
           >
