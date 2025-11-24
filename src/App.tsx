@@ -1,5 +1,5 @@
+// src/App.tsx
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
 import { useAuth } from "./context/AuthContext";
 import AuthModals from "./context/AuthModals";
 
@@ -10,9 +10,10 @@ import ProtectedRoute from "./context/ProtectedRoute";
 // User Pages
 import Home from "./pages/Home";
 import { CoachesPage } from "./pages/CoachesPage";
-import { ProfilePage } from "./pages/Profile";
-import MembershipPackages from "./pages/MembershipPackages";
+import ProfilePage from "./pages/Profile";
 import Classes from "./pages/Classes";
+import EditProfilePage from "./pages/EditProfile";
+import MembershipPackages from "./pages/MembershipPackages";
 
 // Admin Pages
 import AS_PendingMemberships from "./pages/admin/AS_PendingMemberships";
@@ -21,27 +22,52 @@ import AS_MemberDirectory from "./pages/admin/AS_MemberDirectory";
 import AS_CoachDirectory from "./pages/admin/AS_CoachDirectory";
 import AS_AddCoach from "./pages/admin/AS_AddCoach";
 import AS_EditCoach from "./pages/admin/AS_EditCoach";
-import { useEffect } from "react";
 
-// Dialog Popup Pages
-import MembershipPaymentDialog from "./pages/";
+import { useEffect } from "react";
+import { getAuth } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "./firebaseConfig";
+import { AnimatePresence } from "framer-motion";
 
 const App = () => {
   const { user, role, loading } = useAuth();
   const location = useLocation();
 
-  // Auto-redirect after auth loads
+  // Redirect admin to admin home
   useEffect(() => {
     if (!loading && user) {
-      if (role === "admin") {
-        // If admin is on a user page → redirect to admin dashboard
-        if (!window.location.pathname.startsWith("/AS_")) {
-          window.location.replace("/AS_AdminDirectory");
-        }
+      if (role === "admin" && !window.location.pathname.startsWith("/AS_")) {
+        window.location.replace("/AS_AdminDirectory");
       }
     }
   }, [user, role, loading]);
 
+  /* ---------------------------------------------
+      EVENT LISTENER → Open Registration Modal
+  --------------------------------------------- */
+  useEffect(() => {
+    const checkMemberExists = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const ref = doc(db, "members", user.uid);
+      const snap = await getDoc(ref);
+
+      if (!snap.exists()) {
+        console.log("🟡 No Member Record Found → Opening Registration Dialog");
+        window.dispatchEvent(new Event("open-registration"));
+      }
+    };
+
+    const listener = () => checkMemberExists();
+    window.addEventListener("check-member-registration", listener);
+
+    return () =>
+      window.removeEventListener("check-member-registration", listener);
+  }, []);
+
+  // While loading Firebase auth
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -53,9 +79,10 @@ const App = () => {
   return (
     <>
       <AuthModals />
+
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-          {/* ---------- PUBLIC / USER ROUTES ---------- */}
+          {/* ---------- USER ROUTES ---------- */}
           <Route
             path="/"
             element={
@@ -64,6 +91,7 @@ const App = () => {
               </UserLayout>
             }
           />
+
           <Route
             path="/memberships"
             element={
@@ -72,6 +100,7 @@ const App = () => {
               </UserLayout>
             }
           />
+
           <Route
             path="/classes"
             element={
@@ -80,6 +109,7 @@ const App = () => {
               </UserLayout>
             }
           />
+
           <Route
             path="/coaches"
             element={
@@ -88,12 +118,24 @@ const App = () => {
               </UserLayout>
             }
           />
+
           <Route
             path="/profile"
             element={
               <ProtectedRoute requiredRole="member">
                 <UserLayout>
                   <ProfilePage />
+                </UserLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/edit-profile"
+            element={
+              <ProtectedRoute requiredRole="member">
+                <UserLayout>
+                  <EditProfilePage />
                 </UserLayout>
               </ProtectedRoute>
             }
@@ -110,6 +152,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/AS_MemberDirectory"
             element={
@@ -120,6 +163,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/AS_CoachDirectory"
             element={
@@ -130,6 +174,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/AS_PendingMemberships"
             element={
@@ -140,6 +185,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/AS_AddCoach"
             element={
@@ -150,6 +196,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/AS_EditCoach"
             element={
@@ -161,7 +208,7 @@ const App = () => {
             }
           />
 
-          {/* ---------- CATCH ALL ---------- */}
+          {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AnimatePresence>

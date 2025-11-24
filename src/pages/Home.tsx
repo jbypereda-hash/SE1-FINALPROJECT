@@ -62,7 +62,9 @@ const Home = () => {
               </Button>
             ) : (
               <Button
-                onClick={() => window.dispatchEvent(new Event("open-signup"))}
+                onClick={() =>
+                  window.dispatchEvent(new Event("check-member-registration"))
+                }
                 className="shrek-btn text-4xl px-8 py-4"
               >
                 GET STARTED

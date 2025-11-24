@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 interface Props {
   children: ReactNode; //ang text sa button(?)
   className?: string; //optional styling class
-  to?: string; // optional internal navigation 
+  to?: string; // optional internal navigation
   href?: string; // optional external link
   onClick?: () => void; // optional function
   type?: "button" | "submit" | "reset"; //new line added by yen | for the dialog boxes
