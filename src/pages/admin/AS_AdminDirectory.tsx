@@ -1,115 +1,164 @@
+import { useEffect, useState } from "react";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
+import { db } from "../../firebaseConfig";
 import Button from "../../components/Button";
-import AS_AdminDirectoryTile from "../../components/AS_AdminDirectoryTile";
+import AS_DirectoryTile from "../../components/AS_DirectoryTile";
+import EditUserModal from "../../components/AS_EditUserModal";
+import AS_DeleteConfirmModal from "../../components/AS_DeleteConfirmModal";
+import { deleteUser } from "../../api/userAPI";
 
-// SAMPLE DATA
-const users = [
-  {
-    id: 1,
-    name: "Precious Kyle Pagute",
-    position: "CEO",
-    phone: "09952837465",
-    email: "precious@example.com",
-  },
-  {
-    id: 2,
-    name: "Ben Joshua Dizon",
-    position: "Manager",
-    phone: "09475863723",
-    email: "ben@example.com",
-  },
-  {
-    id: 3,
-    name: "Gabriel Ryne Ledres",
-    position: "Manager",
-    phone: "09712654387",
-    email: "gabriel@example.com",
-  },
-  {
-    id: 4,
-    name: "Krishea Joanne Tare",
-    position: "Manager",
-    phone: "09914367583",
-    email: "krishea@example.com",
-  },
-  {
-    id: 5,
-    name: "Rowena Montante",
-    position: "Owner",
-    phone: "09959877456",
-    email: "rowena@example.com",
-  },
-  {
-    id: 6,
-    name: "Yen Vasquez",
-    position: "Assistant",
-    phone: "09273647891",
-    email: "yen@example.com",
-  },
-  {
-    id: 6,
-    name: "Yen Vasquez",
-    position: "Assistant",
-    phone: "09273647891",
-    email: "yen@example.com",
-  },
-  {
-    id: 6,
-    name: "Yen Vasquez",
-    position: "Assistant",
-    phone: "09273647891",
-    email: "yen@example.com",
-  },
-];
+interface FirestoreUser {
+  uid: string;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  phoneNumber: string;
+  email: string;
+  role: string;
+  lastSignInTime?: any;
+}
 
 const AS_AdminDirectory: React.FC = () => {
+  const [admins, setAdmins] = useState<FirestoreUser[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<FirestoreUser | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<FirestoreUser | null>(null);
+
+  useEffect(() => {
+    const usersRef = collection(db, "user");
+    const q = query(usersRef, where("role", "==", "admin"));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({
+        ...(doc.data() as FirestoreUser),
+        uid: doc.id, // Ensure UID matches doc ID
+      }));
+
+      setAdmins(data);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleEdit = (user: FirestoreUser) => {
+    setSelectedUser(user);
+    setModalOpen(true);
+  };
+
+  const handleDelete = (user: FirestoreUser) => {
+    setUserToDelete(user);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!userToDelete) return;
+
+    try {
+      const result = await deleteUser(userToDelete.uid);
+
+      if (result?.success) {
+        console.log("User deleted successfully");
+
+        // optional: locally remove from state so UI updates immediately
+        setAdmins((prev) => prev.filter((u) => u.uid !== userToDelete.uid));
+      } else {
+        console.error("Backend error:", result);
+      }
+    } catch (err) {
+      console.error("Error deleting user:", err);
+    }
+
+    setDeleteModalOpen(false);
+    setUserToDelete(null);
+  };
+
+  const handleSave = async (
+    updatedUser: Partial<FirestoreUser> & { uid: string }
+  ) => {
+    try {
+      const userRef = doc(db, "user", updatedUser.uid);
+
+      const payload: Partial<User> = {
+        firstName: updatedUser.firstName ?? "",
+        lastName: updatedUser.lastName ?? "",
+        phoneNumber: updatedUser.phoneNumber ?? "",
+        gender: updatedUser.gender ?? "",
+        role: updatedUser.role ?? "member",
+      };
+      await updateDoc(userRef, payload);
+
+      setAdmins((prev) =>
+        prev.map((u) => (u.uid === updatedUser.uid ? { ...u, ...payload } : u))
+      );
+
+      setModalOpen(false);
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
+  };
+
   return (
     <div className="flex h-full w-full">
       <main className="flex flex-col flex-1 overflow-hidden">
-        {/* HEADER */}
         <header className="flex flex-col w-full h-[130px] px-4 pt-6 pb-4">
-          {/* Greeting */}
           <h1 className="text-[26px] font-bold leading-tight">
             <span className="text-donkey-30">Welcome, </span>
             <span className="text-white">Admin!</span>
           </h1>
 
-          {/* Title + Action Buttons */}
-          <div className="flex justify-between items-center w-full self-stretch my-1">
-            <p className="text-shrek font-bold text-5xl whitespace-nowrap">
-              ADMIN DIRECTORY
-            </p>
+          <div className="flex justify-between items-center w-full my-1">
+            <p className="text-shrek font-bold text-5xl">ADMIN DIRECTORY</p>
 
             <Button
               onClick={() =>
                 window.dispatchEvent(new Event("open-signup-admin"))
               }
-              className="shrek-btn py-[8px] text-2xl font-bold inline-flex"
+              className="shrek-btn py-[8px] text-2xl font-bold"
             >
               ADD ADMIN
             </Button>
           </div>
         </header>
 
-        {/* TILE CONTAINER */}
-        <div className="flex-1 bg-black-34 rounded-[30px] overflow-auto">
-          <div
-            className="
-              grid
-              w-full
-              gap-6
-              p-8
-              bg-black-34
-              rounded-[25px]
-              auto-rows-[minmax(auto)]
-              [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]
-            "
-          >
-            {users.map((user) => (
-              <AS_AdminDirectoryTile key={user.id} user={user} />
+        <div className="flex-1 bg-black-34 rounded-[30px] overflow-auto scrollbar-thin scrollbar-thumb-green-500 scrollbar-track-gray-700">
+          <div className="grid w-full gap-6 p-8 auto-rows-[minmax(auto)] [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
+            {admins.map((user) => (
+              <AS_DirectoryTile
+                key={user.uid}
+                user={user}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
             ))}
           </div>
         </div>
       </main>
+
+      <EditUserModal
+        user={selectedUser}
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={handleSave}
+      />
+
+      <AS_DeleteConfirmModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        userName={
+          userToDelete
+            ? `${userToDelete.firstName} ${userToDelete.lastName}`
+            : ""
+        }
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 };

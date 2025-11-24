@@ -3,7 +3,7 @@ import Button from "./Button";
 import BackButton from "../assets/icons/arrow-left.svg?react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../firebaseConfig";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -90,6 +90,15 @@ const LoginModal: React.FC<LoginModalProps> = ({
         password
       );
       const user = userCredential.user;
+
+      try {
+        await updateDoc(doc(db, "user", user.uid), {
+          lastSignInTime: user.metadata.lastSignInTime,
+        });
+        console.log("Updated lastSignInTime:", user.metadata.lastSignInTime);
+      } catch (err) {
+        console.error("Failed to update lastSignInTime:", err);
+      }
 
       const userDoc = await getDoc(doc(db, "user", user.uid));
       const role = userDoc.exists() ? userDoc.data().role : "member";
@@ -195,7 +204,10 @@ const LoginModal: React.FC<LoginModalProps> = ({
           </div>
 
           <div className="flex justify-center">
-            <Button className="shrek-btn font-bold py-1 border-3 hover:border-3 mt-15 w-60">
+            <Button
+              type="submit"
+              className="shrek-btn font-bold py-1 border-3 hover:border-3 mt-15 w-60"
+            >
               LOGIN
             </Button>
           </div>

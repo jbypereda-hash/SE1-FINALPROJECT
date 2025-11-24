@@ -99,7 +99,21 @@ const SignupModal: React.FC<SignupModalProps> = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    let newValue = value;
+
+    // Auto-capitalize names while typing
+    if (name === "firstName" || name === "lastName") {
+      newValue = newValue
+        .toLowerCase()
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+    }
+
+    // Auto-format phone number while typing
+    if (name === "phoneNumber") {
+      newValue = newValue.replace(/[\s\-\.]/g, ""); // remove spaces, hyphens, dots
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: newValue }));
     setAuthError(null);
   };
 
@@ -157,7 +171,6 @@ const SignupModal: React.FC<SignupModalProps> = ({
 
       const user = userCredential.user;
 
-      // 2. Save profile in Firestore WITHOUT the password
       await setDoc(doc(db, "user", user.uid), {
         uid: user.uid, // the document ID and field match the Auth UID
         firstName: formData.firstName,
@@ -167,9 +180,26 @@ const SignupModal: React.FC<SignupModalProps> = ({
         gender: formData.gender,
         role: formData.role,
         createdAt: serverTimestamp(),
+        lastSignInTime: null,
       });
 
       setSuccess(true);
+
+      window.dispatchEvent(
+        new CustomEvent("new-user-added", {
+          detail: {
+            uid: user.uid,
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            phoneNumber: formData.phoneNumber,
+            gender: formData.gender,
+            role: formData.role,
+            createdAt: new Date(), // approximate timestamp
+            lastSignInTime: null, // new users haven't signed in yet
+          },
+        })
+      );
 
       // reset form
       setFormData({
@@ -192,8 +222,6 @@ const SignupModal: React.FC<SignupModalProps> = ({
       }, 1500);
     } catch (error: any) {
       console.error("Error creating user:", error);
-
-      setLoading(false);
 
       if (error.code === "auth/email-already-in-use") {
         setAuthError("This email is already in use.");
@@ -390,7 +418,10 @@ const SignupModal: React.FC<SignupModalProps> = ({
             )}
           </div>
           <div className="flex">
-            <Button className="shrek-btn font-bold py-1 border-3 hover:border-3 mt-6 mx-auto w-60">
+            <Button
+              type="submit"
+              className="shrek-btn font-bold py-1 border-3 hover:border-3 mt-6 mx-auto w-60"
+            >
               {defaultRole === "admin" ? "CREATE ADMIN" : "REGISTER"}
             </Button>
           </div>

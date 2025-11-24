@@ -11,7 +11,7 @@ interface Props {
   variant?: "ghost" | "primary" | "secondary"; //new line added by yen | for the dropdown arrow
 }
 
-const Button = ({ children, className = "", to, href, onClick }: Props) => {
+const Button = ({ children, className = "", to, href, onClick, type }: Props) => {
   const baseClasses = className || "nobg-btn"; // default
 
   if (to) {
@@ -39,7 +39,11 @@ const Button = ({ children, className = "", to, href, onClick }: Props) => {
 
   // Otherwise, render as button (action)
   return (
-    <button onClick={onClick} className={baseClasses}>
+    <button
+      type={type || "button"}   // <-- FIXED: Prevents form submit reload
+      onClick={onClick}
+      className={baseClasses}
+    >
       {children}
     </button>
   );

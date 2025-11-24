@@ -1,78 +1,154 @@
-import React from "react";
-import Button from "../../components/Button";
-import AS_CoachDirectoryTile from "../../components/AS_CoachDirectoryTile";
+import { useEffect, useState } from "react";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
+import { db } from "../../firebaseConfig";
+import AS_DirectoryTile from "../../components/AS_DirectoryTile";
+import EditUserModal from "../../components/AS_EditUserModal";
+import AS_DeleteConfirmModal from "../../components/AS_DeleteConfirmModal";
+import { deleteUser } from "../../api/userAPI";
 
-// SAMPLE DATA
-const users = [
-  { id: 1, name: "Toni Fowler", title: "Strength & Conditioning Coach", phone: "09456583925", email: "tFowler@example.com" },
-  { id: 2, name: "Ash Trevino", title: "Yoga & Core Strength Coach", phone: "09475638729", email: "aTrevino@example.com" },
-  { id: 3, name: "Amberlyn Reid", title: "HIIT Instructor & Dance Fitness Coach", phone: "09856437528", email: "aReid@example.com" },
-];
+interface FirestoreUser {
+  uid: string;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  phoneNumber: string;
+  email: string;
+  role: string;
+  lastSignInTime?: any;
+}
 
 const AS_CoachDirectory: React.FC = () => {
-  return (
-    <div className="flex w-screen h-screen">
+  const [coaches, setCoaches] = useState<FirestoreUser[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<FirestoreUser | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<FirestoreUser | null>(null);
 
-      <main className="flex flex-col flex-1 p-4 overflow-auto">
-        {/* HEADER */}
-        <header className="flex flex-col w-full h-[120px] gap-1.5 px-6 pt-6 pb-4">
-          {/* Greeting */}
-          <h1 className="text-[26px] font-bold font-['Inter-Bold',Helvetica] leading-tight">
-            <span className="text-neutral-500">Welcome, </span>
-            <span className="text-[#e8e8e8]">Admin!</span>
+  useEffect(() => {
+    const usersRef = collection(db, "user");
+    const q = query(usersRef, where("role", "==", "coach"));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({
+        ...(doc.data() as FirestoreUser),
+        uid: doc.id, // Ensure UID matches doc ID
+      }));
+
+      setCoaches(data);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleEdit = (user: FirestoreUser) => {
+    setSelectedUser(user);
+    setModalOpen(true);
+  };
+
+  const handleDelete = (user: FirestoreUser) => {
+    setUserToDelete(user);
+    setDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!userToDelete) return;
+
+    try {
+      const result = await deleteUser(userToDelete.uid);
+
+      if (result?.success) {
+        console.log("User deleted successfully");
+
+        // optional: locally remove from state so UI updates immediately
+        setCoaches((prev) => prev.filter((u) => u.uid !== userToDelete.uid));
+      } else {
+        console.error("Backend error:", result);
+      }
+    } catch (err) {
+      console.error("Error deleting user:", err);
+    }
+
+    setDeleteModalOpen(false);
+    setUserToDelete(null);
+  };
+
+  const handleSave = async (
+    updatedUser: Partial<FirestoreUser> & { uid: string }
+  ) => {
+    try {
+      const userRef = doc(db, "user", updatedUser.uid);
+
+      const payload: Partial<User> = {
+        firstName: updatedUser.firstName ?? "",
+        lastName: updatedUser.lastName ?? "",
+        phoneNumber: updatedUser.phoneNumber ?? "",
+        gender: updatedUser.gender ?? "",
+        role: updatedUser.role ?? "member",
+      };
+      await updateDoc(userRef, payload);
+
+      setCoaches((prev) =>
+        prev.map((u) => (u.uid === updatedUser.uid ? { ...u, ...payload } : u))
+      );
+
+      setModalOpen(false);
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
+  };
+
+  return (
+    <div className="flex h-full w-full">
+      <main className="flex flex-col flex-1 overflow-hidden">
+        <header className="flex flex-col w-full h-[130px] px-4 pt-6 pb-4">
+          <h1 className="text-[26px] font-bold leading-tight">
+            <span className="text-donkey-30">Welcome, </span>
+            <span className="text-white">Admin!</span>
           </h1>
 
-          {/* Title + Action Buttons */}
-          <div className="flex flex-row items-center justify-between w-full h-[60px] mt-1">
-            {/* Page Title */}
-            <div className="text-[#d5ff5f] font-bold text-[28px] font-['Inter-Bold',_sans-serif] tracking-tight">
-              COACH DIRECTORY
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex flex-row gap-3 items-center justify-center shrink-0">
-              {/* ADD ADMIN Button */}
-              <Button
-                to="/AS_AddCoach"
-                className="bg-[#d5ff5f] rounded-[24px] w-[130px] h-[40px] flex items-center justify-center hover:bg-[#c9f255] transition-colors"
-              >
-                <span className="text-[#000000] font-bold text-[16px] font-['Inter-Bold',_sans-serif]">
-                  ADD COACH
-                </span>
-              </Button>
-
-              {/* DELETE ADMIN Button */}
-              <Button 
-                to="#"
-                className="bg-[#d5ff5f] rounded-[24px] w-[165px] h-[40px] flex items-center justify-center hover:bg-[#c9f255] transition-colors">
-                <span className="text-[#000000] font-bold text-[16px] font-['Inter-Bold',_sans-serif]">
-                  DELETE COACH
-                </span>
-              </Button>
-            </div>
+          <div className="flex justify-between items-center w-full my-1">
+            <p className="text-shrek font-bold text-5xl">COACH DIRECTORY</p>
           </div>
         </header>
 
-        {/* TILE CONTAINER */}
-        <div className="flex-1 bg-[#2d2d35] rounded-[30px] p-4 overflow-auto">
-          <div
-            className="
-              grid
-              w-full
-              gap-4
-              p-4
-              bg-[#2d2d35]
-              rounded-[25px]
-              auto-rows-[minmax(auto)]
-              [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]
-            "
-          >
-            {users.map((user) => (
-              <AS_CoachDirectoryTile key={user.id} user={user} />
+        <div className="flex-1 bg-black-34 rounded-[30px] overflow-auto scrollbar-thin scrollbar-thumb-green-500 scrollbar-track-gray-700">
+          <div className="grid w-full gap-6 p-8 auto-rows-[minmax(auto)] [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
+            {coaches.map((user) => (
+              <AS_DirectoryTile
+                key={user.uid}
+                user={user}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
             ))}
           </div>
         </div>
       </main>
+
+      <EditUserModal
+        user={selectedUser}
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={handleSave}
+      />
+
+      <AS_DeleteConfirmModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        userName={
+          userToDelete
+            ? `${userToDelete.firstName} ${userToDelete.lastName}`
+            : ""
+        }
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 };

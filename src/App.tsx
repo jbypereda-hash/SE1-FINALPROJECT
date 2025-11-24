@@ -1,4 +1,5 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import { useAuth } from "./context/AuthContext";
 import AuthModals from "./context/AuthModals";
 
@@ -20,9 +21,23 @@ import AS_MemberDirectory from "./pages/admin/AS_MemberDirectory";
 import AS_CoachDirectory from "./pages/admin/AS_CoachDirectory";
 import AS_AddCoach from "./pages/admin/AS_AddCoach";
 import AS_EditCoach from "./pages/admin/AS_EditCoach";
+import { useEffect } from "react";
 
 const App = () => {
-  const { loading } = useAuth();
+  const { user, role, loading } = useAuth();
+  const location = useLocation();
+
+  // Auto-redirect after auth loads
+  useEffect(() => {
+    if (!loading && user) {
+      if (role === "admin") {
+        // If admin is on a user page → redirect to admin dashboard
+        if (!window.location.pathname.startsWith("/AS_")) {
+          window.location.replace("/AS_AdminDirectory");
+        }
+      }
+    }
+  }, [user, role, loading]);
 
   if (loading) {
     return (
@@ -35,116 +50,118 @@ const App = () => {
   return (
     <>
       <AuthModals />
-      <Routes>
-        {/* ---------- PUBLIC / USER ROUTES ---------- */}
-        <Route
-          path="/"
-          element={
-            <UserLayout>
-              <Home />
-            </UserLayout>
-          }
-        />
-        <Route
-          path="/memberships"
-          element={
-            <UserLayout>
-              <MembershipPackages />
-            </UserLayout>
-          }
-        />
-        <Route
-          path="/classes"
-          element={
-            <UserLayout>
-              <Classes />
-            </UserLayout>
-          }
-        />
-        <Route
-          path="/coaches"
-          element={
-            <UserLayout>
-              <CoachesPage />
-            </UserLayout>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute requiredRole="member">
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          {/* ---------- PUBLIC / USER ROUTES ---------- */}
+          <Route
+            path="/"
+            element={
               <UserLayout>
-                <ProfilePage />
+                <Home />
               </UserLayout>
-            </ProtectedRoute>
-          }
-        />
+            }
+          />
+          <Route
+            path="/memberships"
+            element={
+              <UserLayout>
+                <MembershipPackages />
+              </UserLayout>
+            }
+          />
+          <Route
+            path="/classes"
+            element={
+              <UserLayout>
+                <Classes />
+              </UserLayout>
+            }
+          />
+          <Route
+            path="/coaches"
+            element={
+              <UserLayout>
+                <CoachesPage />
+              </UserLayout>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute requiredRole="member">
+                <UserLayout>
+                  <ProfilePage />
+                </UserLayout>
+              </ProtectedRoute>
+            }
+          />
 
-        {/* ---------- ADMIN ROUTES ---------- */}
-        <Route
-          path="/AS_AdminDirectory"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <AdminLayout>
-                <AS_AdminDirectory />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/AS_MemberDirectory"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <AdminLayout>
-                <AS_MemberDirectory />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/AS_CoachDirectory"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <AdminLayout>
-                <AS_CoachDirectory />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/AS_PendingMemberships"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <AdminLayout>
-                <AS_PendingMemberships />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/AS_AddCoach"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <AdminLayout>
-                <AS_AddCoach />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/AS_EditCoach"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <AdminLayout>
-                <AS_EditCoach />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
+          {/* ---------- ADMIN ROUTES ---------- */}
+          <Route
+            path="/AS_AdminDirectory"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminLayout>
+                  <AS_AdminDirectory />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/AS_MemberDirectory"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminLayout>
+                  <AS_MemberDirectory />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/AS_CoachDirectory"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminLayout>
+                  <AS_CoachDirectory />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/AS_PendingMemberships"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminLayout>
+                  <AS_PendingMemberships />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/AS_AddCoach"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminLayout>
+                  <AS_AddCoach />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/AS_EditCoach"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminLayout>
+                  <AS_EditCoach />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
 
-        {/* ---------- CATCH ALL ---------- */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          {/* ---------- CATCH ALL ---------- */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AnimatePresence>
     </>
   );
 };

@@ -43,6 +43,26 @@ body {
 
 @layer base {
   h1 {
-    @apply font-sans font-bold text-shrek text-6xl;
+    @apply font-bold text-shrek text-6xl;
   }
 }
+
+/* GLOBAL SCROLLBAR STYLING */
+/* Works on Chrome, Edge, Safari, Opera */
+::-webkit-scrollbar {
+  width: 8px;        /* scrollbar width */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* track color */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #747474; /* your shrek green */
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #989898; /* slightly darker on hover */
+}
+
