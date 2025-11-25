@@ -49,36 +49,39 @@ const AuthModals = () => {
   }, []);
 
   return (
-    <>
-      <SignupModal
-        isOpen={showSignup}
-        onClose={() => setShowSignup(false)}
-        onSwitchToLogin={() => {
-          setShowSignup(false);
-          setTimeout(() => setShowLogin(true), 300);
-        }}
-        defaultRole={signupRole}
-      />
+    <div className="fixed inset-0 z-[9999] pointer-events-none">
+      {/* Each modal must be able to receive clicks */}
+      <div className="pointer-events-auto">
+        <SignupModal
+          isOpen={showSignup}
+          onClose={() => setShowSignup(false)}
+          onSwitchToLogin={() => {
+            setShowSignup(false);
+            setTimeout(() => setShowLogin(true), 300);
+          }}
+          defaultRole={signupRole}
+        />
 
-      <LoginModal
-        isOpen={showLogin}
-        onClose={() => setShowLogin(false)}
-        onSwitchToSignup={() => {
-          setShowLogin(false);
-          setTimeout(() => setShowSignup(true), 300);
-        }}
-      />
+        <LoginModal
+          isOpen={showLogin}
+          onClose={() => setShowLogin(false)}
+          onSwitchToSignup={() => {
+            setShowLogin(false);
+            setTimeout(() => setShowSignup(true), 300);
+          }}
+        />
 
-      <LogoutConfirmModal
-        isOpen={showLogoutConfirm}
-        onClose={() => setShowLogoutConfirm(false)}
-      />
+        <LogoutConfirmModal
+          isOpen={showLogoutConfirm}
+          onClose={() => setShowLogoutConfirm(false)}
+        />
 
-      <RegistrationDialog
-        isOpen={showRegistration}
-        onClose={() => setShowRegistration(false)}
-      />
-    </>
+        <RegistrationDialog
+          isOpen={showRegistration}
+          onClose={() => setShowRegistration(false)}
+        />
+      </div>
+    </div>
   );
 };
 

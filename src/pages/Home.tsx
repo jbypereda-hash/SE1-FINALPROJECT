@@ -57,13 +57,17 @@ const Home = () => {
             </p>
 
             {isLoggedIn ? (
-              <Button className="shrek-btn text-4xl px-8 py-4" to="/profile">
+              <Button 
+              onClick={() =>
+                  window.dispatchEvent(new Event("check-member-registration"))
+                }
+              className="shrek-btn text-4xl px-8 py-4" to="/profile">
                 MANAGE HEALTH INFO
               </Button>
             ) : (
               <Button
                 onClick={() =>
-                  window.dispatchEvent(new Event("check-member-registration"))
+                  window.dispatchEvent(new Event("open-signup"))
                 }
                 className="shrek-btn text-4xl px-8 py-4"
               >
