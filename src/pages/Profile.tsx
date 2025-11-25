@@ -29,7 +29,7 @@ export default function ProfilePage() {
     );
 
   return (
-    <div className="bg-[#0f0f13] text-white px-6 md:px-10 py-10 min-h-screen">
+    <div className="bg-[#0f0f13] text-white px-6 md:px-10 py-10 h-full">
       <div className="flex gap-10">
         {/* LEFT SIDE – PROFILE */}
         <div className="w-full max-w-xl">

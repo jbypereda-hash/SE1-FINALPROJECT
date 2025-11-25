@@ -227,7 +227,7 @@ export default function EditProfilePage() {
   }
 
   return (
-    <div className="bg-[#0f0f13] min-h-screen px-6 md:px-10 py-10 text-white">
+    <div className="bg-[#0f0f13] h-full px-6 md:px-10 py-10 text-white">
       <h2 className="text-center text-shrek text-3xl md:text-4xl font-bold mb-10">
         EDIT PROFILE
       </h2>
@@ -239,7 +239,7 @@ export default function EditProfilePage() {
         {/* LEFT CARD — Name + Goals */}
         <div className="flex-1 bg-[#1c1c22] rounded-[20px] p-6">
           <label className="text-shrek text-2xl font-bold block mb-2">
-            Name (Format: Last, First)
+            Name (Format: Last Name, First Name)
           </label>
           <input
             value={name}
