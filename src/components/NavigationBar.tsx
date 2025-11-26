@@ -1,34 +1,76 @@
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import { auth, db } from "../firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
 import Button from "./Button";
 
 const NavigationBar = () => {
   const [hidden, setHidden] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+
+  // Auth/UI state
+  const [role, setRole] = useState<"member" | "coach" | "admin">("member");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  // ──────────────────────────────────────────
+  // AUTH LISTENER
+  // ──────────────────────────────────────────
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      // Block UI updates during auth transitions
+      if (window.authTransition.locked) return;
+
       if (user) {
         setIsLoggedIn(true);
+        const ref = doc(db, "user", user.uid);
+        const snap = await getDoc(ref);
+        setRole(snap.exists() ? snap.data().role : "member");
       } else {
         setIsLoggedIn(false);
+        setRole("member"); // default navbar for logged-out users
       }
     });
 
     return () => unsubscribe();
   }, []);
 
+  // When modal says "auth finished", re-evaluate currentUser
+  useEffect(() => {
+    const onComplete = async () => {
+      const user = auth.currentUser;
+
+      if (user) {
+        setIsLoggedIn(true);
+        const ref = doc(db, "user", user.uid);
+        const snap = await getDoc(ref);
+        setRole(snap.exists() ? snap.data().role : "member");
+      } else {
+        setIsLoggedIn(false);
+        setRole("member");
+      }
+    };
+
+    window.addEventListener("auth-transition-complete", onComplete);
+    return () =>
+      window.removeEventListener("auth-transition-complete", onComplete);
+  }, []);
+
+  // ──────────────────────────────────────────
+  // NAVBAR HIDE/SHOW ON SCROLL
+  // ──────────────────────────────────────────
   useEffect(() => {
     const handleScroll = () => {
+      if (window.authTransition.locked) {
+        setHidden(false);
+        return;
+      }
+
       if (window.scrollY > lastScrollY && window.scrollY > 100) {
-        // scrolling down → hide navbar
         setHidden(true);
       } else {
-        // scrolling up → show navbar
         setHidden(false);
       }
+
       setLastScrollY(window.scrollY);
     };
 
@@ -37,54 +79,64 @@ const NavigationBar = () => {
   }, [lastScrollY]);
 
   return (
-    <>
-      <nav
-        className={`sticky top-0 mx-auto flex justify-between items-center px-20 py-[13px] bg-black-34 z-50 transition-transform duration-300 ease-in-out ${
-          hidden ? "-translate-y-full" : "translate-y-0"
-        }`}
+    <nav
+      className={`sticky top-0 z-50 flex items-center justify-between px-20 py-[13px] bg-black-34 transition-transform duration-300 ${
+        hidden ? "-translate-y-full" : "translate-y-0"
+      }`}
+    >
+      {/* LEFT — LOGO */}
+      <Button
+        className="font-bold text-shrek text-5xl hover:scale-110 transition-transform"
+        to="/"
       >
-        {/* Left Side: CORELAB LOGO - Home Button*/}
-        <div>
+        CORE LAB
+      </Button>
+
+      {/* CENTER LINKS */}
+      <div className="absolute left-1/2 -translate-x-1/2 space-x-3">
+        <Button to="/">HOME</Button>
+
+        {/* MEMBER LINKS — always shown, even when logged out */}
+        {role === "member" && (
+          <>
+            <Button to="/memberships">MEMBERSHIPS</Button>
+            <Button to="/classes">CLASSES</Button>
+            <Button to="/coaches">COACHES</Button>
+          </>
+        )}
+
+        {/* COACH LINKS */}
+        {role === "coach" && (
+          <>
+            <Button to="/CS-Classes">CLASSES</Button>
+            <Button to="/CS-Client">CLIENTS</Button>
+          </>
+        )}
+      </div>
+
+      {/* RIGHT — PROFILE + LOGIN/LOGOUT */}
+      <div className="space-x-2">
+        <Button to="/profile">MY PROFILE</Button>
+
+        {isLoggedIn ? (
           <Button
-            className="inline-block font-bold text-shrek text-5xl transition-transform duration-400 hover:scale-110"
-            to="/"
+            className="shrek-btn w-35"
+            onClick={() =>
+              window.dispatchEvent(new Event("open-logout-confirm"))
+            }
           >
-            CORE LAB
+            LOG OUT
           </Button>
-        </div>
-
-        {/* Middle: Nav Links*/}
-        <div className="absolute left-1/2 transform -translate-x-1/2 space-x-3">
-          <Button to="/">HOME</Button>
-          <Button to="/memberships">MEMBERSHIPS</Button>
-          <Button to="/classes">CLASSES</Button>
-          <Button to="/coaches">COACHES</Button>
-        </div>
-
-        {/* Right: Profile + GET STARTED / LOGIN / LOGOUT */}
-        <div className="space-x-2">
-          <Button to="/profile">MY PROFILE</Button>
-
-          {isLoggedIn ? (
-            <Button
-              className="shrek-btn w-35"
-              onClick={() =>
-                window.dispatchEvent(new Event("open-logout-confirm"))
-              }
-            >
-              LOG OUT
-            </Button>
-          ) : (
-            <Button
-              onClick={() => window.dispatchEvent(new Event("open-login"))}
-              className="shrek-btn w-35"
-            >
-              LOG IN
-            </Button>
-          )}
-        </div>
-      </nav>
-    </>
+        ) : (
+          <Button
+            className="shrek-btn w-35"
+            onClick={() => window.dispatchEvent(new Event("open-login"))}
+          >
+            LOG IN
+          </Button>
+        )}
+      </div>
+    </nav>
   );
 };
 

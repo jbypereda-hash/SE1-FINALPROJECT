@@ -35,6 +35,19 @@ const LoginModal: React.FC<LoginModalProps> = ({
   const [showContent, setShowContent] = useState(false);
   const [renderModal, setRenderModal] = useState(false);
 
+  useEffect(() => {
+    if (isOpen) {
+      window.authTransition.locked = true;
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!renderModal && !isOpen) {
+      window.authTransition.locked = false;
+      window.dispatchEvent(new Event("auth-transition-complete"));
+    }
+  }, [renderModal, isOpen]);
+
   // Handle modal mount/unmount and animation states
   useEffect(() => {
     if (isOpen) {
@@ -136,13 +149,21 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
       setSuccess(true);
 
-      setTimeout(() => {
-        if (role === "admin") {
-          window.location.assign("/AS_AdminDirectory");
-        } else {
-          window.location.assign("/");
-        }
-      }, 800);
+      setSuccess(true);
+
+      // Close modal immediately
+      onClose();
+
+      // Redirect immediately
+      if (role === "admin") {
+        window.location.assign("/AS_AdminDirectory");
+      } else {
+        window.location.assign("/");
+      }
+
+      // Unlock UI immediately
+      window.authTransition.locked = false;
+      window.dispatchEvent(new Event("auth-transition-complete"));
     } catch (error: any) {
       console.error("Login error:", error);
       setErrors({

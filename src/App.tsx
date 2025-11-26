@@ -15,6 +15,11 @@ import Classes from "./pages/Classes";
 import EditProfilePage from "./pages/EditProfile";
 import MembershipPackages from "./pages/MembershipPackages";
 
+// Coach Pages
+import { CS_Classes } from "./pages/coach/CS_Classes";
+import { CS_Clients } from "./pages/coach/CS_Clients";
+import { CS_CoachProfile } from "./pages/coach/CS_CoachProfile";
+
 // Admin Pages
 import AS_PendingMemberships from "./pages/admin/AS_PendingMemberships";
 import AS_AdminDirectory from "./pages/admin/AS_AdminDirectory";
@@ -28,10 +33,24 @@ import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 import { AnimatePresence } from "framer-motion";
+import CoachLayout from "./layouts/CoachLayout";
+declare global {
+  interface Window {
+    authTransition: {
+      locked: boolean;
+    };
+  }
+}
+
+window.authTransition = { locked: false };
 
 const App = () => {
   const { user, role, loading } = useAuth();
   const location = useLocation();
+
+  window.authTransition = {
+    locked: false,
+  };
 
   // Redirect admin to admin home
   useEffect(() => {
@@ -82,7 +101,7 @@ const App = () => {
 
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-          {/* ---------- USER ROUTES ---------- */}
+          {/* ---------- HOME PAGE | MEMBER + COACH ---------- */}
           <Route
             path="/"
             element={
@@ -92,6 +111,7 @@ const App = () => {
             }
           />
 
+          {/* ---------- USER ROUTES ---------- */}
           <Route
             path="/memberships"
             element={
@@ -122,7 +142,7 @@ const App = () => {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute requiredRole="member">
+              <ProtectedRoute requiredRole={["member"]}>
                 <UserLayout>
                   <ProfilePage />
                 </UserLayout>
@@ -133,10 +153,45 @@ const App = () => {
           <Route
             path="/edit-profile"
             element={
-              <ProtectedRoute requiredRole="member">
+              <ProtectedRoute requiredRole={["member"]}>
                 <UserLayout>
                   <EditProfilePage />
                 </UserLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ---------- COACH ROUTES ---------- */}
+
+          <Route
+            path="/CS-Classes"
+            element={
+              <ProtectedRoute requiredRole={["coach"]}>
+                <CoachLayout>
+                  <CS_Classes />
+                </CoachLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/CS-Client"
+            element={
+              <ProtectedRoute requiredRole={["coach"]}>
+                <CoachLayout>
+                  <CS_Clients />
+                </CoachLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/CS-CoachProfile"
+            element={
+              <ProtectedRoute requiredRole={["coach"]}>
+                <CoachLayout>
+                  <CS_CoachProfile />
+                </CoachLayout>
               </ProtectedRoute>
             }
           />
@@ -145,7 +200,7 @@ const App = () => {
           <Route
             path="/AS_AdminDirectory"
             element={
-              <ProtectedRoute requiredRole="admin">
+              <ProtectedRoute requiredRole={["admin"]}>
                 <AdminLayout>
                   <AS_AdminDirectory />
                 </AdminLayout>
@@ -156,7 +211,7 @@ const App = () => {
           <Route
             path="/AS_MemberDirectory"
             element={
-              <ProtectedRoute requiredRole="admin">
+              <ProtectedRoute requiredRole={["admin"]}>
                 <AdminLayout>
                   <AS_MemberDirectory />
                 </AdminLayout>
@@ -167,7 +222,7 @@ const App = () => {
           <Route
             path="/AS_CoachDirectory"
             element={
-              <ProtectedRoute requiredRole="admin">
+              <ProtectedRoute requiredRole={["admin"]}>
                 <AdminLayout>
                   <AS_CoachDirectory />
                 </AdminLayout>
@@ -178,7 +233,7 @@ const App = () => {
           <Route
             path="/AS_PendingMemberships"
             element={
-              <ProtectedRoute requiredRole="admin">
+              <ProtectedRoute requiredRole={["admin"]}>
                 <AdminLayout>
                   <AS_PendingMemberships />
                 </AdminLayout>
@@ -189,7 +244,7 @@ const App = () => {
           <Route
             path="/AS_AddCoach"
             element={
-              <ProtectedRoute requiredRole="admin">
+              <ProtectedRoute requiredRole={["admin"]}>
                 <AdminLayout>
                   <AS_AddCoach />
                 </AdminLayout>
@@ -200,7 +255,7 @@ const App = () => {
           <Route
             path="/AS_EditCoach"
             element={
-              <ProtectedRoute requiredRole="admin">
+              <ProtectedRoute requiredRole={["admin"]}>
                 <AdminLayout>
                   <AS_EditCoach />
                 </AdminLayout>

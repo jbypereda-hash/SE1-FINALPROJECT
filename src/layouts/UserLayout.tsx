@@ -1,15 +1,16 @@
 import React from "react";
 import NavigationBar from "../components/NavigationBar";
 import PageTransition from "./PageTransition";
+import AuthTransitionBlocker from "../context/AuthTransitionBlocker";
 
 const UserLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <div>
+    <AuthTransitionBlocker>
       <NavigationBar />
       <main className="flex-1">
         <PageTransition>{children}</PageTransition>
       </main>
-    </div>
+    </AuthTransitionBlocker>
   );
 };
 

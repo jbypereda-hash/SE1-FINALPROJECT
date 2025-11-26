@@ -82,7 +82,7 @@ const AuthModals = () => {
         />
       </div>
     </div>
-  );
+  );x
 };
 
 export default AuthModals;

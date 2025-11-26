@@ -64,6 +64,19 @@ const SignupModal: React.FC<SignupModalProps> = ({
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (isOpen) {
+      window.authTransition.locked = true;
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!renderModal && !isOpen) {
+      window.authTransition.locked = false;
+      window.dispatchEvent(new Event("auth-transition-complete"));
+    }
+  }, [renderModal, isOpen]);
+
   // Remove modal from DOM after fade-out
   useEffect(() => {
     if (!showContent && !isOpen) {
@@ -180,7 +193,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
         gender: formData.gender,
         role: formData.role,
         createdAt: serverTimestamp(),
-        lastSignInTime: null,
+        lastSignInTime: new Date().toUTCString(),
       });
 
       setSuccess(true);
@@ -196,7 +209,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
             gender: formData.gender,
             role: formData.role,
             createdAt: new Date(), // approximate timestamp
-            lastSignInTime: null, // new users haven't signed in yet
+            lastSignInTime: new Date().toUTCString(),
           },
         })
       );
@@ -216,10 +229,7 @@ const SignupModal: React.FC<SignupModalProps> = ({
       setTimeout(() => {
         setSuccess(false);
         onClose(); // close signup modal
-        if (formData.role !== "admin") {
-          setTimeout(onSwitchToLogin, 200); // open login modal
-        }
-      }, 1500);
+      }, 200);
     } catch (error: any) {
       console.error("Error creating user:", error);
 
@@ -234,9 +244,9 @@ const SignupModal: React.FC<SignupModalProps> = ({
       }
 
       return;
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   if (!renderModal) return null;

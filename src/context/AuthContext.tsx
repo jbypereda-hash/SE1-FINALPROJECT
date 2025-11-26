@@ -1,12 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import type { User } from "firebase/auth";
+import { onAuthStateChanged, type User } from "firebase/auth";
 import { auth, db } from "../firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 
 interface AuthContextType {
-  user: User | null;    
-  role: "admin" | "member" | null;
+  user: User | null;
+  role: "admin" | "coach" | "member" | null;
   loading: boolean;
 }
 
@@ -18,9 +17,11 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<"admin" | "member" | null>(null);
+  const [role, setRole] = useState<"admin" | "coach" | "member" | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,14 +30,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (currentUser) {
         try {
-          // 👇 your Firestore collection is "user", not "users"
-          const docRef = doc(db, "user", currentUser.uid);
-          const docSnap = await getDoc(docRef);
+          // IMPORTANT: your collection must contain a role field
+          const userRef = doc(db, "user", currentUser.uid);
+          const snap = await getDoc(userRef);
 
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            setRole(data.role || "member");
+          if (snap.exists()) {
+            const data = snap.data();
+
+            // VALIDATE role
+            if (data.role === "admin") setRole("admin");
+            else if (data.role === "coach") setRole("coach");
+            else setRole("member"); // fallback
           } else {
+            // No document → assume member
             setRole("member");
           }
         } catch (err) {
@@ -44,6 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setRole("member");
         }
       } else {
+        // logged out
         setRole(null);
       }
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Button from "./Button";
+import BackButton from "../assets/icons/arrow-left.svg?react";
 
 interface User {
   uid: string;
@@ -116,17 +117,17 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
             : "opacity-0 scale-90 translate-y-6"
         }`}
       >
+        {/* Back Button */}
         <Button
           onClick={onClose}
-          className="absolute top-5 left-5 hover:scale-110"
+          className="absolute top-5 left-5 hover:scale-110 transition-all duration-200"
         >
-          ←
+          <BackButton className="w-12 h-12" />
         </Button>
 
-        <h2 className="text-shrek text-6xl font-bold">Edit User</h2>
-        <p className="mb-6 text-2xl">Update user information below</p>
+        <h2 className="text-shrek text-6xl font-bold mb-10">EDIT USER</h2>
 
-        <form className="text-left space-y-4">
+        <form className="text-left">
           <div className="flex gap-3">
             <div>
               <p>First Name:</p>
@@ -186,20 +187,25 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
 
           <div>
             <p>Gender:</p>
-            <select
-              value={formData.gender}
-              onChange={(e) =>
-                handleChange("gender", e.target.value as User["gender"])
-              }
-              className="w-full px-3 py-1.5 rounded-4xl bg-donkey-10 text-black-35 appearance-none"
-            >
-              <option value="" disabled hidden>
-                Select
-              </option>
-              <option>Male</option>
-              <option>Female</option>
-              <option>Other</option>
-            </select>
+            <div className="relative w-full">
+              <select
+                value={formData.gender}
+                onChange={(e) =>
+                  handleChange("gender", e.target.value as User["gender"])
+                }
+                className="w-full px-3 py-1.5 rounded-4xl bg-donkey-10 text-black-35 appearance-none"
+              >
+                <option value="" disabled hidden>
+                  Select
+                </option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-black-34">
+                ▼
+              </div>
+            </div>
             {errors.gender && (
               <p className="text-red-400 text-xs ml-3 italic">
                 {errors.gender}
@@ -209,25 +215,30 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
 
           <div>
             <p>Role:</p>
-            <select
-              value={formData.role}
-              onChange={(e) =>
-                handleChange("role", e.target.value as User["role"])
-              }
-              className="w-full px-3 py-1.5 rounded-4xl bg-donkey-10 text-black-35 appearance-none"
-            >
-              <option value="member">Member</option>
-              <option value="coach">Coach</option>
-              <option value="admin">Admin</option>
-            </select>
+            <div className="relative w-full">
+              <select
+                value={formData.role}
+                onChange={(e) =>
+                  handleChange("role", e.target.value as User["role"])
+                }
+                className="w-full px-3 py-1.5 rounded-4xl bg-donkey-10 text-black-35 appearance-none"
+              >
+                <option value="member">Member</option>
+                <option value="coach">Coach</option>
+                <option value="admin">Admin</option>
+              </select>
+              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-black-34">
+                ▼
+              </div>
+            </div>
           </div>
 
           <div className="flex justify-center">
             <Button
               onClick={handleSaveClick}
-              className="shrek-btn font-bold py-1 border-3 mt-6 w-60"
+              className="shrek-btn font-bold py-1 border-3 mt-15 mb-4 w-60"
             >
-              Save Changes
+              SAVE CHANGES
             </Button>
           </div>
         </form>

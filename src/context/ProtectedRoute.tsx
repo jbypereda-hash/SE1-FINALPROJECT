@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import type { JSX } from "react";
 
 interface ProtectedRouteProps {
-  requiredRole?: "admin" | "member";
+  requiredRole?: ("admin" | "coach" | "member")[];
   children: JSX.Element;
 }
 
@@ -18,13 +18,11 @@ const ProtectedRoute = ({ requiredRole, children }: ProtectedRouteProps) => {
     );
   }
 
-  if (!user) {
-    // not logged in
-    return <Navigate to="/" replace />;
-  }
+  // Not logged in → always redirect home
+  if (!user) return <Navigate to="/" replace />;
 
-  if (requiredRole && role !== requiredRole) {
-    // role mismatch
+  // If route requires specific role(s)
+  if (requiredRole && !requiredRole.includes(role!)) {
     return <Navigate to="/" replace />;
   }
 
