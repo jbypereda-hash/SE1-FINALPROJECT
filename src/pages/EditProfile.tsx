@@ -1,4 +1,3 @@
-// src/pages/EditProfile.tsx
 import React, { useEffect, useMemo, useState } from "react";
 import { useMemberProfile } from "../hooks/useMemberProfile";
 import { useNavigate } from "react-router-dom";
@@ -20,7 +19,6 @@ const PRESET_GOALS = [
   "Stress Relief",
 ];
 
-// Split full name entered as:  "LastName, FirstName MiddleName"
 function splitName(full: string) {
   if (!full.includes(",")) {
     return {
@@ -33,7 +31,7 @@ function splitName(full: string) {
 
   return {
     lastName: last,
-    firstName: rest, // already includes middle name if any
+    firstName: rest,
   };
 }
 
@@ -67,9 +65,9 @@ export default function EditProfilePage() {
   const navigate = useNavigate();
   const { member, loading } = useMemberProfile();
   const { userProfile } = useUserProfile();
+  const [navigating, setNavigating] = useState(false);
 
-  // form state
-  const [name, setName] = useState(""); // <-- this is "LastName, FirstName"
+  const [name, setName] = useState("");
   const [dob, setDob] = useState("");
   const [height, setHeight] = useState("");
   const [startingWeight, setStartingWeight] = useState("");
@@ -82,11 +80,9 @@ export default function EditProfilePage() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  // populate form
   useEffect(() => {
     if (!member || !userProfile) return;
 
-    // Reconstruct name into "Last, First"
     const combined =
       userProfile.lastName && userProfile.firstName
         ? `${userProfile.lastName}, ${userProfile.firstName}`
@@ -137,7 +133,10 @@ export default function EditProfilePage() {
   };
 
   const onCancel = () => {
-    navigate("/profile");
+    setNavigating(true);
+    setTimeout(() => {
+      navigate("/profile");
+    }, 800);
   };
 
   const onSave = async (e?: React.FormEvent) => {
@@ -150,20 +149,16 @@ export default function EditProfilePage() {
       const user = auth.currentUser;
       if (!user) throw new Error("Not authenticated");
 
-      // Split name
       const { firstName, lastName } = splitName(name);
 
-      // numeric inputs
       const starting = Number(startingWeight) || 0;
       const current = Number(currentWeight) || starting;
       const goal = Number(goalWeight) || starting;
       const h = Number(height) || 0;
 
-      // computed
       const age = calculateAgeFromString(dob);
       const { bmiValue, bmiCategory } = calculateBMI(current, h);
 
-      // update MEMBER document (NO NAME STORED HERE)
       const memberRef = doc(db, "members", user.uid);
       await updateDoc(memberRef, {
         dob,
@@ -182,7 +177,6 @@ export default function EditProfilePage() {
         },
       });
 
-      // update USER document (THIS IS WHERE NAME IS STORED)
       const userRef = doc(db, "user", user.uid);
       await updateDoc(userRef, {
         firstName,
@@ -192,7 +186,11 @@ export default function EditProfilePage() {
       });
 
       setSaving(false);
-      navigate("/profile");
+      setNavigating(true);
+
+      setTimeout(() => {
+        navigate("/profile");
+      }, 800);
     } catch (err: any) {
       console.error("Save profile error:", err);
       setSaveError(err.message || "Failed to save profile.");
@@ -212,12 +210,21 @@ export default function EditProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-white">
-        Loading…
+      <div className="min-h-screen flex items-center justify-center text-white text-2xl">
+        Loading...
       </div>
     );
   }
 
+  if (navigating) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white text-2xl">
+        Loading...
+      </div>
+    );
+  }
+
+  // only show "No profile found" if NOT navigating or loading
   if (!member || !userProfile) {
     return (
       <div className="min-h-screen flex items-center justify-center text-white">
@@ -227,7 +234,7 @@ export default function EditProfilePage() {
   }
 
   return (
-    <div className="bg-[#0f0f13] min-h-screen px-6 md:px-10 py-10 text-white">
+    <div className="bg-[#0f0f13] h-full px-6 md:px-10 py-10 text-white">
       <h2 className="text-center text-shrek text-3xl md:text-4xl font-bold mb-10">
         EDIT PROFILE
       </h2>
@@ -236,11 +243,15 @@ export default function EditProfilePage() {
         onSubmit={onSave}
         className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-8"
       >
-        {/* LEFT CARD — Name + Goals */}
         <div className="flex-1 bg-[#1c1c22] rounded-[20px] p-6">
           <label className="text-shrek text-2xl font-bold block mb-2">
-            Name (Format: Last, First)
+            Name
           </label>
+
+          <p className="text-xs text-gray-400 mb-3">
+            Format: Last Name, First Name
+          </p>
+
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -252,9 +263,7 @@ export default function EditProfilePage() {
           <hr className="border-gray-700 my-4" />
 
           <h3 className="text-gray-300 font-semibold mb-2">Goals</h3>
-          <p className="text-xs text-gray-400 mb-3">
-            Fitness Goals (Choose up to 3)
-          </p>
+          <p className="text-xs text-gray-400 mb-3">Choose up to 3 goals.</p>
 
           <div className="flex flex-wrap gap-3">
             {PRESET_GOALS.map((g) => {
@@ -264,9 +273,16 @@ export default function EditProfilePage() {
                   key={g}
                   type="button"
                   onClick={() => toggleGoal(g)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition ${
-                    selected ? "bg-shrek text-black" : "bg-donkey-10 text-black"
-                  }`}
+                  className={`
+                  px-4 py-2 rounded-full text-sm font-medium 
+                  transition-all duration-200 
+                  transform hover:scale-105
+                  ${
+                    selected
+                      ? "bg-shrek text-black hover:brightness-110"
+                      : "bg-donkey-10 text-black hover:brightness-110"
+                  }
+                `}
                 >
                   {g}
                 </button>
@@ -279,7 +295,6 @@ export default function EditProfilePage() {
           )}
         </div>
 
-        {/* RIGHT CARD — Health */}
         <div className="flex-1 bg-[#1c1c22] rounded-[20px] p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
@@ -376,12 +391,12 @@ export default function EditProfilePage() {
             <button
               type="button"
               onClick={onCancel}
-              className="px-8 py-2 rounded-full border-2 border-shrek text-[#d5ff5f] hover:bg-[#d5ff5f]/10"
+              className="px-8 py-2 rounded-full border-2 border-shrek text-[#d5ff5f] text-xl font-bold hover:bg-[#d5ff5f]/10"
             >
               CANCEL
             </button>
 
-            <Button type="submit" className="shrek-btn font-bold px-8">
+            <Button type="submit" className="shrek-btn font-bold px-8 py-1">
               {saving ? "Saving..." : "SAVE"}
             </Button>
           </div>
