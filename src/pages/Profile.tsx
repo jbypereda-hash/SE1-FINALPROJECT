@@ -4,10 +4,13 @@ import { useUserProfile } from "../hooks/useUserProfile";
 import { useEffect } from "react";
 import editIcon from "../assets/icons/edit.png";
 import { useNavigate } from "react-router-dom";
+import { useMemberTodos } from "../hooks/useMemberTodos.ts";
+import ToDoList from "../components/ToDoList.tsx";
 
 export default function ProfilePage() {
   const { member, loading } = useMemberProfile();
   const { userProfile } = useUserProfile();
+  const { todos } = useMemberTodos();
 
   const navigate = useNavigate();
 
@@ -21,12 +24,19 @@ export default function ProfilePage() {
     }
   }, [loading, member]);
 
-  if (!member)
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0f0f13] flex items-center justify-center text-white"></div>
+    );
+  }
+
+  if (!member) {
     return (
       <div className="min-h-screen bg-[#0f0f13] flex items-center justify-center text-white">
         No profile found.
       </div>
     );
+  }
 
   return (
     <div className="bg-[#0f0f13] text-white px-6 md:px-10 py-10 h-full">
@@ -40,7 +50,7 @@ export default function ProfilePage() {
                 {/* LEFT SECTION */}
                 <div>
                   {/* STATUS */}
-                  <span className="inline-block bg-[#d5ff5f] text-black text-xs font-bold px-3 py-1 rounded-full mb-2">
+                  <span className="inline-block bg-shrek text-black text-xs font-bold px-3 py-1 rounded-full mb-2">
                     {member.status}
                   </span>
 
@@ -52,7 +62,7 @@ export default function ProfilePage() {
                   </p>
 
                   {/* ⬇⬇ DISPLAY FULL NAME FROM useUserProfile() */}
-                  <h1 className="text-[#d5ff5f] text-3xl md:text-4xl font-extrabold leading-tight">
+                  <h1 className="text-shrek text-3xl md:text-4xl font-extrabold leading-tight">
                     {userProfile?.fullName || "Unnamed Member"}
                   </h1>
                 </div>
@@ -86,13 +96,13 @@ export default function ProfilePage() {
                     member.goals.map((g, i) => (
                       <span
                         key={i}
-                        className="bg-[#d9d9d9] text-black px-4 py-[6px] rounded-lg text-sm font-medium"
+                        className="bg-donkey-10 text-black px-4 py-[6px] rounded-lg text-sm font-medium"
                       >
                         {g}
                       </span>
                     ))
                   ) : (
-                    <span className="text-gray-400">No goals set</span>
+                    <span className="text-donkey-10">No goals set</span>
                   )}
                 </div>
               </div>
@@ -145,7 +155,9 @@ export default function ProfilePage() {
         </div>
 
         {/* RIGHT SIDE – FOR FUTURE FEATURES */}
-        <div className="hidden lg:block flex-1"></div>
+        <div className="hidden lg:block flex-1">
+          <ToDoList todos={todos} />
+        </div>
       </div>
     </div>
   );
