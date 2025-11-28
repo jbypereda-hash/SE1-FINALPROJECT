@@ -79,8 +79,12 @@ const NavigationBar = () => {
 
       {/* RIGHT — LOGIN / LOGOUT */}
       <div className="space-x-2">
-        <Button to="/profile">MY PROFILE</Button>
-
+        {(safeRole === "member" || safeRole === null) && (
+          <Button to="/profile">MY PROFILE</Button>
+        )}
+        {safeRole === "coach" && (
+          <Button to="/CS-CoachProfile">MY PROFILE</Button>
+        )}
         {!freeze &&
           (isLoggedIn ? (
             <Button
