@@ -38,6 +38,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       window.authTransition.locked = true;
+      window.dispatchEvent(new Event("auth-transition-start"));
     }
   }, [isOpen]);
 

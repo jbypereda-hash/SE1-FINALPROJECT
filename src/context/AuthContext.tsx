@@ -1,68 +1,76 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import { auth, db } from "../firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 
-interface AuthContextType {
+interface AuthContextValue {
   user: User | null;
-  role: "admin" | "coach" | "member" | null;
+  role: "member" | "coach" | "admin" | null;
+  isLoggedIn: boolean;
   loading: boolean;
+  forceRefreshAuth: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  role: null,
-  loading: true,
-});
+const AuthContext = createContext<AuthContextValue | null>(null);
 
-export const useAuth = () => useContext(AuthContext);
-
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<"admin" | "coach" | "member" | null>(null);
+  const [role, setRole] = useState<"member" | "coach" | "admin" | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Fetch role from Firestore
+  const loadUserRole = async (uid: string) => {
+    const ref = doc(db, "user", uid);
+    const snap = await getDoc(ref);
+    setRole(snap.exists() ? snap.data().role : "member");
+  };
+
+  // Normal Firebase auth listener
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-
-      if (currentUser) {
-        try {
-          // IMPORTANT: your collection must contain a role field
-          const userRef = doc(db, "user", currentUser.uid);
-          const snap = await getDoc(userRef);
-
-          if (snap.exists()) {
-            const data = snap.data();
-
-            // VALIDATE role
-            if (data.role === "admin") setRole("admin");
-            else if (data.role === "coach") setRole("coach");
-            else setRole("member"); // fallback
-          } else {
-            // No document → assume member
-            setRole("member");
-          }
-        } catch (err) {
-          console.error("Error fetching user role:", err);
-          setRole("member");
-        }
-      } else {
-        // logged out
-        setRole(null);
+    const unsub = onAuthStateChanged(auth, async (u) => {
+      if (!u) {
+        setUser(null);
+        setRole("member");
+        setLoading(false);
+        return;
       }
 
+      setUser(u);
+      await loadUserRole(u.uid);
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => unsub();
   }, []);
 
+  // Function for navbar freeze → re-fetch AFTER modal closes
+  const forceRefreshAuth = async () => {
+    const u = auth.currentUser;
+    if (!u) {
+      setUser(null);
+      setRole("member");
+      return;
+    }
+    setUser(u);
+    await loadUserRole(u.uid);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, role, loading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        role,
+        isLoggedIn: !!user,
+        loading,
+        forceRefreshAuth,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => useContext(AuthContext)!;
+
+// 👇 This is what your NAVBAR needs
+export const useAuthState = () => useContext(AuthContext)!;
