@@ -6,11 +6,14 @@ import editIcon from "../assets/icons/edit.png";
 import { useNavigate } from "react-router-dom";
 import { useMemberTodos } from "../hooks/useMemberTodos.ts";
 import ToDoList from "../components/ToDoList.tsx";
+import { useMyClasses } from "../hooks/useMyClasses";
+import MyClasses from "../components/MyClasses";
 
 export default function ProfilePage() {
   const { member, loading } = useMemberProfile();
   const { userProfile } = useUserProfile();
   const { todos } = useMemberTodos();
+  const { myClasses } = useMyClasses();
 
   const navigate = useNavigate();
 
@@ -155,8 +158,14 @@ export default function ProfilePage() {
         </div>
 
         {/* RIGHT SIDE – FOR FUTURE FEATURES */}
-        <div className="hidden lg:block flex-1">
-          <ToDoList todos={todos} />
+        <div className="hidden lg:flex flex-col flex-1 gap-6">
+          <div className="h-[350px] overflow-y-auto">
+            <MyClasses classes={myClasses} />
+          </div>
+
+          <div className="h-[350px] overflow-y-auto">
+            <ToDoList todos={todos} />
+          </div>
         </div>
       </div>
     </div>
