@@ -19,7 +19,7 @@ import MembershipPackages from "./pages/MembershipPackages";
 import { CS_Classes } from "./pages/coach/CS_Classes";
 import { CS_Clients } from "./pages/coach/CS_Clients";
 import CS_CoachProfile from "./pages/coach/CS_CoachProfile";
-import CS_CoachProfile from "./pages/coach/CS_CoachProfile";
+import CS_EditCoach from "./pages/coach/CS_EditCoach";
 
 // Admin Pages
 import AS_PendingMemberships from "./pages/admin/AS_PendingMemberships";
@@ -27,7 +27,6 @@ import AS_AdminDirectory from "./pages/admin/AS_AdminDirectory";
 import AS_MemberDirectory from "./pages/admin/AS_MemberDirectory";
 import AS_CoachDirectory from "./pages/admin/AS_CoachDirectory";
 import AS_AddCoach from "./pages/admin/AS_AddCoach";
-import CS from "./pages/coach/CS_EditCoach";
 
 import { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
@@ -202,6 +201,17 @@ const App = () => {
               }
             />
 
+            <Route
+              path="/CS-EditCoach"
+              element={
+                <ProtectedRoute requiredRole={["admin"]}>
+                  <AdminLayout>
+                    <CS_EditCoach />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+
             {/* ---------- ADMIN ROUTES ---------- */}
             <Route
               path="/AS_AdminDirectory"
@@ -253,17 +263,6 @@ const App = () => {
                 <ProtectedRoute requiredRole={["admin"]}>
                   <AdminLayout>
                     <AS_AddCoach />
-                  </AdminLayout>
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/AS_EditCoach"
-              element={
-                <ProtectedRoute requiredRole={["admin"]}>
-                  <AdminLayout>
-                    <AS_EditCoach />
                   </AdminLayout>
                 </ProtectedRoute>
               }
