@@ -46,9 +46,9 @@ export default function ProfilePage() {
       <div className="flex gap-10">
         {/* LEFT SIDE – PROFILE */}
         <div className="w-full max-w-xl">
-          <div className="bg-[#1c1c22] rounded-[24px] p-6 ">
+          <div className="bg-black-34 rounded-[24px] p-6 ">
             {/* CARD */}
-            <div className="bg-[#1c1c22] rounded-[24px] p-6 w-full max-w-xl">
+            <div className="bg-black-34 rounded-[24px] p-6 w-full max-w-xl">
               <div className="flex justify-between items-start">
                 {/* LEFT SECTION */}
                 <div>

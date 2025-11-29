@@ -54,7 +54,8 @@ export default function ToDoList({ todos = [], onRefresh }: Props) {
   return (
     <>
       <div className="w-full h-full overflow-x-hidden">
-        <div className="bg-[#1c1c22] rounded-[24px] p-6 w-full h-full flex flex-col">
+        {/* yen changed bg-[#1c1c22] to bg-black-34 uwu */}
+        <div className="bg-black-34 rounded-[24px] p-6 w-full h-full flex flex-col"> 
           {/* HEADER */}
           <div className="flex items-center justify-between mb-4 pr-2">
             <h3 className="text-[#d5ff5f] text-xl font-bold">TO DO</h3>
