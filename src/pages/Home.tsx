@@ -12,23 +12,30 @@ import TiktokIcon from "../assets/icons/tiktok.svg?react";
 import InstagramIcon from "../assets/icons/instagram.svg?react";
 import FacebookIcon from "../assets/icons/facebook.svg?react";
 import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import { useAuthState } from "../context/AuthContext";
 
 const Home = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedIn, role, forceRefreshAuth } = useAuthState();
+  const [freeze, setFreeze] = useState(false);
+
+  const safeRole = isLoggedIn ? role : "member";
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setIsLoggedIn(true);
-      } else {
-        setIsLoggedIn(false);
-      }
-    });
+    const lock = () => setFreeze(true);
 
-    return () => unsubscribe();
-  }, []);
+    const unlock = () => {
+      setFreeze(false);
+      forceRefreshAuth(); // refresh AFTER unlocking
+    };
+
+    window.addEventListener("auth-transition-start", lock);
+    window.addEventListener("auth-transition-complete", unlock);
+
+    return () => {
+      window.removeEventListener("auth-transition-start", lock);
+      window.removeEventListener("auth-transition-complete", unlock);
+    };
+  }, [forceRefreshAuth]);
 
   return (
     <div className="text-white flex flex-col">
@@ -57,18 +64,32 @@ const Home = () => {
             </p>
 
             {isLoggedIn ? (
-              <Button 
-              onClick={() =>
-                  window.dispatchEvent(new Event("check-member-registration"))
-                }
-              className="shrek-btn text-4xl px-8 py-4" to="/profile">
-                MANAGE HEALTH INFO
-              </Button>
+              <>
+                {safeRole === "member" && (
+                  <Button
+                    onClick={() =>
+                      window.dispatchEvent(
+                        new Event("check-member-registration")
+                      )
+                    }
+                    className="shrek-btn text-4xl px-8 py-4"
+                    to="/profile"
+                  >
+                    MANAGE HEALTH INFO
+                  </Button>
+                )}
+                {safeRole === "coach" && (
+                  <Button
+                    className="shrek-btn text-4xl px-8 py-4"
+                    to="/CS-CoachProfile"
+                  >
+                    MANAGE COACH PROFILE
+                  </Button>
+                )}
+              </>
             ) : (
               <Button
-                onClick={() =>
-                  window.dispatchEvent(new Event("open-signup"))
-                }
+                onClick={() => window.dispatchEvent(new Event("open-signup"))}
                 className="shrek-btn text-4xl px-8 py-4"
               >
                 GET STARTED
@@ -117,9 +138,21 @@ const Home = () => {
       {/* MEMBERSHIP PACKAGES */}
       <div className="bg-black-34 text-white flex flex-col items-center text-center py-8 px-25">
         <h1>MEMBERSHIP PACKAGES</h1>
-        <p className="text-white text-xl">
-          Choose a plan that fits your lifestyle.
-        </p>
+        {safeRole === "member" && (
+          <p className="text-white text-xl">
+            Choose a plan that fits your lifestyle.
+          </p>
+        )}
+        {safeRole === "coach" && (
+          <div className="flex space-x-2">
+            <p className="text-white text-xl">
+              Choose a plan that fits your lifestyle
+            </p>
+            <p className="text-white text-xl italic">
+              (Open to regular members only).
+            </p>
+          </div>
+        )}
 
         {/* PACKAGES */}
         <section className="bg-donkey-10 text-black-35 rounded-[55px] flex items-stretch m-12">
@@ -139,9 +172,19 @@ const Home = () => {
               facilities. Perfect for those who prefer to work out on their own
               schedule.
             </p>
-            <Button className="shrek-btn hover:scale-110 hover:bg-shrek hover:text-black-35 transition-transform">
-              Learn More
-            </Button>
+            {safeRole === "member" && (
+              <Button
+                className="shrek-btn hover:scale-110 hover:bg-shrek hover:text-black-35 transition-transform"
+                to="/memberships"
+              >
+                Learn More
+              </Button>
+            )}
+            {safeRole === "coach" && (
+              <Button className="shrek-btn bg bg-donkey-30 text-black-34 pointer-events-none">
+                Learn More
+              </Button>
+            )}
           </div>
 
           <div className="border-l-2 border-black-35 h-105" />
@@ -160,9 +203,19 @@ const Home = () => {
               our group fitness classes. A great option for those who thrive in
               a class environment.
             </p>
-            <Button className="shrek-btn hover:scale-110 hover:bg-shrek hover:text-black-35 transition-transform">
-              Learn More
-            </Button>
+            {safeRole === "member" && (
+              <Button
+                className="shrek-btn hover:scale-110 hover:bg-shrek hover:text-black-35 transition-transform"
+                to="/memberships"
+              >
+                Learn More
+              </Button>
+            )}
+            {safeRole === "coach" && (
+              <Button className="shrek-btn bg bg-donkey-30 text-black-34 pointer-events-none">
+                Learn More
+              </Button>
+            )}
           </div>
 
           <div className="border-l-2 border-black-35 h-105" />
@@ -182,9 +235,19 @@ const Home = () => {
               training sessions with a coach of your choice. Ideal for anyone
               looking for personalized attention and accelerated results.
             </p>
-            <Button className="shrek-btn hover:scale-110 hover:bg-shrek hover:text-black-35 transition-transform">
-              Learn More
-            </Button>
+            {safeRole === "member" && (
+              <Button
+                className="shrek-btn hover:scale-110 hover:bg-shrek hover:text-black-35 transition-transform"
+                to="/memberships"
+              >
+                Learn More
+              </Button>
+            )}
+            {safeRole === "coach" && (
+              <Button className="shrek-btn bg bg-donkey-30 text-black-34 pointer-events-none">
+                Learn More
+              </Button>
+            )}
           </div>
         </section>
       </div>
@@ -192,9 +255,16 @@ const Home = () => {
       {/* OUR CLASSES */}
       <div className="bg-black-35 text-white flex flex-col items-center pt-10 pb-14 px-25">
         <h1>OUR CLASSES</h1>
-        <p className="text-white text-xl">
-          Find the perfect workout to match your goals.
-        </p>
+        {safeRole === "member" && (
+          <p className="text-white text-xl">
+            Find the perfect workout to match your goals.
+          </p>
+        )}
+        {safeRole === "coach" && (
+          <p className="text-white text-xl">
+            Choose the classes you want to teach, when you want to.
+          </p>
+        )}
 
         <section className="flex flex-wrap justify-center">
           {/* CORE CRUSHER */}
@@ -207,7 +277,16 @@ const Home = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-black-34 to-transparent"></div>
             <div className="absolute bottom-0 left-0 text-white p-3">
               <h2 className="text-4xl font-bold leading-none">Core Crusher</h2>
-              <Button className="nobg-btn text-xl p-0 underline">
+              <Button
+                className="nobg-btn text-xl p-0 underline"
+                to={
+                  safeRole === "member"
+                    ? "/classes"
+                    : safeRole === "coach"
+                    ? "/CS-Classes"
+                    : "/"
+                }
+              >
                 Learn More
               </Button>
             </div>
@@ -225,7 +304,16 @@ const Home = () => {
               <h2 className="text-4xl font-bold leading-none">
                 Power Flow Yoga
               </h2>
-              <Button className="nobg-btn text-xl p-0 underline">
+              <Button
+                className="nobg-btn text-xl p-0 underline"
+                to={
+                  safeRole === "member"
+                    ? "/classes"
+                    : safeRole === "coach"
+                    ? "/CS-Classes"
+                    : "/"
+                }
+              >
                 Learn More
               </Button>
             </div>
@@ -241,7 +329,16 @@ const Home = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-black-34 to-transparent"></div>
             <div className="absolute bottom-0 left-0 text-white p-3">
               <h2 className="text-4xl font-bold leading-none">HIIT Blast</h2>
-              <Button className="nobg-btn text-xl p-0 underline">
+              <Button
+                className="nobg-btn text-xl p-0 underline"
+                to={
+                  safeRole === "member"
+                    ? "/classes"
+                    : safeRole === "coach"
+                    ? "/CS-Classes"
+                    : "/"
+                }
+              >
                 Learn More
               </Button>
             </div>
@@ -259,7 +356,16 @@ const Home = () => {
               <h2 className="text-4xl font-bold leading-none">
                 Kickboxing Cardio
               </h2>
-              <Button className="nobg-btn text-xl p-0 underline">
+              <Button
+                className="nobg-btn text-xl p-0 underline"
+                to={
+                  safeRole === "member"
+                    ? "/classes"
+                    : safeRole === "coach"
+                    ? "/CS-Classes"
+                    : "/"
+                }
+              >
                 Learn More
               </Button>
             </div>
@@ -275,7 +381,16 @@ const Home = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-black-34 to-transparent"></div>
             <div className="absolute bottom-0 left-0 text-white p-3">
               <h2 className="text-4xl font-bold leading-none">Pilates</h2>
-              <Button className="nobg-btn text-xl p-0 underline">
+              <Button
+                className="nobg-btn text-xl p-0 underline"
+                to={
+                  safeRole === "member"
+                    ? "/classes"
+                    : safeRole === "coach"
+                    ? "/CS-Classes"
+                    : "/"
+                }
+              >
                 Learn More
               </Button>
             </div>
@@ -293,7 +408,16 @@ const Home = () => {
         <section className="flex flex-wrap justify-center text-center pt-8">
           {/* GAB */}
           <div>
-            <Button className="plain-btn" to="/coaches">
+            <Button
+              className="plain-btn"
+              to={
+                safeRole === "member"
+                  ? "/Coaches"
+                  : safeRole === "coach"
+                  ? "/CS-CoachProfile"
+                  : "/"
+              }
+            >
               <div className="relative w-60 h-60 rounded-full ring-20 ring-donkey-10 bg-white overflow-hidden my-8 mx-12">
                 <img
                   src={Gab}
@@ -307,7 +431,16 @@ const Home = () => {
 
           {/* BEN */}
           <div>
-            <Button className="plain-btn" to="/coaches">
+            <Button
+              className="plain-btn"
+              to={
+                safeRole === "member"
+                  ? "/Coaches"
+                  : safeRole === "coach"
+                  ? "/CS-CoachProfile"
+                  : "/"
+              }
+            >
               <div className="relative w-60 h-60 rounded-full ring-20 ring-donkey-10 bg-white overflow-hidden my-8 mx-12">
                 <img
                   src={Ben}
@@ -321,7 +454,16 @@ const Home = () => {
 
           {/* PRECIOUS */}
           <div>
-            <Button className="plain-btn" to="/coaches">
+            <Button
+              className="plain-btn"
+              to={
+                safeRole === "member"
+                  ? "/Coaches"
+                  : safeRole === "coach"
+                  ? "/CS-CoachProfile"
+                  : "/"
+              }
+            >
               <div className="relative w-60 h-60 rounded-full ring-20 ring-donkey-10 bg-white overflow-hidden my-8 mx-12">
                 <img
                   src={Precious}

@@ -7,6 +7,7 @@ import {
 } from "firebase/auth";
 import { auth, db } from "../firebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { authTransition } from "../hooks/authTransition";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -31,25 +32,20 @@ const LoginModal: React.FC<LoginModalProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [resetMessage, setResetMessage] = useState<string | null>(null);
 
-  // Animations
   const [showContent, setShowContent] = useState(false);
   const [renderModal, setRenderModal] = useState(false);
 
+  // Lock UI when modal opens
   useEffect(() => {
-    if (isOpen) {
-      window.authTransition.locked = true;
-      window.dispatchEvent(new Event("auth-transition-start"));
-    }
+    if (isOpen) authTransition.setLocked(true);
   }, [isOpen]);
 
+  // Unlock UI after modal completely unmounts
   useEffect(() => {
-    if (!renderModal && !isOpen) {
-      window.authTransition.locked = false;
-      window.dispatchEvent(new Event("auth-transition-complete"));
-    }
+    if (!renderModal && !isOpen) authTransition.setLocked(false);
   }, [renderModal, isOpen]);
 
-  // Handle modal mount/unmount and animation states
+  // Animate in/out
   useEffect(() => {
     if (isOpen) {
       setRenderModal(true);
@@ -60,7 +56,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
     }
   }, [isOpen]);
 
-  // Remove from DOM after animation ends
+  // Remove from DOM after fade-out
   useEffect(() => {
     if (!showContent && !isOpen) {
       const timer = setTimeout(() => setRenderModal(false), 200);
@@ -68,20 +64,26 @@ const LoginModal: React.FC<LoginModalProps> = ({
     }
   }, [showContent, isOpen]);
 
-  // Reset form when opened
+  // Reset form on open
   useEffect(() => {
     if (isOpen) {
       setEmail("");
       setPassword("");
       setErrors({});
-      setResetMessage(false);
+      setResetMessage(null);
       setLoading(false);
       setShowPassword(false);
       setSuccess(false);
     }
   }, [isOpen]);
 
-  // Validation
+  const handleClose = () => {
+    setShowContent(false);
+    setTimeout(() => {
+      handleClose(); // actually remove modal from AuthModals
+    }, 200); // match your fade-out duration
+  };
+
   const validate = () => {
     const newErrors: typeof errors = {};
     if (!email.trim()) newErrors.email = "Email is required";
@@ -94,11 +96,9 @@ const LoginModal: React.FC<LoginModalProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  // FORGOT PASSWORD
   const handleForgotPassword = async () => {
     setErrors({});
     setResetMessage(null);
-
     if (!email.trim()) {
       setErrors({ email: "Enter your email to reset your password" });
       return;
@@ -108,19 +108,14 @@ const LoginModal: React.FC<LoginModalProps> = ({
       await sendPasswordResetEmail(auth, email);
       setResetMessage("A password reset link has been sent to your email.");
     } catch (error: any) {
-      console.error("Reset password error:", error);
-
-      if (error.code === "auth/user-not-found") {
+      if (error.code === "auth/user-not-found")
         setErrors({ firebase: "No account found with that email." });
-      } else if (error.code === "auth/invalid-email") {
+      else if (error.code === "auth/invalid-email")
         setErrors({ email: "Invalid email address" });
-      } else {
-        setErrors({ firebase: "Failed to send reset email. Try again." });
-      }
+      else setErrors({ firebase: "Failed to send reset email. Try again." });
     }
   };
 
-  // Submit handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
@@ -140,7 +135,6 @@ const LoginModal: React.FC<LoginModalProps> = ({
         await updateDoc(doc(db, "user", user.uid), {
           lastSignInTime: user.metadata.lastSignInTime,
         });
-        console.log("Updated lastSignInTime:", user.metadata.lastSignInTime);
       } catch (err) {
         console.error("Failed to update lastSignInTime:", err);
       }
@@ -150,23 +144,15 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
       setSuccess(true);
 
-      setSuccess(true);
+      // close modal after animation
+      setTimeout(() => {
+        handleClose();
+        authTransition.setLocked(false);
 
-      // Close modal immediately
-      onClose();
-
-      // Redirect immediately
-      if (role === "admin") {
-        window.location.assign("/AS_AdminDirectory");
-      } else {
-        window.location.assign("/");
-      }
-
-      // Unlock UI immediately
-      window.authTransition.locked = false;
-      window.dispatchEvent(new Event("auth-transition-complete"));
+        if (role === "admin") window.location.assign("/AS_AdminDirectory");
+        else window.location.assign("/");
+      }, 200);
     } catch (error: any) {
-      console.error("Login error:", error);
       setErrors({
         firebase:
           error.code === "auth/invalid-credential"
@@ -178,7 +164,6 @@ const LoginModal: React.FC<LoginModalProps> = ({
             : "Login failed. Please try again.",
       });
     } finally {
-      // don’t close the modal until after reload triggers
       setLoading(false);
     }
   };
@@ -296,7 +281,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
           Don’t have an account?{" "}
           <Button
             onClick={() => {
-              onClose();
+              handleClose();
               setTimeout(onSwitchToSignup, 200);
             }}
             className="underline hover:text-shrek transition-colors duration-300"

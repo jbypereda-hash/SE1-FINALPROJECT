@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Button from "./Button";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebaseConfig";
+import { authTransition } from "../hooks/authTransition";
 
 interface LogoutConfirmModalProps {
   isOpen: boolean;
@@ -14,11 +15,13 @@ const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
 }) => {
   const [showContent, setShowContent] = useState(false);
   const [renderModal, setRenderModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Animate in/out
   useEffect(() => {
     if (isOpen) {
       setRenderModal(true);
+      authTransition.setLocked(true);
       const timer = setTimeout(() => setShowContent(true), 10);
       return () => clearTimeout(timer);
     } else {
@@ -26,17 +29,30 @@ const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
     }
   }, [isOpen]);
 
-  // Remove from DOM after fade-out
+  // Remove modal after fade-out
   useEffect(() => {
     if (!showContent && !isOpen) {
-      const timer = setTimeout(() => setRenderModal(false), 300);
+      const timer = setTimeout(() => {
+        setRenderModal(false);
+        authTransition.setLocked(false);
+        setLoading(false);
+      }, 300); // match animation duration
       return () => clearTimeout(timer);
     }
   }, [showContent, isOpen]);
 
   const handleLogout = async () => {
-    await signOut(auth);
-    onClose();
+    setLoading(true);
+    setShowContent(false); // start fade-out
+
+    setTimeout(async () => {
+      try {
+        await signOut(auth);
+      } finally {
+        // After logout, trigger full page reload (like login modal)
+        window.location.assign("/");
+      }
+    }, 300); // wait for fade-out animation
   };
 
   if (!renderModal) return null;
@@ -54,6 +70,11 @@ const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
           showContent ? "scale-100 opacity-100" : "scale-90 opacity-0"
         }`}
       >
+        {/* Loading Spinner */}
+        {loading && (
+          <div className="absolute top-5 right-5 w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+        )}
+
         <div>
           <h2 className="text-3xl font-bold">Confirm Logout</h2>
           <p className="mb-6 text-donkey-20">
@@ -65,7 +86,10 @@ const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
           <Button onClick={onClose} className="nobg-btn p-0">
             CANCEL
           </Button>
-          <Button onClick={handleLogout} className="shrek-btn font-bold m-0">
+          <Button
+            onClick={handleLogout}
+            className="shrek-btn font-bold m-0"
+          >
             LOG OUT
           </Button>
         </div>

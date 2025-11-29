@@ -4,6 +4,7 @@ import BackButton from "../assets/icons/arrow-left.svg?react";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { authTransition } from "../hooks/authTransition";
 
 interface FormData {
   firstName: string;
@@ -20,7 +21,7 @@ interface SignupModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSwitchToLogin: () => void;
-  defaultRole?: "member" | "admin"; // optional
+  defaultRole?: "member" | "admin";
 }
 
 const SignupModal: React.FC<SignupModalProps> = ({
@@ -49,14 +50,18 @@ const SignupModal: React.FC<SignupModalProps> = ({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
-  // Control animation and modal presence
   const [showContent, setShowContent] = useState(false);
   const [renderModal, setRenderModal] = useState(false);
 
+  // Lock UI when modal opens
+  useEffect(() => {
+    if (isOpen) authTransition.setLocked(true);
+  }, [isOpen]);
+
+  // Animate in/out
   useEffect(() => {
     if (isOpen) {
-      setRenderModal(true); // modal exists in DOM
-      // small timeout ensures transition triggers
+      setRenderModal(true);
       const timer = setTimeout(() => setShowContent(true), 10);
       return () => clearTimeout(timer);
     } else {
@@ -64,28 +69,18 @@ const SignupModal: React.FC<SignupModalProps> = ({
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (isOpen) {
-      window.authTransition.locked = true;
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (!renderModal && !isOpen) {
-      window.authTransition.locked = false;
-      window.dispatchEvent(new Event("auth-transition-complete"));
-    }
-  }, [renderModal, isOpen]);
-
-  // Remove modal from DOM after fade-out
+  // Remove from DOM after fade-out
   useEffect(() => {
     if (!showContent && !isOpen) {
-      const timer = setTimeout(() => setRenderModal(false), 200); // match CSS transition duration
+      const timer = setTimeout(() => {
+        setRenderModal(false);
+        authTransition.setLocked(false); // unlock after fade-out
+      }, 200);
       return () => clearTimeout(timer);
     }
   }, [showContent, isOpen]);
 
-  // Reset form when modal closes
+  // Reset form on open
   useEffect(() => {
     if (isOpen) {
       setFormData({
@@ -107,33 +102,28 @@ const SignupModal: React.FC<SignupModalProps> = ({
     }
   }, [isOpen]);
 
-  // Handle input changes
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     let newValue = value;
 
-    // Auto-capitalize names while typing
     if (name === "firstName" || name === "lastName") {
       newValue = newValue
         .toLowerCase()
         .replace(/\b\w/g, (char) => char.toUpperCase());
     }
 
-    // Auto-format phone number while typing
     if (name === "phoneNumber") {
-      newValue = newValue.replace(/[\s\-\.]/g, ""); // remove spaces, hyphens, dots
+      newValue = newValue.replace(/[\s\-\.]/g, "");
     }
 
     setFormData((prev) => ({ ...prev, [name]: newValue }));
     setAuthError(null);
   };
 
-  // Input Validation
   const validate = () => {
     const newErrors: Partial<Record<keyof FormData, string>> = {};
-
     if (!formData.firstName.trim())
       newErrors.firstName = "First name is required";
     if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
@@ -141,10 +131,9 @@ const SignupModal: React.FC<SignupModalProps> = ({
       newErrors.email = "Valid email required";
 
     const normalizedPhone = formData.phoneNumber.replace(/[\s\-\.]/g, "");
-    if (!normalizedPhone.match(/^(09\d{9}|\+639\d{9})$/)) {
+    if (!normalizedPhone.match(/^(09\d{9}|\+639\d{9})$/))
       newErrors.phoneNumber =
         "Phone number must start with 09 or +63 and be 11 digits long";
-    }
 
     if (!formData.gender) newErrors.gender = "Select a gender";
 
@@ -152,14 +141,13 @@ const SignupModal: React.FC<SignupModalProps> = ({
       !formData.password.match(
         /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+=[\]{};':"\\|,.<>/?-]).{6,}$/
       )
-    ) {
+    )
       newErrors.password =
         "Password must be at least 6 characters, include one capital letter, one number, and one symbol";
-    }
 
     if (
       formData.password !== formData.confirmPassword ||
-      formData.confirmPassword == ""
+      !formData.confirmPassword
     )
       newErrors.confirmPassword = "Passwords do not match";
 
@@ -167,25 +155,24 @@ const SignupModal: React.FC<SignupModalProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  // Submit handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     setLoading(true);
+    setErrors({});
+    setAuthError(null);
 
     try {
-      // 1. Create user in Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         formData.email,
         formData.password
       );
-
       const user = userCredential.user;
 
       await setDoc(doc(db, "user", user.uid), {
-        uid: user.uid, // the document ID and field match the Auth UID
+        uid: user.uid,
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
@@ -198,63 +185,39 @@ const SignupModal: React.FC<SignupModalProps> = ({
 
       setSuccess(true);
 
-      window.dispatchEvent(
-        new CustomEvent("new-user-added", {
-          detail: {
-            uid: user.uid,
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-            phoneNumber: formData.phoneNumber,
-            gender: formData.gender,
-            role: formData.role,
-            createdAt: new Date(), // approximate timestamp
-            lastSignInTime: new Date().toUTCString(),
-          },
-        })
-      );
-
-      // reset form
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phoneNumber: "",
-        gender: "",
-        password: "",
-        confirmPassword: "",
-        role: defaultRole || "member",
-      });
-
+      // fade out and redirect
+      setShowContent(false);
       setTimeout(() => {
-        setSuccess(false);
-        onClose(); // close signup modal
+        onClose();
+        authTransition.setLocked(false);
+        if (formData.role === "admin")
+          window.location.assign("/AS_AdminDirectory");
+        else window.location.assign("/");
       }, 200);
     } catch (error: any) {
-      console.error("Error creating user:", error);
-
-      if (error.code === "auth/email-already-in-use") {
+      if (error.code === "auth/email-already-in-use")
         setAuthError("This email is already in use.");
-      } else if (error.code === "auth/invalid-email") {
+      else if (error.code === "auth/invalid-email")
         setAuthError("Invalid email address.");
-      } else if (error.code === "auth/weak-password") {
+      else if (error.code === "auth/weak-password")
         setAuthError("Password is too weak.");
-      } else {
-        setAuthError("Error creating user. Please try again.");
-      }
-
-      return;
+      else setAuthError("Error creating user. Please try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleClose = () => {
+    setShowContent(false);
+    setTimeout(() => onClose(), 200);
   };
 
   if (!renderModal) return null;
 
   return (
     <div
-      onClick={onClose}
-      className={`fixed inset-0 bg-black/70 flex justify-center items-center z-50 transition-opacity duration-600${
+      onClick={handleClose}
+      className={`fixed inset-0 bg-black/70 flex justify-center items-center z-50 transition-opacity duration-500 ${
         showContent ? "opacity-100" : "opacity-0"
       }`}
     >
@@ -267,10 +230,10 @@ const SignupModal: React.FC<SignupModalProps> = ({
         }`}
       >
         <Button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-5 left-5 hover:scale-110 transition-all duration-200"
         >
-          <BackButton className="w-12 h-12"></BackButton>
+          <BackButton className="w-12 h-12" />
         </Button>
 
         {loading && (
@@ -457,23 +420,13 @@ const SignupModal: React.FC<SignupModalProps> = ({
           </div>
         </form>
 
-        {success && (
-          <p className="text-green-400 text-sm mt-3">
-            Registration successful!
-          </p>
-        )}
-
-        {authError && (
-          <p className="text-red-400 text-xs ml-3 italic">{authError}</p>
-        )}
-
         {formData.role !== "admin" && (
           <p className="text-sm text-gray-300 mt-2">
             Already have an account?{" "}
             <Button
               onClick={() => {
-                onClose(); // close signup modal
-                setTimeout(onSwitchToLogin, 200); // open login modal
+                handleClose();
+                setTimeout(onSwitchToLogin, 200);
               }}
               className="underline hover:text-shrek transition-colors duration-300"
             >

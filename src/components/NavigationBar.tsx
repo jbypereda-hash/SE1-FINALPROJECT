@@ -85,27 +85,26 @@ const NavigationBar = () => {
         {safeRole === "coach" && (
           <Button to="/CS-CoachProfile">MY PROFILE</Button>
         )}
-        {!freeze &&
-          (isLoggedIn ? (
-            <Button
-              className="shrek-btn w-35"
-              onClick={() =>
-                window.dispatchEvent(new Event("open-logout-confirm"))
-              }
-            >
-              LOG OUT
-            </Button>
-          ) : (
-            <Button
-              className="shrek-btn w-35"
-              onClick={() => window.dispatchEvent(new Event("open-login"))}
-            >
-              LOG IN
-            </Button>
-          ))}
+        {isLoggedIn ? (
+          <Button
+            className="shrek-btn w-35"
+            onClick={() =>
+              window.dispatchEvent(new Event("open-logout-confirm"))
+            }
+          >
+            LOG OUT
+          </Button>
+        ) : (
+          <Button
+            className="shrek-btn w-35"
+            onClick={() => window.dispatchEvent(new Event("open-login"))}
+          >
+            LOG IN
+          </Button>
+        )}
       </div>
     </nav>
-  );
+  );  
 };
 
 export default NavigationBar;

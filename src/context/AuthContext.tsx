@@ -1,49 +1,65 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+// src/context/AuthContext.tsx
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, type User } from "firebase/auth";
 import { auth, db } from "../firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
+import { authTransition } from "../hooks/authTransition";
 
-interface AuthContextValue {
+type Role = "member" | "coach" | "admin" | null;
+
+interface AuthContextType {
   user: User | null;
-  role: "member" | "coach" | "admin" | null;
+  role: Role;
   isLoggedIn: boolean;
   loading: boolean;
   forceRefreshAuth: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextValue | null>(null);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<"member" | "coach" | "admin" | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState<Role>("member");
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Fetch role from Firestore
+  // helper to read role from firestore (document path 'user' as you use)
   const loadUserRole = async (uid: string) => {
-    const ref = doc(db, "user", uid);
-    const snap = await getDoc(ref);
-    setRole(snap.exists() ? snap.data().role : "member");
+    try {
+      const ref = doc(db, "user", uid);
+      const snap = await getDoc(ref);
+      if (snap.exists()) {
+        const data = snap.data();
+        setRole((data?.role as Role) ?? "member");
+      } else {
+        setRole("member");
+      }
+    } catch (err) {
+      console.error("loadUserRole error:", err);
+      setRole("member");
+    }
   };
 
-  // Normal Firebase auth listener
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (u) => {
-      if (!u) {
+    // keep the initial loading visible until the first auth state is resolved
+    setLoading(true);
+
+    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!firebaseUser) {
         setUser(null);
         setRole("member");
         setLoading(false);
         return;
       }
 
-      setUser(u);
-      await loadUserRole(u.uid);
+      setUser(firebaseUser);
+      await loadUserRole(firebaseUser.uid);
       setLoading(false);
     });
 
     return () => unsub();
   }, []);
 
-  // Function for navbar freeze → re-fetch AFTER modal closes
+  // Allow components (e.g. navbar) to trigger an immediate refresh after UI unlock
   const forceRefreshAuth = async () => {
     const u = auth.currentUser;
     if (!u) {
@@ -54,6 +70,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(u);
     await loadUserRole(u.uid);
   };
+
+  // Optional: keep window.authTransition.locked in sync if something reads it
+  useEffect(() => {
+    // whenever authTransition changes it updates window.authTransition
+    const unsubscribe = authTransition.subscribe((locked) => {
+      window.authTransition = { locked };
+    });
+    // ensure initial sync
+    window.authTransition = { locked: authTransition.locked };
+    return unsubscribe;
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -70,7 +97,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext)!;
+export const useAuth = (): AuthContextType => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+  return ctx;
+};
 
-// 👇 This is what your NAVBAR needs
-export const useAuthState = () => useContext(AuthContext)!;
+// keep your old useAuthState alias if other files import it
+export const useAuthState = useAuth;

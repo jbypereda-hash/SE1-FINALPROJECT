@@ -10,12 +10,9 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ requiredRole, children }: ProtectedRouteProps) => {
   const { user, role, loading } = useAuth();
 
+  // 👇 FIX: keep showing previous content while loading
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
+    return children;
   }
 
   // Not logged in → always redirect home

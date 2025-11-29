@@ -4,12 +4,15 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App.tsx";
 import "./index.css";
 import { AuthProvider } from "./context/AuthContext.tsx";
+import AuthTransitionBlocker from "./context/AuthTransitionBlocker.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <AuthTransitionBlocker>
+          <App />
+        </AuthTransitionBlocker>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>
