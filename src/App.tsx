@@ -18,7 +18,7 @@ import MembershipPackages from "./pages/MembershipPackages";
 // Coach Pages
 import { CS_Classes } from "./pages/coach/CS_Classes";
 import { CS_Clients } from "./pages/coach/CS_Clients";
-import { CS_CoachProfile } from "./pages/coach/CS_CoachProfile";
+import CS_CoachProfile from "./pages/coach/CS_CoachProfile";
 
 // Admin Pages
 import AS_PendingMemberships from "./pages/admin/AS_PendingMemberships";
@@ -26,7 +26,7 @@ import AS_AdminDirectory from "./pages/admin/AS_AdminDirectory";
 import AS_MemberDirectory from "./pages/admin/AS_MemberDirectory";
 import AS_CoachDirectory from "./pages/admin/AS_CoachDirectory";
 import AS_AddCoach from "./pages/admin/AS_AddCoach";
-import AS_EditCoach from "./pages/admin/AS_EditCoach";
+import AS_EditCoach from "./pages/coach/CS_EditCoach";
 
 import { useEffect } from "react";
 import { getAuth } from "firebase/auth";

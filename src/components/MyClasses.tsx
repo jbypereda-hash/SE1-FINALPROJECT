@@ -24,9 +24,9 @@ export default function MyClasses({
   classes: MyClassItem[];
 }) {
   return (
-    <div className="bg-[#1c1c22] rounded-[24px] p-6 w-full h-full flex flex-col">
-      {/* Sticky Header */}
-      <div className="sticky top-0 bg-[#1c1c22] pb-3 z-10">
+    <div className="bg-black-34 rounded-[24px] p-6 w-full h-full flex flex-col">
+      {/* Sticky Header */}  {/* yen changed bg-[#1c1c22] to bg-black-34 (lines 27 & 28) */}
+      <div className="sticky top-0 bg-black-34 pb-3 z-10">
         <h3 className="text-[#d5ff5f] text-lg font-bold">MY CLASSES</h3>
       </div>
 
