@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Button from "./Button";
 import { useAuthState } from "../context/AuthContext";
+import { useLocation } from "react-router-dom";
 
 const NavigationBar = () => {
   const { isLoggedIn, role, forceRefreshAuth } = useAuthState();
@@ -8,6 +9,9 @@ const NavigationBar = () => {
   const [hidden, setHidden] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [freeze, setFreeze] = useState(false);
+
+  const location = useLocation();
+  const path = location.pathname;
 
   // Freeze when modal opens
   useEffect(() => {
@@ -45,7 +49,7 @@ const NavigationBar = () => {
 
   return (
     <nav
-      className={`sticky top-0 z-50 flex items-center justify-between px-20 py-[13px] bg-black-34 transition-transform duration-300 ${
+      className={`sticky top-0 z-50 flex items-center justify-between px-20 py-[13px] bg-black-34 transition-transform duration-300 shadow-2xl ${
         hidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
@@ -59,20 +63,56 @@ const NavigationBar = () => {
 
       {/* NAV LINKS */}
       <div className="absolute left-1/2 -translate-x-1/2 space-x-3">
-        <Button to="/">HOME</Button>
+        <Button
+          className={`nobg-btn ${path === "/" ? "text-shrek" : ""}`}
+          to="/"
+        >
+          HOME
+        </Button>
 
         {safeRole === "member" && (
           <>
-            <Button to="/memberships">MEMBERSHIPS</Button>
-            <Button to="/classes">CLASSES</Button>
-            <Button to="/coaches">COACHES</Button>
+            <Button
+              className={`nobg-btn ${
+                path === "/memberships" ? "text-shrek" : ""
+              }`}
+              to="/memberships"
+            >
+              MEMBERSHIPS
+            </Button>
+            <Button
+              className={`nobg-btn ${path === "/classes" ? "text-shrek" : ""}`}
+              to="/classes"
+            >
+              CLASSES
+            </Button>
+            <Button
+              className={`nobg-btn ${path === "/coaches" ? "text-shrek" : ""}`}
+              to="/coaches"
+            >
+              COACHES
+            </Button>
           </>
         )}
 
         {safeRole === "coach" && (
           <>
-            <Button to="/CS-Classes">CLASSES</Button>
-            <Button to="/CS-Client">CLIENTS</Button>
+            <Button
+              className={`nobg-btn ${
+                path === "/CS-Classes" ? "text-shrek" : ""
+              }`}
+              to="/CS-Classes"
+            >
+              CLASSES
+            </Button>
+            <Button
+              className={`nobg-btn ${
+                path === "/CS-Client" ? "text-shrek" : ""
+              }`}
+              to="/CS-Client"
+            >
+              CLIENTS
+            </Button>
           </>
         )}
       </div>
@@ -80,10 +120,22 @@ const NavigationBar = () => {
       {/* RIGHT — LOGIN / LOGOUT */}
       <div className="space-x-2">
         {(safeRole === "member" || safeRole === null) && (
-          <Button to="/profile">MY PROFILE</Button>
+          <Button
+            className={`nobg-btn ${path === "/profile" ? "text-shrek" : ""}`}
+            to="/profile"
+          >
+            MY PROFILE
+          </Button>
         )}
         {safeRole === "coach" && (
-          <Button to="/CS-CoachProfile">MY PROFILE</Button>
+          <Button
+            className={`nobg-btn ${
+              path === "/CS-CoachProfile" ? "text-shrek" : ""
+            }`}
+            to="/CS-CoachProfile"
+          >
+            MY PROFILE
+          </Button>
         )}
         {isLoggedIn ? (
           <Button
@@ -104,7 +156,7 @@ const NavigationBar = () => {
         )}
       </div>
     </nav>
-  );  
+  );
 };
 
 export default NavigationBar;
