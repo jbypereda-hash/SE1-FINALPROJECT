@@ -16,7 +16,7 @@ import EditProfilePage from "./pages/EditProfile";
 import MembershipPackages from "./pages/MembershipPackages";
 
 // Coach Pages
-import { CS_Classes } from "./pages/coach/CS_Classes";
+import CS_Classes from "./pages/coach/CS_Classes";
 import { CS_Clients } from "./pages/coach/CS_Clients";
 import CS_CoachProfile from "./pages/coach/CS_CoachProfile";
 import CS_EditCoach from "./pages/coach/CS_EditCoach";
