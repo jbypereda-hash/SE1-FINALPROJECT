@@ -10,22 +10,34 @@ export interface MembershipPackage {
   description: string;
 }
 
-interface AS_PackagesDropdownProps {
-  pkg: MembershipPackage;
-  onCancel?: () => void;
-  onSave?: (pkg: MembershipPackage) => void;
+export interface GymClass {
+  id: string;
+  name: string;
+  intensity: string;
+  priceLabel: string;
+  description: string;
 }
 
-const AS_PackagesDropdown: React.FC<AS_PackagesDropdownProps> = ({
-  pkg,
+interface AS_DropdownProps {
+  mode: "package" | "class";
+  item: MembershipPackage | GymClass;
+  onCancel?: () => void;
+  onSave?: (item: MembershipPackage | GymClass) => void;
+}
+
+const AS_Dropdown: React.FC<AS_DropdownProps> = ({
+  mode,
+  item,
   onCancel,
   onSave,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSave = () => {
-    if (onSave) onSave(pkg);
+    if (onSave) onSave(item);
   };
+
+  const isClass = mode === "class";
 
   return (
     <div className="flex flex-col w-full bg-donkey-10 rounded-[30px] px-5 py-2.5 gap-3">
@@ -36,7 +48,7 @@ const AS_PackagesDropdown: React.FC<AS_PackagesDropdownProps> = ({
         className="flex items-center justify-between w-full h-10 px-1 rounded-[30px] hover:opacity-90 transition-opacity"
       >
         <p className="font-bold text-black-35 text-[28px] truncate">
-          {pkg.name}
+          {item.name}
         </p>
 
         <DropdownArrow
@@ -49,11 +61,11 @@ const AS_PackagesDropdown: React.FC<AS_PackagesDropdownProps> = ({
       {/* INNER CONTENT */}
       {isOpen && (
         <div className="flex flex-col items-center gap-2.5">
-          {/* PACKAGE NAME CARD */}
+          {/* NAME CARD */}
           <div className="flex flex-col w-full max-w-full h-[120px] items-center gap-2.5 bg-donkey-30 rounded-[25px] overflow-hidden">
             <div className="w-full px-[15px] pt-2 pb-2">
-              <p className="flex items-center justify-left font-bold text-black-35 text-[24px] text-center">
-                Package Name
+              <p className="flex items-center justify-start font-bold text-black-35 text-[24px] text-center">
+                {isClass ? "Class Name" : "Package Name"}
               </p>
 
               <img
@@ -64,15 +76,36 @@ const AS_PackagesDropdown: React.FC<AS_PackagesDropdownProps> = ({
             </div>
 
             <p className="text-shrek text-2xl mb-4 text-center font-bold">
-              {pkg.name}
+              {item.name}
             </p>
           </div>
 
-          {/* PACKAGE PRICE CARD */}
+          {/* CLASS INTENSITY */}
+          {isClass && (
+            <div className="flex flex-col w-full max-w-full h-[120px] items-center gap-2.5 bg-donkey-30 rounded-[25px] overflow-hidden">
+              <div className="w-full px-[15px] pt-2 pb-2">
+                <p className="flex items-center justify-start font-bold text-black-35 text-[24px] text-center">
+                  Class Intensity
+                </p>
+
+                <img
+                  src={line1}
+                  alt="divider"
+                  className="w-full h-[2px] mt-1 object-cover"
+                />
+              </div>
+
+              <p className="text-white text-[20px] font-semibold truncate px-4 w-full text-center">
+                {(item as GymClass).intensity}
+              </p>
+            </div>
+          )}
+
+          {/* PRICE CARD */}
           <div className="flex flex-col w-full max-w-full h-[120px] items-center gap-2.5 bg-donkey-30 rounded-[25px] overflow-hidden">
             <div className="w-full px-[15px] pt-2 pb-2">
-              <p className="flex items-center justify-left font-bold text-black-35 text-[24px] text-center">
-                Package Price
+              <p className="flex items-center justify-start font-bold text-black-35 text-[24px] text-center">
+                {isClass ? "Class Price" : "Package Price"}
               </p>
 
               <img
@@ -83,15 +116,15 @@ const AS_PackagesDropdown: React.FC<AS_PackagesDropdownProps> = ({
             </div>
 
             <p className="text-white text-[20px] font-semibold truncate px-4 w-full text-center">
-              {pkg.priceLabel}
+              {item.priceLabel}
             </p>
           </div>
 
-          {/* PACKAGE DEFINITION CARD */}
-          <div className="flex flex-col w-full max-w-full h-[299px] items-center gap-2.5 bg-donkey-30 rounded-[25px] overflow-hidden">
+          {/* DESCRIPTION CARD */}
+          <div className="flex flex-col w-full max-w-full items-center gap-2.5 bg-donkey-30 rounded-[25px] py-2">
             <div className="w-full px-[15px] pt-2 pb-2">
-              <p className="flex items-center justify-left font-bold text-black-35 text-[24px] text-center">
-                Package Definition
+              <p className="flex items-center justify-start font-bold text-black-35 text-[24px] text-center">
+                {isClass ? "Class Description" : "Package Description"}
               </p>
 
               <img
@@ -102,7 +135,7 @@ const AS_PackagesDropdown: React.FC<AS_PackagesDropdownProps> = ({
             </div>
 
             <div className="flex flex-col gap-3 text-center max-w-[80%]">
-              {pkg.description.split("\n").map((line, index) => (
+              {item.description.split("\n").map((line, index) => (
                 <p
                   key={index}
                   className="text-white text-[20px] leading-relaxed"
@@ -137,4 +170,4 @@ const AS_PackagesDropdown: React.FC<AS_PackagesDropdownProps> = ({
   );
 };
 
-export default AS_PackagesDropdown;
+export default AS_Dropdown;

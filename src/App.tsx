@@ -28,6 +28,7 @@ import AS_MemberDirectory from "./pages/admin/AS_MemberDirectory";
 import AS_CoachDirectory from "./pages/admin/AS_CoachDirectory";
 import AS_AddCoach from "./pages/admin/AS_AddCoach";
 import AS_Packages from "./pages/admin/AS_Packages";
+import AS_Classes from "./pages/admin/AS_Classes";
 
 import { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
@@ -258,6 +259,16 @@ const App = () => {
               }
             />
 
+            <Route
+              path="/AS_Classes"
+              element={
+                <ProtectedRoute requiredRole={["admin"]}>
+                  <AdminLayout>
+                    <AS_Classes />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
 
             <Route
               path="/AS_PendingMemberships"

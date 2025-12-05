@@ -2,6 +2,9 @@ import PersonIcon from "../assets/icons/person.svg?react";
 import gearIcon from "../assets/icons/gear.svg";
 import ClockIcon from "../assets/icons/clock.svg?react";
 import listIcon from "../assets/icons/list.svg";
+import Calendar from "../assets/icons/calendar.svg";
+import Package from "../assets/icons/package.svg";
+
 import type { JSX } from "react";
 import Button from "./Button";
 import { useLocation } from "react-router-dom";
@@ -100,8 +103,24 @@ export const AS_SideBar = (): JSX.Element => {
             }
           `}>
           <div className="flex gap-[6px] items-center transform transition-all duration-200 group-hover:scale-105 group-hover:text-shrek">
-          <PersonIcon className="w-6 h-6" />
+          <img src={Package} alt="Package Icon" className="w-6 h-6" />
           <p className="text-xl">Packages</p>
+          </div>
+        </Button>
+
+        {/* Classes */}
+        <Button
+          to="/AS_Classes"
+          className={`group flex items-center p-2 pl-2 rounded-lg transition-colors
+          ${
+            path === "/AS_Classes"
+              ? "bg-[#3a3a45]"
+              : "hover:bg-[#3a3a45]"
+            }
+          `}>
+          <div className="flex gap-[6px] items-center transform transition-all duration-200 group-hover:scale-105 group-hover:text-shrek">
+          <img src={Calendar} alt="Calendar Icon" className="w-6 h-6" />
+          <p className="text-xl">Classes</p>
           </div>
         </Button>
 

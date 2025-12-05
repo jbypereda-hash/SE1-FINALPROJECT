@@ -1,30 +1,32 @@
 import React, { useEffect, useState } from "react";
-import AS_Dropdown, { type MembershipPackage } from "../../components/AS_Dropdown";
+import AS_Dropdown, { type GymClass } from "../../components/AS_Dropdown";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 
-const AS_Packages: React.FC = () => {
-  const [packages, setPackages] = useState<MembershipPackage[]>([]);
+const AS_Classes: React.FC = () => {
+  const [classes, setClasses] = useState<GymClass[]>([]);
 
   useEffect(() => {
-    const packagesRef = collection(db, "packages");
+    const classesRef = collection(db, "classes");
 
-    const unsubscribe = onSnapshot(packagesRef, (snapshot) => {
-      const data: MembershipPackage[] = snapshot.docs.map((doc) => {
+    const unsubscribe = onSnapshot(classesRef, (snapshot) => {
+      const data: GymClass[] = snapshot.docs.map((doc) => {
         const raw = doc.data() as any;
 
         return {
           id: doc.id,
-          name: raw.name ?? "",
+          name: raw.title ?? "",
+          intensity:
+            raw.level !== undefined ? `Level ${raw.level}` : "Not specified",
           priceLabel:
-            raw.price !== undefined
-              ? `₱${raw.price.toLocaleString()} per month`
+            raw.pricePerWeek !== undefined
+              ? `₱${raw.pricePerWeek.toLocaleString()} per week`
               : "",
-          description: raw.details ?? "",
+          description: raw.description ?? "",
         };
       });
 
-      setPackages(data);
+      setClasses(data);
     });
 
     return () => unsubscribe();
@@ -41,21 +43,21 @@ const AS_Packages: React.FC = () => {
           </h1>
 
           <div className="flex justify-between items-center w-full my-1">
-            <p className="text-shrek font-bold text-5xl">
-              MEMBERSHIP PACKAGES
-            </p>
+            <p className="text-shrek font-bold text-5xl">CLASSES</p>
           </div>
         </header>
 
         {/* LOWER CONTAINER */}
         <div className="flex-1 bg-black-34 rounded-[30px] overflow-auto p-8">
-          {packages.map((pkg) => (
-            <div key={pkg.id} className="mb-4">
+          {classes.map((cls) => (
+            <div key={cls.id} className="mb-4">
               <AS_Dropdown
-                mode="package"
-                item={pkg}
+                mode="class"
+                item={cls}
                 onCancel={() => console.log("Cancelled")}
-                onSave={(savedPkg) => console.log("Saved package:", savedPkg)}
+                onSave={(savedClass) =>
+                  console.log("Saved class:", savedClass)
+                }
               />
             </div>
           ))}
@@ -65,4 +67,4 @@ const AS_Packages: React.FC = () => {
   );
 };
 
-export default AS_Packages;
+export default AS_Classes;
