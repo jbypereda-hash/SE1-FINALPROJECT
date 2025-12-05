@@ -77,7 +77,7 @@ export const CS_Clients: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black-35 text-color-white">
+    <div className="min-h-screen bg-black-35 text-white">
       <main className="max-w-7xl mx-auto px-6 py-12">
         {/* TITLE BLOCK */}
         <div className="grid grid-cols-3 items-center mb-12">
@@ -95,15 +95,17 @@ export const CS_Clients: React.FC = () => {
             <div className="w-full px-6">
               <div className="grid w-full grid-cols-[1fr_1fr_1fr_auto] gap-6 px-5">
                 <div className="flex items-center justify-center">
-                  <h2 className="font-bold text-[#d5ff5f] text-xl">Class</h2>
+                  <h2 className="font-bold text-shrek text-xl">Class</h2>
                 </div>
 
                 <div className="flex items-center justify-center pr-8">
-                  <h2 className="font-bold text-[#d5ff5f] text-xl">Schedule</h2>
+                  <h2 className="font-bold text-shrek text-xl">Schedule</h2>
                 </div>
 
                 <div className="flex items-center justify-center pr-14">
-                  <h2 className="font-bold text-[#d5ff5f] text-xl">No. of Students</h2>
+                  <h2 className="font-bold text-shrek text-xl">
+                    No. of Students
+                  </h2>
                 </div>
 
                 <div className="flex items-center justify-center" />

@@ -21,7 +21,7 @@ const CS_ClientsRow: React.FC<Props> = ({ user, onViewProfile }) => {
     <div className="grid w-full grid-cols-4 px-5 py-2.5 gap-6 hover:bg-black-35 rounded-full transition-colors">
       {/* NAME */}
       <div className="flex items-center justify-center">
-        <p className="font-bold text-color-white text-[18px] truncate text-center">
+        <p className="font-bold text-white text-[18px] truncate text-center">
           {user.firstName} {user.lastName}
         </p>
       </div>
@@ -31,12 +31,12 @@ const CS_ClientsRow: React.FC<Props> = ({ user, onViewProfile }) => {
         {user.email ? (
           <a
             href={`mailto:${user.email}`}
-            className="font-bold text-color-white text-[16px] truncate text-center"
+            className="font-bold text-white text-[16px] truncate text-center"
           >
             {user.email}
           </a>
         ) : (
-          <p className="font-bold text-color-white/60 text-[12px] italic text-center">
+          <p className="font-bold text-white/60 text-[12px] italic text-center">
             No email
           </p>
         )}
@@ -46,7 +46,7 @@ const CS_ClientsRow: React.FC<Props> = ({ user, onViewProfile }) => {
       <div className="flex items-center justify-center">
         <a
           href={`tel:${user.phoneNumber}`}
-          className="font-bold text-color-white text-[16px] truncate text-center"
+          className="font-bold text-white text-[16px] truncate text-center"
         >
           {user.phoneNumber}
         </a>
@@ -57,7 +57,7 @@ const CS_ClientsRow: React.FC<Props> = ({ user, onViewProfile }) => {
         <Button
           to="#"
           onClick={() => onViewProfile && onViewProfile(user)}
-          className="px-5 h-10 bg-[#d5ff5f] rounded-full flex items-center justify-center font-bold text-[#040404] text-[18px] hover:opacity-90 transition-opacity"
+          className="px-5 h-10 bg-shrek rounded-full flex items-center justify-center font-bold text-black-35 text-[18px] hover:opacity-90 transition-opacity"
         >
           View Profile
         </Button>
@@ -65,6 +65,5 @@ const CS_ClientsRow: React.FC<Props> = ({ user, onViewProfile }) => {
     </div>
   );
 };
-
 
 export default CS_ClientsRow;

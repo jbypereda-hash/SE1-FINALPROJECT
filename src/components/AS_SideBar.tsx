@@ -31,12 +31,12 @@ export const AS_SideBar = (): JSX.Element => {
           <Button
             to="/AS_AdminDirectory"
             className={`group flex items-center p-2 pl-2 rounded-lg transition-colors
-    ${
-      path === "/AS_AdminDirectory"
-        ? "bg-[#3a3a45]"
-        : "hover:bg-[#3a3a45]"
-    }
-  `}
+              ${
+                path === "/AS_AdminDirectory"
+                  ? "bg-[#3a3a45]"
+                  : "hover:bg-[#3a3a45]"
+              }
+            `}
           >
             <div className="flex gap-1 items-center transform transition-all duration-200 group-hover:scale-105 group-hover:text-shrek">
               <PersonIcon className="w-6 h-6" />
@@ -47,12 +47,12 @@ export const AS_SideBar = (): JSX.Element => {
           <Button
             to="/AS_MemberDirectory"
             className={`group flex items-center p-2 pl-2 rounded-lg transition-colors
-    ${
-      path === "/AS_MemberDirectory"
-        ? "bg-[#3a3a45]"
-        : "hover:bg-[#3a3a45]"
-    }
-  `}
+              ${
+                path === "/AS_MemberDirectory"
+                  ? "bg-[#3a3a45]"
+                  : "hover:bg-[#3a3a45]"
+              }
+            `}
           >
             <div className="flex gap-1 items-center transform transition-all duration-200 group-hover:scale-105 group-hover:text-shrek">
               <PersonIcon className="w-6 h-6" />
@@ -63,12 +63,12 @@ export const AS_SideBar = (): JSX.Element => {
           <Button
             to="/AS_CoachDirectory"
             className={`group flex items-center p-2 pl-2 rounded-lg transition-colors
-    ${
-      path === "/AS_CoachDirectory"
-        ? "bg-[#3a3a45]"
-        : "hover:bg-[#3a3a45]"
-    }
-  `}
+              ${
+                path === "/AS_CoachDirectory"
+                  ? "bg-[#3a3a45]"
+                  : "hover:bg-[#3a3a45]"
+              }
+            `}
           >
             <div className="flex gap-1 items-center transform transition-all duration-200 group-hover:scale-105 group-hover:text-shrek">
               <PersonIcon className="w-6 h-6" />
@@ -76,6 +76,34 @@ export const AS_SideBar = (): JSX.Element => {
             </div>
           </Button>
         </div>
+
+        {/* CONTENT MANAEGEMENT Header */}
+        <div className="flex items-center gap-2 mt-6 mb-2">
+          <img
+            src={gearIcon}
+            alt="Content Management"
+            className="w-7 h-7"
+          />
+          <span className="text-shrek font-bold text-[25px] uppercase">
+            Management
+          </span>
+        </div>
+
+        {/* Packages */}
+        <Button
+          to="/AS_Packages"
+          className={`group flex items-center p-2 pl-2 rounded-lg transition-colors
+          ${
+            path === "/AS_Packages"
+              ? "bg-[#3a3a45]"
+              : "hover:bg-[#3a3a45]"
+            }
+          `}>
+          <div className="flex gap-[6px] items-center transform transition-all duration-200 group-hover:scale-105 group-hover:text-shrek">
+          <PersonIcon className="w-6 h-6" />
+          <p className="text-xl">Packages</p>
+          </div>
+        </Button>
 
         {/* MEMBERSHIP APPLICATIONS Header */}
         <div className="flex items-center gap-2 mt-6 mb-2">
@@ -93,17 +121,18 @@ export const AS_SideBar = (): JSX.Element => {
         <Button
           to="/AS_PendingMemberships"
           className={`group flex items-center p-2 pl-2 rounded-lg transition-colors
-    ${
-      path === "/AS_PendingMemberships"
-        ? "bg-[#3a3a45]"
-        : "hover:bg-[#3a3a45]"
-    }
-  `}>
+          ${
+            path === "/AS_PendingMemberships"
+              ? "bg-[#3a3a45]"
+              : "hover:bg-[#3a3a45]"
+            }
+          `}>
           <div className="flex gap-[6px] items-center transform transition-all duration-200 group-hover:scale-105 group-hover:text-shrek">
             <ClockIcon className="w-5 h-5 ml-[4px]" />
             <p className="text-xl">Pending</p>
           </div>
         </Button>
+
       </div>
 
       {/* Spacer */}
