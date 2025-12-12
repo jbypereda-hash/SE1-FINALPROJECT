@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from "react";
 import Button from "./Button";
 import BackButton from "../assets/icons/arrow-left.svg?react";
-import { serverTimestamp, addDoc, collection } from "firebase/firestore";
+import {
+  serverTimestamp,
+  addDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
-import { useAuth } from "../context/AuthContext";
 import { authTransition } from "../hooks/authTransition";
 
 interface AddScheduleModalProps {
   isOpen: boolean;
   onClose: () => void;
-  classID: string; // <-- Added
+  classID: string;
   classTitle: string;
 }
 
@@ -38,16 +44,19 @@ const CS_AddScheduleModal: React.FC<AddScheduleModalProps> = ({
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
 
+  const [dayError, setDayError] = useState("");
+  const [timeError, setTimeError] = useState("");
+  const [conflictError, setConflictError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
   const [renderModal, setRenderModal] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Lock UI on open
   useEffect(() => {
     if (isOpen) authTransition.setLocked(true);
   }, [isOpen]);
 
-  // Fade-In Animation
   useEffect(() => {
     if (isOpen) {
       setRenderModal(true);
@@ -58,7 +67,6 @@ const CS_AddScheduleModal: React.FC<AddScheduleModalProps> = ({
     }
   }, [isOpen]);
 
-  // Fade-Out + remove from DOM
   useEffect(() => {
     if (!showContent && !isOpen) {
       const timer = setTimeout(() => {
@@ -69,46 +77,79 @@ const CS_AddScheduleModal: React.FC<AddScheduleModalProps> = ({
     }
   }, [showContent, isOpen]);
 
-  // Reset when opened
   useEffect(() => {
     if (isOpen) {
       setSelectedDay("");
       setSelectedTime("");
+      setDayError("");
+      setTimeError("");
+      setConflictError("");
+      setSuccessMessage("");
     }
   }, [isOpen]);
 
-  // ---------------------------
-  // SAVE SCHEDULE TO FIRESTORE
-  // ---------------------------
   const handleSubmit = async () => {
-  if (!selectedDay || !selectedTime) return;
+    let hasError = false;
 
-  setLoading(true);
+    setDayError("");
+    setTimeError("");
+    setConflictError("");
 
-  try {
-    const scheduleRef = await addDoc(collection(db, "classSchedules"), {
-      classID,            // <--- from props
-      title: classTitle,  // <--- from props
-      days: selectedDay,
-      time: selectedTime,
-      coach: auth.currentUser?.displayName || auth.currentUser?.uid || "Unknown",
-      createdAt: serverTimestamp(),
-    });
+    if (!selectedDay) {
+      setDayError("Please select a day.");
+      hasError = true;
+    }
 
-    console.log("Added schedule with ID:", scheduleRef.id);
+    if (!selectedTime) {
+      setTimeError("Please select a time.");
+      hasError = true;
+    }
 
-    setShowContent(false);
-    setTimeout(() => {
-      onClose();
-      authTransition.setLocked(false);
-    }, 200);
-  } catch (err) {
-    console.error("Error adding schedule:", err);
-  } finally {
-    setLoading(false);
-  }
-};
+    if (hasError) return;
 
+    const coachID = auth.currentUser?.uid;
+    if (!coachID) return;
+
+    setLoading(true);
+
+    try {
+      const q = query(
+        collection(db, "classSchedules"),
+        where("coach", "==", coachID),
+        where("days", "==", selectedDay),
+        where("time", "==", selectedTime)
+      );
+
+      const existing = await getDocs(q);
+
+      if (!existing.empty) {
+        setConflictError("You already have a class at this time.");
+        setLoading(false);
+        return;
+      }
+
+      await addDoc(collection(db, "classSchedules"), {
+        classID,
+        title: classTitle,
+        days: selectedDay,
+        time: selectedTime,
+        coach: coachID,
+        createdAt: serverTimestamp(),
+      });
+      setSuccessMessage("Schedule successfully added!");
+      setTimeout(() => {
+        setShowContent(false);
+
+        // After fade-out animation
+        setTimeout(() => {
+          onClose();
+          authTransition.setLocked(false);
+        }, 300);
+      }, 1000); // <--- change this value to any delay you want
+    } catch (err) {
+      console.error("Error adding schedule:", err);
+    }
+  };
 
   const handleClose = () => {
     setShowContent(false);
@@ -128,11 +169,10 @@ const CS_AddScheduleModal: React.FC<AddScheduleModalProps> = ({
         onClick={(e) => e.stopPropagation()}
         className={`bg-black-35 px-16 py-7 rounded-2xl w-[500px] text-center text-white relative transform transition-all duration-300 ease-out ${
           showContent
-            ? "opacity-100 scale-100 translate-y-0"
+            ? "opacity-100 scale-100"
             : "opacity-0 scale-90 translate-y-6"
         }`}
       >
-        {/* Back Button */}
         <Button
           onClick={handleClose}
           className="absolute top-5 left-5 hover:scale-110 transition-all duration-200"
@@ -140,7 +180,6 @@ const CS_AddScheduleModal: React.FC<AddScheduleModalProps> = ({
           <BackButton className="w-10 h-10" />
         </Button>
 
-        {/* Loading spinner */}
         {loading && (
           <div className="absolute top-5 right-5 w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
         )}
@@ -149,54 +188,64 @@ const CS_AddScheduleModal: React.FC<AddScheduleModalProps> = ({
         <p className="mb-6 text-2xl">Add a new class schedule</p>
 
         <p className="text-xl mb-6">
-          Class: <span className="font-bold">{classTitle}</span>
+          Class: <span className="font-bold italic">{classTitle}</span>
         </p>
 
-        {/* DAYS DROPDOWN */}
-        <div className="text-left mb-4">
+        {/* DAYS */}
+        <div className="text-left mb-2">
           <p>Days:</p>
-          <div className="relative w-full">
-            <select
-              value={selectedDay}
-              onChange={(e) => setSelectedDay(e.target.value)}
-              className="w-full px-3 py-1.5 rounded-4xl bg-donkey-10 text-black-35 appearance-none"
-            >
-              <option value="" disabled hidden>
-                Select days
-              </option>
-              {DAYS_OPTIONS.map((d) => (
-                <option key={d}>{d}</option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-black-34">
-              ▼
-            </div>
-          </div>
+          <select
+            value={selectedDay}
+            onChange={(e) => {
+              setSelectedDay(e.target.value);
+              setDayError("");
+            }}
+            className="w-full px-3 py-1.5 rounded-4xl bg-donkey-10 text-black-35 appearance-none"
+          >
+            <option value="" disabled hidden>
+              Select days
+            </option>
+            {DAYS_OPTIONS.map((d) => (
+              <option key={d}>{d}</option>
+            ))}
+          </select>
+
+          {dayError && <p className="text-red-400 text-sm mt-1">{dayError}</p>}
         </div>
 
-        {/* TIME DROPDOWN */}
-        <div className="text-left mb-6">
+        {/* TIME */}
+        <div className="text-left mb-8">
           <p>Time:</p>
-          <div className="relative w-full">
-            <select
-              value={selectedTime}
-              onChange={(e) => setSelectedTime(e.target.value)}
-              className="w-full px-3 py-1.5 rounded-4xl bg-donkey-10 text-black-35 appearance-none"
-            >
-              <option value="" disabled hidden>
-                Select time
-              </option>
-              {TIME_OPTIONS.map((t) => (
-                <option key={t}>{t}</option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-black-34">
-              ▼
-            </div>
-          </div>
+          <select
+            value={selectedTime}
+            onChange={(e) => {
+              setSelectedTime(e.target.value);
+              setTimeError("");
+            }}
+            className="w-full px-3 py-1.5 rounded-4xl bg-donkey-10 text-black-35 appearance-none"
+          >
+            <option value="" disabled hidden>
+              Select time
+            </option>
+            {TIME_OPTIONS.map((t) => (
+              <option key={t}>{t}</option>
+            ))}
+          </select>
+
+          {timeError && (
+            <p className="text-red-400 text-sm mt-1">{timeError}</p>
+          )}
         </div>
 
-        {/* BUTTON */}
+        {/* CONFLICT ERROR */}
+        {conflictError && (
+          <p className="text-red-400 text-md font-semibold">{conflictError}</p>
+        )}
+
+        {successMessage && (
+          <p className="text-green-400 font-semibold mt-2">{successMessage}</p>
+        )}
+
         <div className="flex">
           <Button
             onClick={handleSubmit}
