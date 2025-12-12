@@ -26,9 +26,7 @@ export default function PackagePaymentDialog({
           <h2 className="text-lg font-semibold">{packageData.name}</h2>
 
           <div className="text-sm text-gray-300">
-            {packageData.details.map((d, i) => (
-              <p key={i}>{d}</p>
-            ))}
+            <p>{packageData.details}</p>
           </div>
 
           <p className="text-xl mt-2 font-bold text-green-400">

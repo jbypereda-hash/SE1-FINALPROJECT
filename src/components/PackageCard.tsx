@@ -4,7 +4,7 @@ interface PackageCardProps {
 data: {
     name: string;
     price: number;
-    details: string[];
+    details: string;
 };
 onClick: () => void;
 }
@@ -16,9 +16,7 @@ return (
         <h2 className="text-shrek text-2xl font-semibold mb-4">{data.name}</h2>
         <p className="text-xl font-bold mb-6">₱{data.price} per month</p>
 
-        {data.details?.map((d, i) => (
-        <p key={i} className="mb-3 text-sm opacity-90">{d}</p>
-        ))}
+        <p className="mb-3 text-sm opacity-90">{data.details}</p>
 
         <button
         onClick={onClick}

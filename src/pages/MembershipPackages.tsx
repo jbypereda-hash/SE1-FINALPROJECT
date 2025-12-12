@@ -18,7 +18,7 @@ export interface PackageData {
   id: string;
   name: string;
   price: number;
-  details: string[];
+  details: string; // 👈 now a string instead of string[]
 }
 
 export default function MembershipPackages() {
@@ -76,10 +76,13 @@ export default function MembershipPackages() {
   };
 
   return (
-    <div className="text-white font-[Inria Sans]">
-      <h1 className="text-center text-3xl font-bold mb-8">
+    <div className="text-shrek font-[Inria Sans]">
+      <h2 className="text-center text-6xl font-bold mb-8">
         Membership Packages
-      </h1>
+      </h2>
+
+      <p className="text-white text-3xl">
+          Choose a plan that fits your lifestyle. </p>
 
       {loading ? (
         <p className="text-center opacity-60">Loading packages...</p>
@@ -103,7 +106,7 @@ export default function MembershipPackages() {
         />
       )}
 
-      {showConfirmation && (
+      {showConfirmation && selectedPackage && (
         <MembershipConfirmationDialog
           selectedPackage={selectedPackage}
           onClose={() => setShowConfirmation(false)}
@@ -112,3 +115,4 @@ export default function MembershipPackages() {
     </div>
   );
 }
+
