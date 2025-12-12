@@ -11,8 +11,8 @@ import {
 } from "firebase/firestore";
 
 import PackagePaymentDialog from "../components/PackagePaymentDialog";
-import MembershipConfirmationDialog from "../components/MembershipConfirmationDialog";
-import PackageCard from "../components/PackageCard";
+import MembershipConfirmationDialog from "./MembershipConfirmationDialog";
+import PackageCard from "./PackageCard";
 
 export interface PackageData {
   id: string;
