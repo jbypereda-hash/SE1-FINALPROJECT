@@ -1,84 +1,110 @@
-import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { db } from "../firebaseConfig";
 
-const PACKAGE_DATA: Record<string, any> = {
-  starter: {
-    name: "Starter Package",
-    price: 1300,
-    details: [
-      "Unlimited access to all gym equipment and facilities.",
-      "Free fitness assessment.",
-      "Free basic coaching sessions for 1 month.",
-    ],
-  },
-  flex: {
-    name: "Flex Package",
-    price: 1700,
-    details: [
-      "Unlimited access to all gym equipment and facilities.",
-      "Free fitness assessment.",
-      "Free basic coaching sessions for 3 months.",
-      "Access to all of our group fitness classes.",
-    ],
-  },
-  pro: {
-    name: "Pro Package",
-    price: 2000,
-    details: [
-      "Unlimited access to all gym equipment and facilities.",
-      "Free workout plan & nutrition program.",
-      "One-on-one personal training sessions with a coach of your choice.",
-      "Access to all of our group fitness classes.",
-    ],
-  },
-};
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 
-const PackagePaymentDialog: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const plan = params.get("plan") || "starter";
-  const pkg = PACKAGE_DATA[plan];
+import PackagePaymentDialog from "../components/PackagePaymentDialog";
+import MembershipConfirmationDialog from "../components/MembershipConfirmationDialog";
+import PackageCard from "../components/PackageCard";
 
-  const handleConfirm = () => {
-    navigate(`/membershipconfirmation?plan=${plan}`);
+export interface PackageData {
+  id: string;
+  name: string;
+  price: number;
+  details: string[];
+}
+
+export default function MembershipPackages() {
+  const [packages, setPackages] = useState<PackageData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const [selectedPackage, setSelectedPackage] = useState<PackageData | null>(null);
+  const [showPayment, setShowPayment] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const q = query(collection(db, "packages"), orderBy("price", "asc"));
+        const snap = await getDocs(q);
+
+        const list = snap.docs.map((doc) => ({
+          id: doc.id,
+          ...(doc.data() as Omit<PackageData, "id">),
+        }));
+
+        setPackages(list);
+      } catch (err) {
+        console.error("Error fetching packages:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPackages();
+  }, []);
+
+  const handleAvail = (pkg: PackageData) => {
+    setSelectedPackage(pkg);
+    setShowPayment(true);
+  };
+
+  const handleConfirm = async (pkg: PackageData, method?: string) => {
+    try {
+      await addDoc(collection(db, "applications"), {
+        packageId: pkg.id,
+        packageName: pkg.name,
+        price: pkg.price,
+        paymentMethod: method || null,
+        createdAt: serverTimestamp(),
+      });
+
+      setShowPayment(false);
+      setShowConfirmation(true);
+    } catch (err) {
+      console.error("Error saving application:", err);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-black-35 text-white px-6 py-10 flex flex-col items-center">
-      <h1 className="text-shrek text-4xl mb-6 text-center">CORE LAB</h1>
-      <p className="text-xl mb-6 text-center">Complete your membership.</p>
+    <div className="text-white font-[Inria Sans]">
+      <h1 className="text-center text-3xl font-bold mb-8">Membership Packages</h1>
 
-      <div className="bg-black-34 p-6 rounded-xl max-w-lg w-full shadow-lg">
-        <h2 className="text-shrek text-2xl mb-4 text-center">{pkg.name}</h2>
-
-        <p className="text-center text-lg font-bold mb-4">
-          ₱{pkg.price.toLocaleString()} per month
-        </p>
-
-        {pkg.details.map((d: string, i: number) => (
-          <p key={i} className="text-center mb-2 text-donkey-10">
-            {d}
-          </p>
-        ))}
-
-        <div className="mt-8 flex justify-between">
-          <button
-            className="px-6 py-2 rounded-xl bg-gray-600"
-            onClick={() => navigate(-1)}
-          >
-            CANCEL
-          </button>
-          <button
-            className="px-6 py-2 rounded-xl bg-shrek text-black"
-            onClick={handleConfirm}
-          >
-            CONFIRM
-          </button>
+      {loading ? (
+        <p className="text-center opacity-60">Loading packages...</p>
+      ) : (
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto px-6">
+          {packages.map((pkg) => (
+            <PackageCard
+              key={pkg.id}
+              data={pkg}
+              onClick={() => handleAvail(pkg)}
+            />
+          ))}
         </div>
-      </div>
+      )}
+
+      {showPayment && selectedPackage && (
+        <PackagePaymentDialog
+          packageData={selectedPackage}
+          onCancel={() => setShowPayment(false)}
+          onConfirm={(method) => handleConfirm(selectedPackage, method)}
+        />
+      )}
+
+      {showConfirmation && (
+        <MembershipConfirmationDialog
+          selectedPackage={selectedPackage}
+          onClose={() => setShowConfirmation(false)}
+        />
+      )}
     </div>
   );
-};
-
-export default PackagePaymentDialog;
+}
