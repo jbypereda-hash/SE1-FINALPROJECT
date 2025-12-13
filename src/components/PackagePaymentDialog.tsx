@@ -25,7 +25,7 @@ export default function PackagePaymentDialog({
           CORE LAB
         </h1>
 
-        <div className="bg-gray-700 p-4 rounded-xl mb-4">
+        <div className="bg-black-35 p-4 rounded-xl mb-4">
           <h2 className="text-lg font-semibold">{packageData.name}</h2>
 
           <div className="text-sm text-gray-300">
@@ -61,7 +61,9 @@ export default function PackagePaymentDialog({
         <div className="flex justify-end gap-3">
           <button
             onClick={onCancel}
-            className="px-4 py-2 rounded-4xl bg-black-34 hover:bg-donkey-30 transition"
+            className="px-4 py-2 rounded-4xl bg-black-34 hover:bg-black-34
+            border-2 border-transparent transition-colors duration-300
+            hover:text-white hover:border-shrek"
           >
             Cancel
           </button>
@@ -69,7 +71,7 @@ export default function PackagePaymentDialog({
           <button
             onClick={() => onConfirm(paymentMethod, "For Confirmation")}
             disabled={!paymentMethod || !agree}
-            className="shrek-btn disabled:opacity-40"
+            className="shrek-btn font-bold"
           >
             Confirm
           </button>
