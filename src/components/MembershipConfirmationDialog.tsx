@@ -14,7 +14,7 @@ export default function MembershipConfirmationDialog({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 font-[Inria Sans]">
-      <div className="bg-[var(--color-black-35)] text-white p-8 rounded-2xl w-[420px] shadow-xl text-center">
+      <div className="bg-[var(--color-donkey-30)] text-white p-8 rounded-2xl w-[420px] shadow-xl text-center">
 
         <h1 className="text-shrek text-3xl mb-2">CORE LAB</h1>
         <h2 className="text-xl mb-4">Congratulations!</h2>
@@ -27,7 +27,7 @@ export default function MembershipConfirmationDialog({
 
         <button
           onClick={onClose}
-          className="mt-4 bg-shrek text-black px-6 py-2 rounded-xl font-semibold"
+          className="mt-4 bg-shrek text-black-34 px-6 py-2 rounded-xl font-semibold"
         >
           Close
         </button>

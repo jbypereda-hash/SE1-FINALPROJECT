@@ -21,6 +21,12 @@ export interface PackageData {
   details: string; // 👈 now a string instead of string[]
 }
 
+export type MembershipStatus =
+  | "For Confirmation"
+  | "Pending"
+  | "Active"
+  | "Expired";
+
 export default function MembershipPackages() {
   const [packages, setPackages] = useState<PackageData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,36 +64,40 @@ export default function MembershipPackages() {
     setShowPayment(true);
   };
 
-  const handleConfirm = async (pkg: PackageData, method?: string) => {
-    try {
-      await addDoc(collection(db, "applications"), {
-        packageId: pkg.id,
-        packageName: pkg.name,
-        price: pkg.price,
-        paymentMethod: method || null,
-        createdAt: serverTimestamp(),
-      });
+const handleConfirm = async (
+  pkg: PackageData,
+  method: string,
+  status: MembershipStatus
+) => {
+  try {
+    await addDoc(collection(db, "applications"), {
+      packageId: pkg.id,
+      packageName: pkg.name,
+      price: pkg.price,
+      paymentMethod: method,
+      status, 
+      createdAt: serverTimestamp(),
+    });
 
-      setShowPayment(false);
-      setShowConfirmation(true);
-    } catch (err) {
-      console.error("Error saving application:", err);
-    }
-  };
+    setShowPayment(false);
+    setShowConfirmation(true);
+  } catch (err) {
+    console.error("Error saving application:", err);
+  }
+};
 
   return (
-    <div className="text-shrek font-[Inria Sans]">
-      <h2 className="text-center text-6xl font-bold mb-8">
-        Membership Packages
-      </h2>
-
-      <p className="text-white text-3xl">
+    <div className="text-center text-shrek font-[Inria Sans]">
+      <h2 className="font-bold text-6xl">
+        MEMBERSHIP PACKAGES     </h2>
+          <p className="text-white text-3xl">
           Choose a plan that fits your lifestyle. </p>
+
 
       {loading ? (
         <p className="text-center opacity-60">Loading packages...</p>
       ) : (
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto px-6">
+        <div className="grid md:grid-cols-3 gap-6 max-w-7xl mt-auto px-6 py-8 mx-auto">
           {packages.map((pkg) => (
             <PackageCard
               key={pkg.id}
@@ -100,9 +110,9 @@ export default function MembershipPackages() {
 
       {showPayment && selectedPackage && (
         <PackagePaymentDialog
-          packageData={selectedPackage}
+          packageData={(selectedPackage)}
           onCancel={() => setShowPayment(false)}
-          onConfirm={(method) => handleConfirm(selectedPackage, method)}
+          onConfirm={(method, status) => handleConfirm(selectedPackage, method, status)}
         />
       )}
 
