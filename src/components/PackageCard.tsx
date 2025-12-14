@@ -10,8 +10,8 @@ const packageBackgrounds: Record<string, string> = {
 };
 interface PackageCardProps {
 data: {
-    name: string;
-    price: number;
+    title: string;
+    pricePerMonth: number;
     details: string;
 };
 onClick: () => void;
@@ -28,12 +28,12 @@ return (
     
     <div className="relative rounded-2xl overflow-hidden shadow-lg bg-donkey-30 bg-cover bg-center min-h-[600px]"
     style={{
-    backgroundImage: `url(${packageBackgrounds[data.name]})`,}}>
+    backgroundImage: `url(${packageBackgrounds[data.title]})`,}}>
 
     <div className="absolute inset-0 bg-black/60" />
     <div className="relative p-8 text-center text-white flex flex-col h-full">
-        <h2 className="text-shrek text-4xl font-semibold mb-4">{data.name}</h2>
-        <p className="text-xl font-bold mb-6">₱{data.price} per month</p>
+        <h2 className="text-shrek text-4xl font-semibold mb-4">{data.title}</h2>
+        <p className="text-xl font-bold mb-6">₱{data.pricePerMonth} per month</p>
         <div className="space-y-4 mb-8 flex-basis"/>
 
     <div className="text-lar opacity-90 space-y-8">

@@ -16,9 +16,9 @@ import PackageCard from "../components/PackageCard";
 
 export interface PackageData {
   id: string;
-  name: string;
-  price: number;
-  details: string; 
+  title: string;
+  pricePerMonth: number;
+  details: string;
 }
 
 export type MembershipStatus =
@@ -72,8 +72,8 @@ const handleConfirm = async (
   try {
     await addDoc(collection(db, "applications"), {
       packageId: pkg.id,
-      packageName: pkg.name,
-      price: pkg.price,
+      packageName: pkg.title,
+      price: pkg.pricePerMonth,
       paymentMethod: method,
       status,
       createdAt: serverTimestamp(),

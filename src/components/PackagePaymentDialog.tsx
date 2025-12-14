@@ -26,14 +26,14 @@ export default function PackagePaymentDialog({
         </h1>
 
         <div className="bg-black-35 p-4 rounded-xl mb-4">
-          <h2 className="text-lg font-semibold">{packageData.name}</h2>
+          <h2 className="text-lg font-semibold">{packageData.title}</h2>
 
           <div className="text-sm text-gray-300">
             <p>{packageData.details}</p>
           </div>
 
           <p className="text-xl mt-2 font-bold text-shrek">
-            ₱{packageData.price}
+            ₱{packageData.pricePerMonth}
           </p>
         </div>
 
