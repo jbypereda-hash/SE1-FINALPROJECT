@@ -143,7 +143,6 @@ const CS_AddScheduleModal: React.FC<AddScheduleModalProps> = ({
         // After fade-out animation
         setTimeout(() => {
           onClose();
-          setLoading(false);
           authTransition.setLocked(false);
         }, 300);
       }, 1000); // <--- change this value to any delay you want

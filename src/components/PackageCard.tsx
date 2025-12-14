@@ -1,55 +1,32 @@
-import starterBg from "../assets/images/starter-package.png";
-import flexBg from "../assets/images/flex-package.png";
-import proBg from "../assets/images/pro-package.png";
+import type { JSX } from "react";
 
-const packageBackgrounds: Record<string, string> = {
-  "Starter Package": starterBg,
-  "Flex Package": flexBg,
-  "Pro Package": proBg,
-};
 interface PackageCardProps {
-  data: {
-    title: string;
-    pricePerMonth: number;
-    description: string;
-  };
-  onClick: () => void;
+data: {
+    name: string;
+    price: number;
+    details: string[];
+};
+onClick: () => void;
 }
 
-export default function PackageCard({ data, onClick }: PackageCardProps) {
-  const detailItems = data.description
-    .split(".")
-    .map((s) => s.trim())
-    .filter(Boolean);
+export default function PackageCard({ data, onClick }: PackageCardProps): JSX.Element {
+return (
+    <div className="relative rounded-2xl overflow-hidden shadow-lg bg-black-34">
+    <div className="relative p-8 text-center text-white">
+        <h2 className="text-shrek text-2xl font-semibold mb-4">{data.name}</h2>
+        <p className="text-xl font-bold mb-6">₱{data.price} per month</p>
 
-  return (
-    <div className="relative rounded-2xl overflow-hidden min-h-[600px] bg-cover"
-      style={{ backgroundImage: `url(${packageBackgrounds[data.title]})` }}
-    >
-      <div className="absolute inset-0 bg-black/60" />
-
-      <div className="relative p-8 text-white flex flex-col h-full">
-        <h2 className="text-shrek text-4xl font-semibold mb-4">
-          {data.title}
-        </h2>
-
-        <p className="text-xl font-bold mb-6">
-          ₱{data.pricePerMonth} per month
-        </p>
-
-        <div className="space-y-6 mb-8">
-          {detailItems.map((item, i) => (
-            <p key={i}>{item}.</p>
-          ))}
-        </div>
+        {data.details?.map((d, i) => (
+        <p key={i} className="mb-3 text-sm opacity-90">{d}</p>
+        ))}
 
         <button
-          onClick={onClick}
-          className="shrek-btn text-xl font-bold mt-auto mx-auto px-8 py-1 rounded-3xl"
+        onClick={onClick}
+        className="mt-6 px-6 py-2 rounded-lg bg-shrek hover:bg-green-600 transition"
         >
-          AVAIL
+        AVAIL
         </button>
-      </div>
     </div>
-  );
+    </div>
+);
 }

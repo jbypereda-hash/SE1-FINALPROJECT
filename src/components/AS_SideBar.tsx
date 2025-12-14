@@ -2,8 +2,8 @@ import PersonIcon from "../assets/icons/person.svg?react";
 import gearIcon from "../assets/icons/gear.svg";
 import ClockIcon from "../assets/icons/clock.svg?react";
 import listIcon from "../assets/icons/list.svg";
-import Calendar from "../assets/icons/calendar.svg?react";
-import Package from "../assets/icons/package.svg?react";
+import Calendar from "../assets/icons/calendar.svg";
+import Package from "../assets/icons/package.svg";
 
 import type { JSX } from "react";
 import Button from "./Button";
@@ -103,7 +103,7 @@ export const AS_SideBar = (): JSX.Element => {
             }
           `}>
           <div className="flex gap-[6px] items-center transform transition-all duration-200 group-hover:scale-105 group-hover:text-shrek">
-          <Package className="w-6 h-6" />
+          <img src={Package} alt="Package Icon" className="w-6 h-6" />
           <p className="text-xl">Packages</p>
           </div>
         </Button>
@@ -119,7 +119,7 @@ export const AS_SideBar = (): JSX.Element => {
             }
           `}>
           <div className="flex gap-[6px] items-center transform transition-all duration-200 group-hover:scale-105 group-hover:text-shrek">
-          <Calendar className="w-6 h-6" />
+          <img src={Calendar} alt="Calendar Icon" className="w-6 h-6" />
           <p className="text-xl">Classes</p>
           </div>
         </Button>

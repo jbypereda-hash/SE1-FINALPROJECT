@@ -1,38 +1,114 @@
-import type { PackageData } from "../pages/MembershipPackages";
+import { useEffect, useState } from "react";
+import { db } from "../firebaseConfig";
 
-interface ConfirmationProps {
-  selectedPackage: PackageData | null;
-  onClose: () => void;
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+
+import PackagePaymentDialog from "../components/PackagePaymentDialog";
+import MembershipConfirmationDialog from "./MembershipConfirmationDialog";
+import PackageCard from "./PackageCard";
+
+export interface PackageData {
+  id: string;
+  name: string;
+  price: number;
+  details: string[];
 }
 
-export default function MembershipConfirmationDialog({
-  selectedPackage,
-  onClose,
-}: ConfirmationProps) {
-  
-  if (!selectedPackage) return null;
+export default function MembershipPackages() {
+  const [packages, setPackages] = useState<PackageData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const [selectedPackage, setSelectedPackage] = useState<PackageData | null>(
+    null
+  );
+  const [showPayment, setShowPayment] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const q = query(collection(db, "packages"), orderBy("price", "asc"));
+        const snap = await getDocs(q);
+
+        const list = snap.docs.map((doc) => ({
+          id: doc.id,
+          ...(doc.data() as Omit<PackageData, "id">),
+        }));
+
+        setPackages(list);
+      } catch (err) {
+        console.error("Error fetching packages:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPackages();
+  }, []);
+
+  const handleAvail = (pkg: PackageData) => {
+    setSelectedPackage(pkg);
+    setShowPayment(true);
+  };
+
+  const handleConfirm = async (pkg: PackageData, method?: string) => {
+    try {
+      await addDoc(collection(db, "applications"), {
+        packageId: pkg.id,
+        packageName: pkg.name,
+        price: pkg.price,
+        paymentMethod: method || null,
+        createdAt: serverTimestamp(),
+      });
+
+      setShowPayment(false);
+      setShowConfirmation(true);
+    } catch (err) {
+      console.error("Error saving application:", err);
+    }
+  };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 font-[Inria Sans]">
-      <div className="bg-[var(--color-black-34)] text-white p-8 rounded-2xl w-[420px] shadow-xl text-center">
+    <div className="text-white font-[Inria Sans]">
+      <h1 className="text-center text-3xl font-bold mb-8">
+        Membership Packages
+      </h1>
 
-        <h1 className="text-shrek text-3xl mb-2">CORE LAB</h1>
-        <h2 className="text-xl mb-4">Congratulations!</h2>
+      {loading ? (
+        <p className="text-center opacity-60">Loading packages...</p>
+      ) : (
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto px-6">
+          {packages.map((pkg) => (
+            <PackageCard
+              key={pkg.id}
+              data={pkg}
+              onClick={() => handleAvail(pkg)}
+            />
+          ))}
+        </div>
+      )}
 
-        <p className="opacity-80 mb-6">
-          Your application for the{" "}
-          <span className="font-bold">{selectedPackage.title}</span> package has been
-          successfully submitted.
-        </p>
+      {showPayment && selectedPackage && (
+        <PackagePaymentDialog
+          packageData={selectedPackage}
+          onCancel={() => setShowPayment(false)}
+          onConfirm={(method) => handleConfirm(selectedPackage, method)}
+        />
+      )}
 
-        <button
-          onClick={onClose}
-          className="shrek-btn font-bold mt-4"
-        >
-          Close
-        </button>
-
-      </div>
+      {showConfirmation && (
+        <MembershipConfirmationDialog
+          selectedPackage={selectedPackage}
+          onClose={() => setShowConfirmation(false)}
+        />
+      )}
     </div>
   );
 }

@@ -134,7 +134,7 @@ const CS_Classes: React.FC = () => {
           <div className="text-center">
             <h2 className="text-6xl text-shrek font-bold">OUR CLASSES</h2>
             <p className="text-white text-3xl">
-              Choose which classes to teach, when and how you want to.
+              Find the perfect workout to match your goals.
             </p>
           </div>
         </div>

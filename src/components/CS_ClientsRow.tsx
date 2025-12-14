@@ -11,83 +11,56 @@ interface User {
   lastSignInTime: any;
 }
 
-interface ClassGroup {
-  id: string;
-  name: string;
-  schedule: string;
-  students: User[];
-}
-
 interface Props {
   user: User;
-  classGroup: ClassGroup;
   onViewProfile?: (user: User) => void;
-  onRemoveClient?: (classGroup: ClassGroup, user: User) => void;
 }
 
-const CS_ClientsRow: React.FC<Props> = ({
-  user,
-  classGroup,
-  onViewProfile,
-  onRemoveClient,
-}) => {
+const CS_ClientsRow: React.FC<Props> = ({ user, onViewProfile }) => {
   return (
-    <div className="grid w-full grid-cols-[1fr_1fr_1fr_auto_auto] px-5 py-2.5 gap-2 hover:bg-black-35 rounded-full transition-colors items-center">
+    <div className="grid w-full grid-cols-4 px-5 py-2.5 gap-6 hover:bg-black-35 rounded-full transition-colors">
       {/* NAME */}
-      <div className="flex justify-center">
-        <p className="font-bold text-white text-[20px] truncate text-center">
+      <div className="flex items-center justify-center">
+        <p className="font-bold text-white text-[18px] truncate text-center">
           {user.firstName} {user.lastName}
         </p>
       </div>
 
       {/* EMAIL */}
-      <div className="flex justify-center">
+      <div className="flex items-center justify-center">
         {user.email ? (
           <a
             href={`mailto:${user.email}`}
-            className="italic text-white text-[18px] truncate"
+            className="font-bold text-white text-[16px] truncate text-center"
           >
             {user.email}
           </a>
         ) : (
-          <p className="text-white/60 italic text-[12px]">No email</p>
+          <p className="font-bold text-white/60 text-[12px] italic text-center">
+            No email
+          </p>
         )}
       </div>
 
       {/* PHONE */}
-      <div className="flex justify-center">
+      <div className="flex items-center justify-center">
         <a
           href={`tel:${user.phoneNumber}`}
-          className="font-bold text-white text-[16px]"
+          className="font-bold text-white text-[16px] truncate text-center"
         >
           {user.phoneNumber}
         </a>
       </div>
 
-      {/* VIEW PROFILE */}
-      <div className="flex justify-center">
+      {/* ACTION BUTTON - VIEW PROFILE */}
+      <div className="flex items-center justify-center">
         <Button
-          type="button"
-          onClick={() => onViewProfile?.(user)}
-          className="shrek-btn font-bold text-[20px] px-5 py-1"
+          to="#"
+          onClick={() => onViewProfile && onViewProfile(user)}
+          className="px-5 h-10 bg-shrek rounded-full flex items-center justify-center font-bold text-black-35 text-[18px] hover:opacity-90 transition-opacity"
         >
-          VIEW PROFILE
+          View Profile
         </Button>
-      </div>
-
-      {/* REMOVE CLIENT */}
-      <div className="flex justify-center">
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemoveClient?.(classGroup, user);
-          }}
-          className="shrek-btn font-bold text-[20px] px-5 py-1"
-          title="Remove Client"
-        >
-          REMOVE
-        </button>
       </div>
     </div>
   );

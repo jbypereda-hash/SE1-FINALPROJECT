@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { db } from "../firebaseConfig";
+
 import {
   collection,
   getDocs,
@@ -8,7 +9,6 @@ import {
   addDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import { auth } from "../firebaseConfig";
 
 import PackagePaymentDialog from "../components/PackagePaymentDialog";
 import MembershipConfirmationDialog from "../components/MembershipConfirmationDialog";
@@ -16,36 +16,38 @@ import PackageCard from "../components/PackageCard";
 
 export interface PackageData {
   id: string;
-  title: string;
-  pricePerMonth: number;
-  description: string;
+  name: string;
+  price: number;
+  details: string[];
 }
 
 export default function MembershipPackages() {
   const [packages, setPackages] = useState<PackageData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [selectedPackage, setSelectedPackage] = useState<PackageData | null>(null);
+  const [selectedPackage, setSelectedPackage] = useState<PackageData | null>(
+    null
+  );
   const [showPayment, setShowPayment] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   useEffect(() => {
     const fetchPackages = async () => {
-      const q = query(
-        collection(db, "packages"),
-        orderBy("pricePerMonth", "asc")
-      );
+      try {
+        const q = query(collection(db, "packages"), orderBy("price", "asc"));
+        const snap = await getDocs(q);
 
-      const snap = await getDocs(q);
-
-      setPackages(
-        snap.docs.map((doc) => ({
+        const list = snap.docs.map((doc) => ({
           id: doc.id,
           ...(doc.data() as Omit<PackageData, "id">),
-        }))
-      );
+        }));
 
-      setLoading(false);
+        setPackages(list);
+      } catch (err) {
+        console.error("Error fetching packages:", err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchPackages();
@@ -56,31 +58,33 @@ export default function MembershipPackages() {
     setShowPayment(true);
   };
 
-  const handleConfirm = async (method: string) => {
-    const user = auth.currentUser;
-    if (!user || !selectedPackage) return;
+  const handleConfirm = async (pkg: PackageData, method?: string) => {
+    try {
+      await addDoc(collection(db, "applications"), {
+        packageId: pkg.id,
+        packageName: pkg.name,
+        price: pkg.price,
+        paymentMethod: method || null,
+        createdAt: serverTimestamp(),
+      });
 
-    await addDoc(collection(db, "applications"), {
-      userID: user.uid,
-      packageID: selectedPackage.id,
-      appliedAt: serverTimestamp(),
-      methodOfPayment: method,
-      status: "pending",
-    });
-
-    setShowPayment(false);
-    setShowConfirmation(true);
+      setShowPayment(false);
+      setShowConfirmation(true);
+    } catch (err) {
+      console.error("Error saving application:", err);
+    }
   };
 
   return (
-    <div className="text-center text-shrek mt-8">
-      <h2 className="font-bold text-6xl">MEMBERSHIP PACKAGES</h2>
-      <p className="text-white text-3xl">Choose a plan that fits your lifestyle.</p>
+    <div className="text-white font-[Inria Sans]">
+      <h1 className="text-center text-3xl font-bold mb-8">
+        Membership Packages
+      </h1>
 
       {loading ? (
-        <p className="opacity-60">Loading packages...</p>
+        <p className="text-center opacity-60">Loading packages...</p>
       ) : (
-        <div className="grid md:grid-cols-3 gap-6 max-w-7xl px-6 py-8 mx-auto">
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto px-6">
           {packages.map((pkg) => (
             <PackageCard
               key={pkg.id}
@@ -94,12 +98,12 @@ export default function MembershipPackages() {
       {showPayment && selectedPackage && (
         <PackagePaymentDialog
           packageData={selectedPackage}
-          onClose={() => setShowPayment(false)}
-          onConfirm={handleConfirm}
+          onCancel={() => setShowPayment(false)}
+          onConfirm={(method) => handleConfirm(selectedPackage, method)}
         />
       )}
 
-      {showConfirmation && selectedPackage && (
+      {showConfirmation && (
         <MembershipConfirmationDialog
           selectedPackage={selectedPackage}
           onClose={() => setShowConfirmation(false)}
