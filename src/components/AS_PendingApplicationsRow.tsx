@@ -3,57 +3,53 @@ import Button from "./Button";
 import Check from "../assets/icons/check.svg";
 import X from "../assets/icons/x.svg";
 
-interface UserData {
-  id: number;
+interface ApplicationData {
+  id: string;
   name: string;
-  package: string;
+  packageName: string;
   contactNo: string;
 }
 
-interface AS_PendingApplicationsRowProps {
-  user: UserData;
-  onApprove?: (id: number) => void;
-  onReject?: (id: number) => void;
+interface Props {
+  application: ApplicationData;
+  onApprove: (id: string) => void;
+  onReject: (id: string) => void;
 }
 
-const AS_PendingApplicationsRow: React.FC<AS_PendingApplicationsRowProps> = ({
-  user,
-  onApprove = (id) => console.log(`Approved user ${id}`),
-  onReject = (id) => console.log(`Rejected user ${id}`),
+const AS_PendingApplicationsRow: React.FC<Props> = ({
+  application,
+  onApprove,
+  onReject,
 }) => {
   return (
     <div className="flex w-full bg-[#b5b5b5] rounded-[30px] px-4 py-2.5 items-center gap-3">
-      {/* ACTION BUTTONS */}
+      {/* ACTION */}
       <div className="flex flex-1 justify-center gap-2">
         <Button
-          to="#"
-          onClick={() => onApprove(user.id)}
-          className="w-19 h-11 bg-[#d5ff5f] rounded-full flex items-center justify-center hover:opacity-90 transition-opacity"
+          onClick={() => onApprove(application.id)}
+          className="w-19 h-11 bg-[#d5ff5f] rounded-full flex items-center justify-center"
         >
           <img src={Check} alt="Approve" className="w-9 h-9" />
         </Button>
+
         <Button
-          to="#"
-          onClick={() => onReject(user.id)}
-          className="w-19 h-11 bg-[#d5ff5f] rounded-full flex items-center justify-center hover:opacity-90 transition-opacity"
+          onClick={() => onReject(application.id)}
+          className="w-19 h-11 bg-[#d5ff5f] rounded-full flex items-center justify-center"
         >
           <img src={X} alt="Reject" className="w-9 h-9" />
         </Button>
       </div>
 
-      {/* NAME */}
-      <div className="flex-[1.5] flex justify-center">
-        <p className="font-bold text-[#040404] text-[16px] truncate">{user.name}</p>
+      <div className="flex-[1.5] text-center font-bold truncate">
+        {application.name}
       </div>
 
-      {/* PACKAGE */}
-      <div className="flex-1 flex justify-center">
-        <p className="font-bold text-black text-[16px] truncate">{user.package}</p>
+      <div className="flex-1 text-center font-bold">
+        {application.packageName}
       </div>
 
-      {/* CONTACT NO. */}
-      <div className="flex-1 flex justify-center">
-        <p className="font-bold text-black text-[16px] truncate">{user.contactNo}</p>
+      <div className="flex-1 text-center font-bold">
+        {application.contactNo}
       </div>
     </div>
   );
