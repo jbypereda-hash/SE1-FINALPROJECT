@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import AS_Dropdown, { type MembershipPackage } from "../../components/AS_Dropdown";
+import AS_Dropdown from "../../components/AS_Dropdown";
+import type { MembershipPackage } from "../../components/AS_Dropdown";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 
@@ -15,12 +16,9 @@ const AS_Packages: React.FC = () => {
 
         return {
           id: doc.id,
-          name: raw.name ?? "",
-          priceLabel:
-            raw.price !== undefined
-              ? `₱${raw.price.toLocaleString()} per month`
-              : "",
-          description: raw.details ?? "",
+          title: raw.title ?? "",
+          pricePerMonth: raw.pricePerMonth ?? 0,
+          description: raw.description ?? "",
         };
       });
 
@@ -33,30 +31,21 @@ const AS_Packages: React.FC = () => {
   return (
     <div className="flex h-full w-full bg-black-35 text-white">
       <main className="flex flex-col flex-1 overflow-hidden">
-        {/* HEADER */}
         <header className="flex flex-col w-full h-[130px] px-4 pt-6 pb-4">
-          <h1 className="text-[26px] font-bold leading-tight">
+          <h1 className="text-[26px] font-bold">
             <span className="text-donkey-30">Welcome, </span>
             <span className="text-white">Admin!</span>
           </h1>
 
-          <div className="flex justify-between items-center w-full my-1">
-            <p className="text-shrek font-bold text-5xl">
-              MEMBERSHIP PACKAGES
-            </p>
-          </div>
+          <p className="text-shrek font-bold text-5xl">
+            MEMBERSHIP PACKAGES
+          </p>
         </header>
 
-        {/* LOWER CONTAINER */}
         <div className="flex-1 bg-black-34 rounded-[30px] overflow-auto p-8">
           {packages.map((pkg) => (
             <div key={pkg.id} className="mb-4">
-              <AS_Dropdown
-                mode="package"
-                item={pkg}
-                onCancel={() => console.log("Cancelled")}
-                onSave={(savedPkg) => console.log("Saved package:", savedPkg)}
-              />
+              <AS_Dropdown mode="package" item={pkg} />
             </div>
           ))}
         </div>

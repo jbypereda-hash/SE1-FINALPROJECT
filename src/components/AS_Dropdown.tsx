@@ -1,171 +1,217 @@
 import React, { useState } from "react";
 import DropdownArrow from "../assets/icons/dropdownarrow.svg?react";
-import line1 from "../assets/icons/line1.svg";
 import Button from "./Button";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
+
+/* ---------- TYPES ---------- */
 
 export interface MembershipPackage {
   id: string;
-  name: string;
-  priceLabel: string;
+  title: string;
+  pricePerMonth: number;
   description: string;
 }
 
 export interface GymClass {
   id: string;
-  name: string;
-  intensity: string;
-  priceLabel: string;
+  title: string;
+  level: number;
+  pricePerWeek: number;
   description: string;
 }
 
 interface AS_DropdownProps {
   mode: "package" | "class";
   item: MembershipPackage | GymClass;
-  onCancel?: () => void;
-  onSave?: (item: MembershipPackage | GymClass) => void;
 }
 
-const AS_Dropdown: React.FC<AS_DropdownProps> = ({
-  mode,
-  item,
-  onCancel,
-  onSave,
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
+/* ---------- COMPONENT ---------- */
 
-  const handleSave = () => {
-    if (onSave) onSave(item);
-  };
-
+const AS_Dropdown: React.FC<AS_DropdownProps> = ({ mode, item }) => {
   const isClass = mode === "class";
 
+  const [isOpen, setIsOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Shared
+  const [title, setTitle] = useState(item.title);
+  const [description, setDescription] = useState(item.description);
+
+  // Package-only
+  const [pricePerMonth, setPricePerMonth] = useState(
+    !isClass ? (item as MembershipPackage).pricePerMonth : 0
+  );
+
+  // Class-only
+  const [level, setLevel] = useState(
+    isClass ? (item as GymClass).level : 1
+  );
+  const [pricePerWeek, setPricePerWeek] = useState(
+    isClass ? (item as GymClass).pricePerWeek : 0
+  );
+
+  /* ---------- HANDLERS ---------- */
+
+  const handleCancel = () => {
+    setTitle(item.title);
+    setDescription(item.description);
+
+    if (isClass) {
+      const cls = item as GymClass;
+      setLevel(cls.level);
+      setPricePerWeek(cls.pricePerWeek);
+    } else {
+      const pkg = item as MembershipPackage;
+      setPricePerMonth(pkg.pricePerMonth);
+    }
+
+    setIsEditing(false);
+  };
+
+  const handleSave = async () => {
+    const ref = doc(db, isClass ? "classes" : "packages", item.id);
+
+    await updateDoc(ref, {
+      title,
+      description,
+      ...(isClass
+        ? {
+            level,
+            pricePerWeek,
+          }
+        : {
+            pricePerMonth,
+          }),
+    });
+
+    setIsEditing(false);
+  };
+
+  /* ---------- RENDER ---------- */
+
   return (
-    <div className="flex flex-col w-full bg-donkey-10 rounded-[30px] px-5 py-2.5 gap-3">
+    <div className="flex flex-col w-full bg-donkey-10 rounded-[30px] px-5 py-3">
       {/* HEADER */}
       <button
         type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
-        className="flex items-center justify-between w-full h-10 px-1 rounded-[30px] hover:opacity-90 transition-opacity"
+        onClick={() => setIsOpen((p) => !p)}
+        className="flex items-center justify-between w-full"
       >
         <p className="font-bold text-black-35 text-[28px] truncate">
-          {item.name}
+          {title}
         </p>
 
         <DropdownArrow
-          className={`w-10 h-10 transform transition-transform ${
-            isOpen ? "rotate-180" : "rotate-0"
+          className={`w-10 h-10 ${
+            isOpen ? "rotate-180" : ""
           }`}
         />
       </button>
 
-      {/* INNER CONTENT */}
-      {isOpen && (
-        <div className="flex flex-col items-center gap-2.5">
-          {/* NAME CARD */}
-          <div className="flex flex-col w-full max-w-full h-[120px] items-center gap-2.5 bg-donkey-30 rounded-[25px] overflow-hidden">
-            <div className="w-full px-[15px] pt-2 pb-2">
-              <p className="flex items-center justify-start font-bold text-black-35 text-[24px] text-center">
-                {isClass ? "Class Name" : "Package Name"}
-              </p>
-
-              <img
-                src={line1}
-                alt="divider"
-                className="w-full h-[2px] mt-1 object-cover"
-              />
-            </div>
-
-            <p className="text-shrek text-2xl mb-4 text-center font-bold">
-              {item.name}
+      {/* DROPDOWN CONTENT */}
+      <div
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+          isOpen
+            ? "max-h-[1000px] opacity-100 translate-y-0"
+            : "max-h-0 opacity-0 -translate-y-2"
+        }`}
+      >
+        <div className="flex flex-col gap-4 mt-4">
+          {/* TITLE */}
+          <div className="bg-donkey-30 rounded-[25px] p-4">
+            <p className="font-bold text-black-35 text-[22px] mb-2">
+              {isClass ? "Class Name" : "Package Name"}
             </p>
+            <div className="w-full h-[2px] bg-black-35 my-2" />
+            <input
+              disabled={!isEditing}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full text-center text-2xl font-bold bg-transparent outline-none text-shrek"
+            />
           </div>
 
-          {/* CLASS INTENSITY */}
+          {/* CLASS LEVEL */}
           {isClass && (
-            <div className="flex flex-col w-full max-w-full h-[120px] items-center gap-2.5 bg-donkey-30 rounded-[25px] overflow-hidden">
-              <div className="w-full px-[15px] pt-2 pb-2">
-                <p className="flex items-center justify-start font-bold text-black-35 text-[24px] text-center">
-                  Class Intensity
-                </p>
-
-                <img
-                  src={line1}
-                  alt="divider"
-                  className="w-full h-[2px] mt-1 object-cover"
-                />
-              </div>
-
-              <p className="text-white text-[20px] font-semibold truncate px-4 w-full text-center">
-                {(item as GymClass).intensity}
+            <div className="bg-donkey-30 rounded-[25px] p-4">
+              <p className="font-bold text-black-35 text-[22px] mb-2">
+                Class Level
               </p>
+              <div className="w-full h-[2px] bg-black-35 my-2" />
+              <input
+                type="number"
+                min={1}
+                disabled={!isEditing}
+                value={level}
+                onChange={(e) => setLevel(Number(e.target.value))}
+                className="w-full text-center text-xl bg-transparent outline-none text-white"
+              />
             </div>
           )}
 
-          {/* PRICE CARD */}
-          <div className="flex flex-col w-full max-w-full h-[120px] items-center gap-2.5 bg-donkey-30 rounded-[25px] overflow-hidden">
-            <div className="w-full px-[15px] pt-2 pb-2">
-              <p className="flex items-center justify-start font-bold text-black-35 text-[24px] text-center">
-                {isClass ? "Class Price" : "Package Price"}
-              </p>
-
-              <img
-                src={line1}
-                alt="divider"
-                className="w-full h-[2px] mt-1 object-cover"
-              />
-            </div>
-
-            <p className="text-white text-[20px] font-semibold truncate px-4 w-full text-center">
-              {item.priceLabel}
+          {/* PRICE */}
+          <div className="bg-donkey-30 rounded-[25px] p-4">
+            <p className="font-bold text-black-35 text-[22px] mb-2">
+              {isClass ? "Price Per Week" : "Price Per Month"}
             </p>
+            <div className="w-full h-[2px] bg-black-35 my-2" />
+            <input
+              type="number"
+              disabled={!isEditing}
+              value={isClass ? pricePerWeek : pricePerMonth}
+              onChange={(e) =>
+                isClass
+                  ? setPricePerWeek(Number(e.target.value))
+                  : setPricePerMonth(Number(e.target.value))
+              }
+              className="w-full text-center text-xl bg-transparent outline-none text-white"
+            />
           </div>
 
-          {/* DESCRIPTION CARD */}
-          <div className="flex flex-col w-full max-w-full items-center gap-2.5 bg-donkey-30 rounded-[25px] py-2">
-            <div className="w-full px-[15px] pt-2 pb-2">
-              <p className="flex items-center justify-start font-bold text-black-35 text-[24px] text-center">
-                {isClass ? "Class Description" : "Package Description"}
-              </p>
+          {/* DESCRIPTION */}
+          <div className="bg-donkey-30 rounded-[25px] p-4">
+            <p className="font-bold text-black-35 text-[22px] mb-2">
+              Description
+            </p>
+            <div className="w-full h-[2px] bg-black-35 my-2" />
+            <textarea
+              disabled={!isEditing}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={4}
+              className="w-full text-center text-lg bg-transparent outline-none text-white resize-none"
+            />
+          </div>
 
-              <img
-                src={line1}
-                alt="divider"
-                className="w-full h-[2px] mt-1 object-cover"
-              />
-            </div>
-
-            <div className="flex flex-col gap-3 text-center max-w-[80%]">
-              {item.description.split("\n").map((line, index) => (
-                <p
-                  key={index}
-                  className="text-white text-[20px] leading-relaxed"
+          {/* ACTIONS */}
+          <div className="flex justify-center gap-6">
+            {isEditing ? (
+              <>
+                <Button
+                  onClick={handleCancel}
+                  className="nobg-btn p-0 text-black-35 hover:text-black-35"
                 >
-                  {line}
-                </p>
-              ))}
-            </div>
-          </div>
-
-          {/* BUTTON ROW */}
-          <div className="flex items-center justify-center gap-[35px] w-full px-2.5">
-            <Button
-              type="button"
-              onClick={onCancel}
-              className="w-[161px] h-12 rounded-[50px] border-4 border-shrek text-shrek text-2xl font-bold flex items-center justify-center"
-            >
-              CANCEL
-            </Button>
-
-            <Button
-              type="button"
-              onClick={handleSave}
-              className="w-[161px] h-12 rounded-[50px] bg-shrek px-[38px] py-2 text-black-35 text-2xl font-bold"
-            >
-              SAVE
-            </Button>
+                  CANCEL
+                </Button>
+                <Button
+                  onClick={handleSave}
+                  className="shrek-btn font-bold hover:scale-105 hover:bg-shrek hover:text-black-35 transition-transform py-1 mb-1 w-80"
+                >
+                  SAVE
+                </Button>
+              </>
+            ) : (
+              <Button
+                onClick={() => setIsEditing(true)}
+                className="shrek-btn font-bold hover:scale-105 hover:bg-shrek hover:text-black-35 transition-transform py-1 mb-1 w-100"
+              >
+                EDIT
+              </Button>
+            )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

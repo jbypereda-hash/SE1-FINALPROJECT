@@ -21,7 +21,7 @@ export default function MembershipConfirmationDialog({
 
         <p className="opacity-80 mb-6">
           Your application for the{" "}
-          <span className="font-bold">{selectedPackage.name}</span> package has been
+          <span className="font-bold">{selectedPackage.title}</span> package has been
           successfully submitted.
         </p>
 

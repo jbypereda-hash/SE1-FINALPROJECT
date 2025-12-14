@@ -1,84 +1,115 @@
-import { useState } from "react";
-import type { PackageData } from "../pages/MembershipPackages";
-import type { MembershipStatus } from "../pages/MembershipPackages";
-interface PaymentProps {
-  packageData: PackageData;
-  onCancel: () => void;
-  onConfirm: (method: string, status: MembershipStatus) => void;
+import { useEffect, useState } from "react";
+import Button from "./Button";
+import BackButton from "../assets/icons/arrow-left.svg?react";
+import { authTransition } from "../hooks/authTransition";
+
+interface Props {
+  packageData: {
+    title: string;
+    pricePerMonth: number;
+    description: string;
+  };
+  onClose: () => void;
+  onConfirm: (method: string) => void;
 }
 
 export default function PackagePaymentDialog({
   packageData,
-  onCancel,
+  onClose,
   onConfirm,
-}: PaymentProps) {
+}: Props) {
+  const [renderModal, setRenderModal] = useState(false);
+  const [showContent, setShowContent] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [agree, setAgree] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    authTransition.setLocked(true);
+    setRenderModal(true);
+    setTimeout(() => setShowContent(true), 10);
+  }, []);
+
+  const handleClose = () => {
+    setShowContent(false);
+    setTimeout(() => {
+      authTransition.setLocked(false);
+      onClose();
+    }, 200);
+  };
+
+  const handleConfirm = () => {
+    if (!paymentMethod || !agree) {
+      setError("Please select a payment method and agree to terms.");
+      return;
+    }
+
+    setShowContent(false);
+    setTimeout(() => {
+      authTransition.setLocked(false);
+      onConfirm(paymentMethod);
+    }, 300);
+  };
+
+  if (!renderModal) return null;
 
   return (
-  
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+    <div
+      onClick={handleClose}
+      className={`fixed inset-0 bg-black/70 flex items-center justify-center z-50 transition-opacity duration-500 ${
+        showContent ? "opacity-100" : "opacity-0"
+      }`}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className={`bg-black-35 px-12 pt-4 pb-7 rounded-2xl w-[500px] text-white transition-all duration-300 ${
+          showContent ? "scale-100 opacity-100" : "scale-90 opacity-0"
+        }`}
+      >
+        <Button onClick={handleClose} className="absolute top-5 left-5">
+          <BackButton className="w-12 h-12" />
+        </Button>
 
-      <div className="bg-black-34 text-white p-6 rounded-2xl w-[380px] shadow-xl">
+        <h2 className="text-shrek text-6xl font-bold text-center">CORE LAB</h2>
+        <p className="text-center text-xl mb-6">Complete your membership.</p>
 
-        <h1 className="text-center text-shrek text-2xl font-bold mb-2">
-          CORE LAB
-        </h1>
-
-        <div className="bg-black-35 p-4 rounded-xl mb-4">
-          <h2 className="text-lg font-semibold">{packageData.name}</h2>
-
-          <div className="text-sm text-gray-300">
-            <p>{packageData.details}</p>
-          </div>
-
-          <p className="text-xl mt-2 font-bold text-shrek">
-            ₱{packageData.price}
+        <div className="bg-black/20 rounded-xl p-4">
+          <p className="font-bold">{packageData.title}</p>
+          <p className="text-sm">{packageData.description}</p>
+          <p className="text-xl font-bold mt-2">
+            ₱{packageData.pricePerMonth}
           </p>
         </div>
 
         <select
+          className="w-full mt-4 px-3 py-2 rounded-4xl bg-donkey-10 text-black-35"
           value={paymentMethod}
           onChange={(e) => setPaymentMethod(e.target.value)}
-          className="w-full p-2 rounded-lg bg-black-34 border border-gray-600 mb-4"
         >
-          <option value="">Choose payment method</option>
-          <option value="gcash">GCash</option>
-          <option value="paymaya">PayMaya</option>
-          <option value="card">Credit / Debit</option>
+          <option value="" disabled hidden>
+            Select payment method
+          </option>
           <option value="cash">Cash</option>
+          <option value="gcash">GCash</option>
+          <option value="card">Credit / Debit Card</option>
         </select>
 
-        <label className="flex items-center gap-2 text-sm mb-4">
-          <input
-            type="checkbox"
-            checked={agree}
-            onChange={() => setAgree(!agree)}
-          />
-          I agree to the terms and conditions.
-        </label>
-
-        <div className="flex justify-end gap-3">
-          <button
-            onClick={onCancel}
-            className="px-4 py-2 rounded-4xl bg-black-34 hover:bg-black-34
-            border-2 border-transparent transition-colors duration-300
-            hover:text-white hover:border-shrek"
-          >
-            Cancel
-          </button>
-
-          <button
-            onClick={() => onConfirm(paymentMethod, "For Confirmation")}
-            disabled={!paymentMethod || !agree}
-            className="shrek-btn font-bold"
-          >
-            Confirm
-          </button>
+        <div className="flex items-center justify-center gap-2 mt-3 text-sm">
+          <input type="checkbox" checked={agree} onChange={() => setAgree(!agree)} />
+          <p>I agree to the terms and conditions</p>
         </div>
 
+        {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
+
+        <div className="flex justify-center gap-8 mt-6">
+          <Button onClick={handleClose} className="nobg-btn">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirm} className="shrek-btn font-bold px-8">
+            CONFIRM & PAY
+          </Button>
+        </div>
       </div>
     </div>
   );
 }
-

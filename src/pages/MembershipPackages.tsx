@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { db } from "../firebaseConfig";
-
 import {
   collection,
   getDocs,
@@ -9,6 +8,7 @@ import {
   addDoc,
   serverTimestamp,
 } from "firebase/firestore";
+import { auth } from "../firebaseConfig";
 
 import PackagePaymentDialog from "../components/PackagePaymentDialog";
 import MembershipConfirmationDialog from "../components/MembershipConfirmationDialog";
@@ -16,44 +16,36 @@ import PackageCard from "../components/PackageCard";
 
 export interface PackageData {
   id: string;
-  name: string;
-  price: number;
-  details: string; 
+  title: string;
+  pricePerMonth: number;
+  description: string;
 }
-
-export type MembershipStatus =
-  | "For Confirmation"
-  | "Pending"
-  | "Active"
-  | "Expired";
 
 export default function MembershipPackages() {
   const [packages, setPackages] = useState<PackageData[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [selectedPackage, setSelectedPackage] = useState<PackageData | null>(
-    null
-  );
+  const [selectedPackage, setSelectedPackage] = useState<PackageData | null>(null);
   const [showPayment, setShowPayment] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   useEffect(() => {
     const fetchPackages = async () => {
-      try {
-        const q = query(collection(db, "packages"), orderBy("price", "asc"));
-        const snap = await getDocs(q);
+      const q = query(
+        collection(db, "packages"),
+        orderBy("pricePerMonth", "asc")
+      );
 
-        const list = snap.docs.map((doc) => ({
+      const snap = await getDocs(q);
+
+      setPackages(
+        snap.docs.map((doc) => ({
           id: doc.id,
           ...(doc.data() as Omit<PackageData, "id">),
-        }));
+        }))
+      );
 
-        setPackages(list);
-      } catch (err) {
-        console.error("Error fetching packages:", err);
-      } finally {
-        setLoading(false);
-      }
+      setLoading(false);
     };
 
     fetchPackages();
@@ -64,40 +56,31 @@ export default function MembershipPackages() {
     setShowPayment(true);
   };
 
-const handleConfirm = async (
-  pkg: PackageData,
-  method: string,
-  status: MembershipStatus
-) => {
-  try {
+  const handleConfirm = async (method: string) => {
+    const user = auth.currentUser;
+    if (!user || !selectedPackage) return;
+
     await addDoc(collection(db, "applications"), {
-      packageId: pkg.id,
-      packageName: pkg.name,
-      price: pkg.price,
-      paymentMethod: method,
-      status,
-      createdAt: serverTimestamp(),
+      userID: user.uid,
+      packageID: selectedPackage.id,
+      appliedAt: serverTimestamp(),
+      methodOfPayment: method,
+      status: "pending",
     });
 
     setShowPayment(false);
     setShowConfirmation(true);
-  } catch (err) {
-    console.error("Error saving application:", err);
-  }
-};
+  };
 
   return (
-    <div className="text-center text-shrek font-[Inria Sans] mt-8">
-      <h2 className="font-bold text-6xl">
-        MEMBERSHIP PACKAGES     </h2>
-          <p className="text-white text-3xl">
-          Choose a plan that fits your lifestyle. </p>
-
+    <div className="text-center text-shrek mt-8">
+      <h2 className="font-bold text-6xl">MEMBERSHIP PACKAGES</h2>
+      <p className="text-white text-3xl">Choose a plan that fits your lifestyle.</p>
 
       {loading ? (
-        <p className="text-center opacity-60">Loading packages...</p>
+        <p className="opacity-60">Loading packages...</p>
       ) : (
-        <div className="grid md:grid-cols-3 gap-6 max-w-7xl px-6 py-8 mx-auto items-stretch">
+        <div className="grid md:grid-cols-3 gap-6 max-w-7xl px-6 py-8 mx-auto">
           {packages.map((pkg) => (
             <PackageCard
               key={pkg.id}
@@ -110,9 +93,9 @@ const handleConfirm = async (
 
       {showPayment && selectedPackage && (
         <PackagePaymentDialog
-          packageData={(selectedPackage)}
-          onCancel={() => setShowPayment(false)}
-          onConfirm={(method, status) => handleConfirm(selectedPackage, method, status)}
+          packageData={selectedPackage}
+          onClose={() => setShowPayment(false)}
+          onConfirm={handleConfirm}
         />
       )}
 
@@ -125,4 +108,3 @@ const handleConfirm = async (
     </div>
   );
 }
-
