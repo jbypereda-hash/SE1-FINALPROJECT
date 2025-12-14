@@ -15,13 +15,9 @@ const AS_Classes: React.FC = () => {
 
         return {
           id: doc.id,
-          name: raw.title ?? "",
-          intensity:
-            raw.level !== undefined ? `Level ${raw.level}` : "Not specified",
-          priceLabel:
-            raw.pricePerWeek !== undefined
-              ? `₱${raw.pricePerWeek.toLocaleString()} per week`
-              : "",
+          title: raw.title ?? "",
+          level: raw.level ?? 1,
+          pricePerWeek: raw.pricePerWeek ?? 0,
           description: raw.description ?? "",
         };
       });
@@ -47,18 +43,11 @@ const AS_Classes: React.FC = () => {
           </div>
         </header>
 
-        {/* LOWER CONTAINER */}
+        {/* CONTENT */}
         <div className="flex-1 bg-black-34 rounded-[30px] overflow-auto p-8">
           {classes.map((cls) => (
             <div key={cls.id} className="mb-4">
-              <AS_Dropdown
-                mode="class"
-                item={cls}
-                onCancel={() => console.log("Cancelled")}
-                onSave={(savedClass) =>
-                  console.log("Saved class:", savedClass)
-                }
-              />
+              <AS_Dropdown mode="class" item={cls} />
             </div>
           ))}
         </div>
