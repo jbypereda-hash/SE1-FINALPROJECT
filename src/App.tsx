@@ -37,6 +37,7 @@ import { db } from "./firebaseConfig";
 import { AnimatePresence } from "framer-motion";
 import CoachLayout from "./layouts/CoachLayout";
 import ScrollToTop from "./layouts/ScrollToTop";
+import CS_CoachEditProfile from "./pages/coach/CS_CoachEditProfile";
 declare global {
   interface Window {
     authTransition?: { locked: boolean };
@@ -204,12 +205,12 @@ const App = () => {
             />
 
             <Route
-              path="/CS-EditCoach"
+              path="/CS-CoachEditProfile"
               element={
-                <ProtectedRoute requiredRole={["admin"]}>
-                  <AdminLayout>
-                    <CS_EditCoach />
-                  </AdminLayout>
+                <ProtectedRoute requiredRole={["coach"]}>
+                  <CoachLayout>
+                    <CS_CoachEditProfile />
+                  </CoachLayout>
                 </ProtectedRoute>
               }
             />
@@ -287,6 +288,17 @@ const App = () => {
                 <ProtectedRoute requiredRole={["admin"]}>
                   <AdminLayout>
                     <AS_AddCoach />
+                  </AdminLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/CS-EditCoach"
+              element={
+                <ProtectedRoute requiredRole={["admin"]}>
+                  <AdminLayout>
+                    <CS_EditCoach />
                   </AdminLayout>
                 </ProtectedRoute>
               }

@@ -13,7 +13,7 @@ import AlignRight from "../../assets/icons/alignright.svg?react";
 import AlignJustify from "../../assets/icons/alignjustify.svg?react";
 import Mail from "../../assets/icons/mail.svg";
 import Phone from "../../assets/icons/phone.svg";
-import EmptyPhoto from "../../assets/icons/emptyphoto.svg"
+import EmptyPhoto from "../../assets/icons/emptyphoto.svg";
 import Line2 from "../../assets/icons/line2.svg";
 import Line1 from "../../assets/icons/line1.svg";
 
@@ -54,7 +54,7 @@ export const AS_EditCoach = (): JSX.Element => {
                 Toni Fowler
               </div>
               <Button>
-               <EditDarkGreyBG className="w-[25px] h-6" />
+                <EditDarkGreyBG className="w-[25px] h-6" />
               </Button>
             </div>
 
@@ -63,7 +63,7 @@ export const AS_EditCoach = (): JSX.Element => {
                 Strength &amp; Conditioning Coach
               </div>
               <Button>
-               <EditDarkGreyBG className="w-[25px] h-6" />
+                <EditDarkGreyBG className="w-[25px] h-6" />
               </Button>
             </div>
 
@@ -91,7 +91,7 @@ export const AS_EditCoach = (): JSX.Element => {
                 </div>
                 <Button>
                   <EditWhiteBG className="w-5 h-5" />
-                </Button>              
+                </Button>
               </div>
             </div>
           </div>
@@ -105,19 +105,43 @@ export const AS_EditCoach = (): JSX.Element => {
               Description
             </div>
             <Button>
-               <EditDarkGreyBG className="w-[25px] h-6" />
+              <EditDarkGreyBG className="w-[25px] h-6" />
             </Button>
           </div>
 
           {/* === DESCRIPTION TOOLBAR === */}
           <div className="bg-[#b5b5b5] rounded-[20px] flex flex-col items-center justify-start w-[485px] h-[172px] relative overflow-hidden">
             <div className="relative w-[500px] h-[52px]">
-              <img className="top-[38px] left-0 w-[500px] h-px absolute object-cover" alt="" src={Line1} />
-              <img className="top-0 left-[50px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
-              <img className="top-0 left-[100px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
-              <img className="top-0 left-[150px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
-              <img className="top-0 left-[200px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
-              <img className="top-0 left-[400px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
+              <img
+                className="top-[38px] left-0 w-[500px] h-px absolute object-cover"
+                alt=""
+                src={Line1}
+              />
+              <img
+                className="top-0 left-[50px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
+              <img
+                className="top-0 left-[100px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
+              <img
+                className="top-0 left-[150px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
+              <img
+                className="top-0 left-[200px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
+              <img
+                className="top-0 left-[400px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
 
               <Button className="absolute top-2.5 left-[20px] w-5 h-5">
                 <Bold className="w-full h-full" />
@@ -167,12 +191,36 @@ export const AS_EditCoach = (): JSX.Element => {
           {/* === FEEDBACK TOOLBAR === */}
           <div className="bg-[#b5b5b5] rounded-[20px] flex flex-col items-center justify-start w-[485px] h-[172px] relative overflow-hidden">
             <div className="relative w-[500px] h-[52px]">
-              <img className="top-[38px] left-0 w-[500px] h-px absolute object-cover" alt="" src={Line1} />
-              <img className="top-0 left-[50px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
-              <img className="top-0 left-[100px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
-              <img className="top-0 left-[150px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
-              <img className="top-0 left-[200px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
-              <img className="top-0 left-[400px] w-px h-[38px] absolute object-cover" alt="" src={Line2} />
+              <img
+                className="top-[38px] left-0 w-[500px] h-px absolute object-cover"
+                alt=""
+                src={Line1}
+              />
+              <img
+                className="top-0 left-[50px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
+              <img
+                className="top-0 left-[100px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
+              <img
+                className="top-0 left-[150px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
+              <img
+                className="top-0 left-[200px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
+              <img
+                className="top-0 left-[400px] w-px h-[38px] absolute object-cover"
+                alt=""
+                src={Line2}
+              />
 
               <Button className="absolute top-2.5 left-[20px] w-5 h-5">
                 <Bold className="w-full h-full" />
