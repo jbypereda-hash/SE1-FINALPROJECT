@@ -1,6 +1,15 @@
 // src/hooks/useMemberProfile.ts
 import { useEffect, useState } from "react";
-import { doc, getDoc, Timestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  Timestamp,
+  collection,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { db } from "../firebaseConfig";
 
@@ -104,18 +113,20 @@ export function useMemberProfile(memberUid?: string) {
       return;
     }
 
-    const fetchMember = async () => {
+    const load = async () => {
       try {
-        const snap = await getDoc(doc(db, "members", uid));
+        /* 1️⃣ FETCH MEMBER BASE DATA */
+        const memberSnap = await getDoc(doc(db, "members", uid));
 
-        if (!snap.exists()) {
+        if (!memberSnap.exists()) {
           setMember(null);
           return;
         }
 
-        const raw = snap.data();
+        const raw = memberSnap.data();
 
-        const health = {
+        /* 2️⃣ HEALTH */
+        const health: HealthData = {
           startingWeight: raw.health?.startingWeight ?? 0,
           currentWeight: raw.health?.currentWeight ?? 0,
           goalWeight: raw.health?.goalWeight ?? 0,
@@ -131,11 +142,57 @@ export function useMemberProfile(memberUid?: string) {
         health.bmiValue = bmi.bmiValue;
         health.bmiCategory = bmi.bmiCategory;
 
+        /* 3️⃣ APPLICATION = SOURCE OF TRUTH */
+        const appQuery = query(
+          collection(db, "applications"),
+          where("userID", "==", uid),
+          where("status", "==", "active")
+        );
+
+        const appSnap = await getDocs(appQuery);
+
+        let status = "Inactive";
+        let membershipType = "—";
+        let validUntil = "";
+
+        if (!appSnap.empty) {
+          const app = appSnap.docs[0].data();
+
+          const appliedAt =
+            app.appliedAt instanceof Timestamp
+              ? app.appliedAt.toDate()
+              : null;
+
+          if (appliedAt) {
+            const expiry = new Date(appliedAt);
+            expiry.setDate(expiry.getDate() + 30);
+
+            const now = new Date();
+            const isActive = now <= expiry;
+
+            status = isActive ? "Active" : "Expired";
+            validUntil = expiry.toISOString().split("T")[0];
+          }
+
+          membershipType =
+            app.packageID === "starter-package"
+              ? "Starter"
+              : app.packageID ?? "—";
+
+          /* OPTIONAL: cache back to members */
+          await updateDoc(doc(db, "members", uid), {
+            status,
+            membershipType,
+            validUntil,
+          });
+        }
+
+        /* 4️⃣ FINAL MEMBER OBJECT */
         setMember({
-          status: raw.status ?? "",
-          membershipType: raw.membershipType ?? "",
+          status,
+          membershipType,
           dob: raw.dob ?? "",
-          validUntil: raw.validUntil ?? "",
+          validUntil,
           goals: Array.isArray(raw.goals) ? raw.goals : [],
           health,
           classes: Array.isArray(raw.classes) ? raw.classes : [],
@@ -149,7 +206,7 @@ export function useMemberProfile(memberUid?: string) {
       }
     };
 
-    fetchMember();
+    load();
   }, [uid]);
 
   return { member, loading };

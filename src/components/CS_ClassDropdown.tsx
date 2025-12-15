@@ -25,6 +25,7 @@ interface CS_ClassDropdownProps {
   onViewProfile?: (user: User) => void;
   onDeleteClass?: (classGroup: ClassGroup) => void;
   onRemoveClient?: (classGroup: ClassGroup, user: User) => void;
+  onAssignTodo: (user: User) => void;
 }
 
 const CS_ClassDropdown: React.FC<CS_ClassDropdownProps> = ({
@@ -32,28 +33,32 @@ const CS_ClassDropdown: React.FC<CS_ClassDropdownProps> = ({
   onViewProfile,
   onDeleteClass,
   onRemoveClient,
+  onAssignTodo,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="flex flex-col w-full bg-donkey-10 rounded-[30px] px-6 pt-3 gap-3 hover:bg-[#e0e0e0] transition-colors duration-300">
-      {/* HEADER (DIV — NOT BUTTON) */}
+      {/* HEADER */}
       <div
         onClick={() => setIsOpen((prev) => !prev)}
         className="grid w-full grid-cols-[1fr_1fr_1fr_auto] items-center gap-6 px-5 cursor-pointer hover:opacity-90 transition-opacity"
       >
+        {/* CLASS NAME */}
         <div className="flex justify-center">
           <p className="font-bold text-black-35 text-2xl truncate">
             {classGroup.name}
           </p>
         </div>
 
+        {/* SCHEDULE */}
         <div className="flex justify-center">
           <p className="font-semibold text-black-35 text-xl truncate">
             {classGroup.schedule}
           </p>
         </div>
 
+        {/* STUDENT COUNT */}
         <div className="flex justify-center">
           <p className="font-semibold text-black-35 text-xl truncate">
             {classGroup.students.length} Student
@@ -64,7 +69,7 @@ const CS_ClassDropdown: React.FC<CS_ClassDropdownProps> = ({
         {/* ACTIONS */}
         <div
           className="flex items-center gap-3"
-          onClick={(e) => e.stopPropagation()} // 🚫 prevent dropdown toggle
+          onClick={(e) => e.stopPropagation()}
         >
           <button
             type="button"
@@ -76,7 +81,9 @@ const CS_ClassDropdown: React.FC<CS_ClassDropdownProps> = ({
           </button>
 
           <DropdownArrow
-            className={`w-10 h-10 ${isOpen ? "rotate-180" : ""}`}
+            className={`w-10 h-10 transition-transform ${
+              isOpen ? "rotate-180" : ""
+            }`}
           />
         </div>
       </div>
@@ -102,6 +109,7 @@ const CS_ClassDropdown: React.FC<CS_ClassDropdownProps> = ({
                 classGroup={classGroup}
                 onViewProfile={onViewProfile}
                 onRemoveClient={onRemoveClient}
+                onAssignTodo={onAssignTodo}
               />
             ))
           )}

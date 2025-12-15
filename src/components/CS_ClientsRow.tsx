@@ -3,8 +3,8 @@ import Button from "./Button";
 
 interface User {
   uid: string;
-  lastName: string;
   firstName: string;
+  lastName: string;
   role: string;
   phoneNumber: string;
   email?: string;
@@ -23,6 +23,7 @@ interface Props {
   classGroup: ClassGroup;
   onViewProfile?: (user: User) => void;
   onRemoveClient?: (classGroup: ClassGroup, user: User) => void;
+  onAssignTodo?: (user: User) => void;
 }
 
 const CS_ClientsRow: React.FC<Props> = ({
@@ -30,9 +31,10 @@ const CS_ClientsRow: React.FC<Props> = ({
   classGroup,
   onViewProfile,
   onRemoveClient,
+  onAssignTodo,
 }) => {
   return (
-    <div className="grid w-full grid-cols-[1fr_1fr_1fr_auto_auto] px-5 py-2.5 gap-2 hover:bg-black-35 rounded-full transition-colors items-center">
+    <div className="grid w-full grid-cols-[1fr_1fr_1fr_auto_auto_auto] px-5 py-2.5 gap-3 hover:bg-black-35 rounded-full transition-colors items-center">
       {/* NAME */}
       <div className="flex justify-center">
         <p className="font-bold text-white text-[20px] truncate text-center">
@@ -69,25 +71,32 @@ const CS_ClientsRow: React.FC<Props> = ({
         <Button
           type="button"
           onClick={() => onViewProfile?.(user)}
-          className="shrek-btn font-bold text-[20px] px-5 py-1"
+          className="shrek-btn font-bold text-[18px] px-4 py-1"
         >
           VIEW PROFILE
         </Button>
       </div>
 
+      {/* ASSIGN TODO */}
+      <div className="flex justify-center">
+        <Button
+          type="button"
+          onClick={() => onAssignTodo?.(user)}
+          className="shrek-btn font-bold text-[18px] px-4 py-1"
+        >
+          ASSIGN TASK
+        </Button>
+      </div>
+
       {/* REMOVE CLIENT */}
       <div className="flex justify-center">
-        <button
+        <Button
           type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemoveClient?.(classGroup, user);
-          }}
-          className="shrek-btn font-bold text-[20px] px-5 py-1"
-          title="Remove Client"
+          onClick={() => onRemoveClient?.(classGroup, user)}
+          className="shrek-btn font-bold text-[18px] px-4 py-1"
         >
           REMOVE
-        </button>
+        </Button>
       </div>
     </div>
   );

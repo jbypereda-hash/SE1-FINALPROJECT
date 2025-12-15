@@ -2,47 +2,72 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 
 interface Props {
-  children: ReactNode; //ang text sa button(?)
-  className?: string; //optional styling class
-  to?: string; // optional internal navigation
-  href?: string; // optional external link
-  onClick?: () => void; // optional function
-  type?: "button" | "submit" | "reset"; //new line added by yen | for the dialog boxes
-  variant?: "ghost" | "primary" | "secondary"; //new line added by yen | for the dropdown arrow
+  children: ReactNode;
+  className?: string;
+  to?: string;
+  href?: string;
+  onClick?: () => void;
+  type?: "button" | "submit" | "reset";
+  variant?: "ghost" | "primary" | "secondary";
+  disabled?: boolean; // ✅ ADD THIS
 }
 
-const Button = ({ children, className = "", to, href, onClick, type }: Props) => {
-  const baseClasses = className || "nobg-btn"; // default
+const Button = ({
+  children,
+  className = "",
+  to,
+  href,
+  onClick,
+  type,
+  disabled = false,
+}: Props) => {
+  const baseClasses = className || "nobg-btn";
 
+  /* ----------------------------------
+     LINK BUTTON
+  ---------------------------------- */
   if (to) {
-    // If "to" exists, render as Link (navigation)
     return (
-      <Link to={to} className={baseClasses}>
+      <Link
+        to={to}
+        className={`${baseClasses} ${
+          disabled ? "pointer-events-none opacity-50" : ""
+        }`}
+      >
         {children}
       </Link>
     );
   }
 
+  /* ----------------------------------
+     EXTERNAL LINK
+  ---------------------------------- */
   if (href) {
-    // If "href" exists, render as External Link
     return (
       <a
-        href={href}
+        href={disabled ? undefined : href}
         target="_blank"
         rel="noopener noreferrer"
-        className={baseClasses}
+        className={`${baseClasses} ${
+          disabled ? "pointer-events-none opacity-50" : ""
+        }`}
       >
         {children}
       </a>
     );
   }
 
-  // Otherwise, render as button (action)
+  /* ----------------------------------
+     ACTION BUTTON
+  ---------------------------------- */
   return (
     <button
-      type={type || "button"}   // <-- FIXED: Prevents form submit reload
-      onClick={onClick}
-      className={baseClasses}
+      type={type || "button"}
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+      className={`${baseClasses} ${
+        disabled ? "opacity-50 cursor-not-allowed" : ""
+      }`}
     >
       {children}
     </button>
