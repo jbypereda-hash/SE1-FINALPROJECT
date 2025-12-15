@@ -32,6 +32,12 @@ export default function MembershipPackages() {
   const [showPayment, setShowPayment] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
+  const PACKAGE_ORDER: Record<string, number> = {
+    "Starter Package": 1,
+    "Flex Package": 2,
+    "Pro Package": 3,
+  };
+
   useEffect(() => {
     const fetchPackages = async () => {
       const q = query(
@@ -41,12 +47,17 @@ export default function MembershipPackages() {
 
       const snap = await getDocs(q);
 
-      setPackages(
-        snap.docs.map((doc) => ({
-          id: doc.id,
-          ...(doc.data() as Omit<PackageData, "id">),
-        }))
+      const fetched = snap.docs.map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as Omit<PackageData, "id">),
+      }));
+
+      fetched.sort(
+        (a, b) =>
+          (PACKAGE_ORDER[a.title] ?? 99) - (PACKAGE_ORDER[b.title] ?? 99)
       );
+
+      setPackages(fetched);
 
       setLoading(false);
     };
