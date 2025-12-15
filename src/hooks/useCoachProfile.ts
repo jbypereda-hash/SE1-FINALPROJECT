@@ -17,6 +17,7 @@ export interface CoachUser {
 }
 
 export interface CoachProfile {
+  isProfileComplete: boolean;
   id: string;
   title?: string;
   description?: string;
