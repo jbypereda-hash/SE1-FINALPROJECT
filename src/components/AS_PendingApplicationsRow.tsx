@@ -22,21 +22,21 @@ const AS_PendingApplicationsRow: React.FC<Props> = ({
   onReject,
 }) => {
   return (
-    <div className="flex w-full bg-[#b5b5b5] rounded-[30px] px-4 py-2.5 items-center gap-3">
+    <div className="flex w-full text-black-35 text-2xl bg-donkey-10 rounded-full px-2 py-2.5 items-center gap-3 mb-3 hover:bg-[#e0e0e0] transition-colors duration:400">
       {/* ACTION */}
       <div className="flex flex-1 justify-center gap-2">
         <Button
           onClick={() => onApprove(application.id)}
-          className="w-19 h-11 bg-[#d5ff5f] rounded-full flex items-center justify-center"
+          className="group w-19 h-11 bg-shrek rounded-full flex items-center justify-center"
         >
-          <img src={Check} alt="Approve" className="w-9 h-9" />
+          <img src={Check} alt="Approve" className="w-9 h-9 group-hover:scale-110 duration-300 transition-transform" />
         </Button>
 
         <Button
           onClick={() => onReject(application.id)}
-          className="w-19 h-11 bg-[#d5ff5f] rounded-full flex items-center justify-center"
+          className="group w-19 h-11 bg-shrek rounded-full flex items-center justify-center"
         >
-          <img src={X} alt="Reject" className="w-9 h-9" />
+          <img src={X} alt="Reject" className="w-9 h-9 group-hover:scale-110 duration-300 transition-transform" />
         </Button>
       </div>
 

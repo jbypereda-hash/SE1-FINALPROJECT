@@ -1,5 +1,5 @@
 import Button from "../components/Button";
-import Toni from "../assets/images/toni-fowler.jpg";
+import Toni from "../assets/images/landingpage.jpg";
 import CoreCrusher from "../assets/images/corecrusher-class.jpg";
 import PowerFlowYoga from "../assets/images/powerflowyoga-class.png";
 import HIITBlast from "../assets/images/hiitblast-class.png";
