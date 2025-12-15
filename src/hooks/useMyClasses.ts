@@ -1,24 +1,45 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs, query, where, doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  doc,
+  getDoc,
+  deleteDoc,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { db } from "../firebaseConfig";
 
-export interface MyClassItem {
-  id: string;
-  classId: string;
-  scheduleId: string;
-  classInfo?: any;
-  scheduleInfo?: any;
-}
+export type ClassInfo = {
+  name?: string;
+  description?: string;
+  intensity?: number;
+};
+
+export type ScheduleInfo = {
+  classID?: string;
+  title?: string;
+  days?: string;
+  time?: string;
+};
+
+export type MyClassItem = {
+  enrollmentId: string;
+  userID: string;
+  classScheduleID: string;
+  classInfo?: ClassInfo | null;
+  scheduleInfo?: ScheduleInfo | null;
+};
 
 export function useMyClasses() {
   const [myClasses, setMyClasses] = useState<MyClassItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const auth = getAuth();
-    const user = auth.currentUser;
+  const auth = getAuth();
+  const user = auth.currentUser;
 
+  useEffect(() => {
     if (!user) {
       setMyClasses([]);
       setLoading(false);
@@ -30,29 +51,34 @@ export function useMyClasses() {
 
       const q = query(
         collection(db, "enrollments"),
-        where("userId", "==", user.uid)
+        where("userID", "==", user.uid)
       );
 
       const snap = await getDocs(q);
       const arr: MyClassItem[] = [];
 
       for (const d of snap.docs) {
-        const data = d.data();
-        const classId = data.classId;
-        const scheduleId = data.scheduleId;
+        const enrollment = d.data();
+        const classScheduleID = enrollment.classScheduleID;
 
-        const classSnap = await getDoc(doc(db, "classes", data.classId));
-        
-        const schedRef = doc( db, "classes", classId, "classesDetails", scheduleId );
-        const schedSnap = await getDoc(schedRef);
+        // Get schedule
+        const scheduleSnap = await getDoc(
+          doc(db, "classSchedules", classScheduleID)
+        );
+        if (!scheduleSnap.exists()) continue;
 
+        const scheduleData = scheduleSnap.data();
+        const classID = scheduleData.classID;
+
+        // Get class
+        const classSnap = await getDoc(doc(db, "classes", classID));
 
         arr.push({
-          id: d.id,
-          classId: data.classId,
-          scheduleId: data.scheduleId,
-          classInfo: classSnap.data(),
-          scheduleInfo: schedSnap.data(),
+          enrollmentId: d.id,
+          userID: enrollment.userID,
+          classScheduleID,
+          scheduleInfo: scheduleData,
+          classInfo: classSnap.exists() ? classSnap.data() : null,
         });
       }
 
@@ -61,7 +87,23 @@ export function useMyClasses() {
     }
 
     load();
-  }, []);
+  }, [user]);
 
-  return { myClasses, loading };
+  // 🔥 UNENROLL
+  const unenroll = async (enrollmentId: string) => {
+  try {
+    await deleteDoc(doc(db, "enrollments", enrollmentId));
+
+    // Instant UI update
+    setMyClasses((prev) =>
+      prev.filter((c) => c.enrollmentId !== enrollmentId)
+    );
+  } catch (error) {
+    console.error("Failed to unenroll:", error);
+    alert("Failed to unenroll. Please try again.");
+  }
+  };
+
+
+  return { myClasses, loading, unenroll };
 }

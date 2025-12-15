@@ -106,7 +106,12 @@ const CS_CoachProfile: React.FC = () => {
 
         {/* RIGHT SIDE — My Classes */}
         <div className="hidden lg:flex flex-col flex-1 gap-6">
-          <MyClasses classes={classes} />
+          <MyClasses
+            classes={classes}
+            onUnenroll={function (): void {
+              throw new Error("Function not implemented.");
+            }}
+          />
         </div>
       </div>
     </div>
