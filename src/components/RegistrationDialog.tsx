@@ -167,7 +167,6 @@ export default function RegistrationDialog({
         name: user.displayName || "",
         membershipType: "Member",
         validUntil: "",
-        status: "Active",
         goals: form.goals,
         dob: form.dob,
         createdAt: serverTimestamp(),

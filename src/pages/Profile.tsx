@@ -61,10 +61,12 @@ export default function ProfilePage() {
                   </span>
 
                   <p className="text-gray-300 text-sm mb-2">
-                    {member.membershipType}{" "}
-                    <span className="text-gray-400 text-xs">
-                      valid until {member.validUntil || "—"}
-                    </span>
+                    {member.membershipType}
+                    {member.validUntil && (
+                      <span className="ml-2 text-gray-400 text-xs">
+                        valid until {member.validUntil}
+                      </span>
+                    )}
                   </p>
 
                   <h1 className="text-shrek text-3xl md:text-4xl font-extrabold">
