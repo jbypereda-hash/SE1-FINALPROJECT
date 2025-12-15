@@ -11,26 +11,23 @@ import {
 import { getAuth } from "firebase/auth";
 import { db } from "../firebaseConfig";
 
-export type ClassInfo = {
-  name?: string;
-  description?: string;
-  intensity?: number;
-};
-
-export type ScheduleInfo = {
-  classID?: string;
-  title?: string;
-  days?: string;
-  time?: string;
-};
-
 export type MyClassItem = {
-  enrollmentId: string;
-  userID: string;
+  enrollmentId?: string;   // ✅ optional
+  userID?: string;         // ✅ optional
   classScheduleID: string;
-  classInfo?: ClassInfo | null;
-  scheduleInfo?: ScheduleInfo | null;
+
+  classInfo?: {
+    name?: string;
+    description?: string;
+    intensity?: number;
+  } | null;
+
+  scheduleInfo?: {
+    days?: string;
+    time?: string;
+  } | null;
 };
+
 
 export function useMyClasses() {
   const [myClasses, setMyClasses] = useState<MyClassItem[]>([]);
