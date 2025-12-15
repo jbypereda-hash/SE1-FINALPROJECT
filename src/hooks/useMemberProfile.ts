@@ -1,8 +1,8 @@
+// src/hooks/useMemberProfile.ts
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import { doc, getDoc, Timestamp } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import { Timestamp } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 
 /* ----------------------------------
    Interfaces
@@ -32,10 +32,9 @@ export interface TodoData {
 }
 
 export interface MemberData {
-  name: string;
   status: string;
   membershipType: string;
-  dob: string;
+  dob: string | Timestamp;
   validUntil: string;
   goals: string[];
   health: HealthData;
@@ -50,26 +49,23 @@ export interface MemberData {
 function calculateAge(dateInput: string | Timestamp): number {
   if (!dateInput) return 0;
 
-  let dateString = "";
+  const date =
+    dateInput instanceof Timestamp
+      ? dateInput.toDate()
+      : new Date(dateInput);
 
-  if (dateInput instanceof Timestamp) {
-    dateString = dateInput.toDate().toISOString().split("T")[0];
-  } else {
-    dateString = dateInput;
-  }
-
-  const safeDateString = dateString.replace(/-/g, "/");
+  if (isNaN(date.getTime())) return 0;
 
   const today = new Date();
-  const birthDate = new Date(safeDateString);
+  let age = today.getFullYear() - date.getFullYear();
 
-  if (isNaN(birthDate.getTime())) return 0;
-
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const m = today.getMonth() - birthDate.getMonth();
-  const d = today.getDate() - birthDate.getDate();
-
-  if (m < 0 || (m === 0 && d < 0)) age--;
+  if (
+    today.getMonth() < date.getMonth() ||
+    (today.getMonth() === date.getMonth() &&
+      today.getDate() < date.getDate())
+  ) {
+    age--;
+  }
 
   return age;
 }
@@ -84,8 +80,7 @@ function calculateBMI(weight: number, heightCM: number) {
   const v = Number(bmi.toFixed(1));
 
   let category = "Obese";
-  if (v === 0) category = "N/A";
-  else if (v < 18.5) category = "Underweight";
+  if (v < 18.5) category = "Underweight";
   else if (v < 25) category = "Normal";
   else if (v < 30) category = "Overweight";
 
@@ -93,75 +88,69 @@ function calculateBMI(weight: number, heightCM: number) {
 }
 
 /* ----------------------------------
-   Main Hook
+   Hook
 ---------------------------------- */
 
-export function useMemberProfile() {
+export function useMemberProfile(memberUid?: string) {
+  const auth = getAuth();
+  const uid = memberUid ?? auth.currentUser?.uid;
+
   const [member, setMember] = useState<MemberData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!uid) {
+      setLoading(false);
+      return;
+    }
+
     const fetchMember = async () => {
-      const auth = getAuth();
-      const user = auth.currentUser;
+      try {
+        const snap = await getDoc(doc(db, "members", uid));
 
-      if (!user) {
-        setLoading(false);
-        return;
-      }
+        if (!snap.exists()) {
+          setMember(null);
+          return;
+        }
 
-      const ref = doc(db, "members", user.uid);
-      const snap = await getDoc(ref);
-
-      if (snap.exists()) {
         const raw = snap.data();
 
-        /* SAFELY BUILD FULL MEMBER OBJECT */
-        const safeMember: MemberData = {
-          name: raw.name ?? "",
+        const health = {
+          startingWeight: raw.health?.startingWeight ?? 0,
+          currentWeight: raw.health?.currentWeight ?? 0,
+          goalWeight: raw.health?.goalWeight ?? 0,
+          height: raw.health?.height ?? 0,
+          age: 0,
+          bmiValue: 0,
+          bmiCategory: "N/A",
+          medicalConditions: raw.health?.medicalConditions ?? "",
+        };
+
+        health.age = calculateAge(raw.dob);
+        const bmi = calculateBMI(health.currentWeight, health.height);
+        health.bmiValue = bmi.bmiValue;
+        health.bmiCategory = bmi.bmiCategory;
+
+        setMember({
           status: raw.status ?? "",
           membershipType: raw.membershipType ?? "",
           dob: raw.dob ?? "",
           validUntil: raw.validUntil ?? "",
           goals: Array.isArray(raw.goals) ? raw.goals : [],
-
-          /* ⛑ SAFE HEALTH FALLBACK */
-          health: {
-            startingWeight: raw.health?.startingWeight ?? 0,
-            currentWeight: raw.health?.currentWeight ?? 0,
-            goalWeight: raw.health?.goalWeight ?? 0,
-            height: raw.health?.height ?? 0,
-            age: raw.health?.age ?? 0,
-            bmiValue: raw.health?.bmiValue ?? 0,
-            bmiCategory: raw.health?.bmiCategory ?? "N/A",
-            medicalConditions: raw.health?.medicalConditions ?? "",
-          },
-
+          health,
           classes: Array.isArray(raw.classes) ? raw.classes : [],
           todos: Array.isArray(raw.todos) ? raw.todos : [],
-        };
-
-        /* AGE AUTO */
-        if (safeMember.dob) {
-          safeMember.health.age = calculateAge(safeMember.dob);
-        }
-
-        /* BMI AUTO */
-        const { bmiValue, bmiCategory } = calculateBMI(
-          safeMember.health.currentWeight,
-          safeMember.health.height
-        );
-        safeMember.health.bmiValue = bmiValue;
-        safeMember.health.bmiCategory = bmiCategory;
-
-        setMember(safeMember);
+        });
+      } catch (err) {
+        console.error("useMemberProfile error:", err);
+        setMember(null);
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     fetchMember();
-  }, []);
+  }, [uid]);
 
   return { member, loading };
 }

@@ -1,40 +1,57 @@
+// src/hooks/useUserProfile.ts
 import { useEffect, useState } from "react";
-import { db } from "../firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth } from "firebase/auth";
+import { db } from "../firebaseConfig";
 
-export function useUserProfile() {
-  const [userProfile, setUserProfile] = useState<any>(null);
+export interface UserProfile {
+  uid: string;
+  firstName?: string;
+  lastName?: string;
+  fullName?: string;
+  email?: string;
+  phoneNumber?: string;
+  role?: string;
+}
+
+export function useUserProfile(uid?: string) {
+  const auth = getAuth();
+  const userId = uid ?? auth.currentUser?.uid;
+
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const auth = getAuth();
-
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        setUserProfile(null);
-        setLoading(false);
-        return;
-      }
-
-      const ref = doc(db, "user", user.uid);
-      const snap = await getDoc(ref);
-
-    if (snap.exists()) {
-        const data = snap.data();
-        setUserProfile({
-            uid: user.uid,
-            ...data,
-            fullName: `${data.firstName} ${data.lastName}`,
-        });
+    if (!userId) {
+      setLoading(false);
+      return;
     }
 
+    const fetchUser = async () => {
+      try {
+        const snap = await getDoc(doc(db, "user", userId));
 
-      setLoading(false);
-    });
+        if (snap.exists()) {
+          const u = snap.data();
 
-    return () => unsub();
-  }, []);
+          setUserProfile({
+            uid: userId,
+            ...u,
+            fullName: `${u.firstName ?? ""} ${u.lastName ?? ""}`.trim(),
+          });
+        } else {
+          setUserProfile(null);
+        }
+      } catch (err) {
+        console.error("useUserProfile error:", err);
+        setUserProfile(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [userId]);
 
   return { userProfile, loading };
 }

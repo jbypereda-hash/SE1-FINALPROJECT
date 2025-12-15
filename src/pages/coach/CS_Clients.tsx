@@ -164,7 +164,7 @@ const CS_Clients: React.FC = () => {
   }, []);
 
   const handleViewProfile = (user: User) => {
-    navigate(`/profile/${user.uid}`);
+    navigate(`/clients/${user.uid}`);
   };
 
   return (

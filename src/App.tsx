@@ -38,6 +38,7 @@ import { AnimatePresence } from "framer-motion";
 import CoachLayout from "./layouts/CoachLayout";
 import ScrollToTop from "./layouts/ScrollToTop";
 import CS_CoachEditProfile from "./pages/coach/CS_CoachEditProfile";
+import ClientProfile from "./pages/ClientProfile";
 declare global {
   interface Window {
     authTransition?: { locked: boolean };
@@ -150,10 +151,21 @@ const App = () => {
             <Route
               path="/profile"
               element={
-                <ProtectedRoute requiredRole={["member"]}>
+                <ProtectedRoute requiredRole={["member", "coach"]}>
                   <UserLayout>
                     <ProfilePage />
                   </UserLayout>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/clients/:clientUid"
+              element={
+                <ProtectedRoute requiredRole={["coach"]}>
+                  <CoachLayout>
+                    <ClientProfile />
+                  </CoachLayout>
                 </ProtectedRoute>
               }
             />
