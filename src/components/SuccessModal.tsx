@@ -98,13 +98,13 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ enrolledClasses }) => {
             onClick={handleExplore}
             className="shrek-btn font-bold px-8 py-1"
           >
-            Explore Classes
+            EXPLORE MORE CLASSES
           </Button>
           <Button
             onClick={handleViewProfile}
             className="shrek-btn font-bold px-8 py-1"
           >
-            View My Profile
+            VIEW MY PROFILE
           </Button>
         </div>
       </div>

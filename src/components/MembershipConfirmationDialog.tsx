@@ -1,37 +1,41 @@
-import type { PackageData } from "../pages/MembershipPackages";
-
-interface ConfirmationProps {
-  selectedPackage: PackageData | null;
-  onClose: () => void;
-}
+import Button from "./Button";
 
 export default function MembershipConfirmationDialog({
-  selectedPackage,
   onClose,
-}: ConfirmationProps) {
-  
-  if (!selectedPackage) return null;
-
+}: {
+  onClose: () => void;
+}) {
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 font-[Inria Sans]">
-      <div className="bg-[var(--color-black-34)] text-white p-8 rounded-2xl w-[420px] shadow-xl text-center">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+      <div className="bg-black-35 p-10 rounded-2xl w-[480px] text-center text-white">
+        <h1 className="text-shrek text-5xl font-bold">CORE LAB</h1>
+        <p className="text-xl mb-8">Congratulations!</p>
 
-        <h1 className="text-shrek text-3xl mb-2">CORE LAB</h1>
-        <h2 className="text-xl mb-4">Congratulations!</h2>
-
-        <p className="opacity-80 mb-6">
-          Your application for the{" "}
-          <span className="font-bold">{selectedPackage.title}</span> package has been
-          successfully submitted.
+        <p className="text-shrek text-2xl font-bold mb-2">
+          Your application is under review.
         </p>
 
-        <button
-          onClick={onClose}
-          className="shrek-btn font-bold mt-4"
-        >
-          Close
-        </button>
+        <p className="opacity-80 mb-6">
+          Your membership status will be reflected on your profile.
+        </p>
 
+        <p className="text-sm opacity-70 mb-8">
+          Charges will be automatically applied once your application is
+          approved.
+        </p>
+
+        <div className="flex justify-center gap-6">
+          <Button to="/" className="shrek-btn text-xl font-bold px-4 py-1">
+            BACK TO HOME
+          </Button>
+          <Button
+            onClick={onClose}
+            to="/profile"
+            className="shrek-btn text-xl font-bold px-4 py-1"
+          >
+            VIEW MY PROFILE
+          </Button>
+        </div>
       </div>
     </div>
   );
