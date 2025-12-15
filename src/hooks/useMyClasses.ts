@@ -11,9 +11,13 @@ import {
 import { getAuth } from "firebase/auth";
 import { db } from "../firebaseConfig";
 
+/* ----------------------------------
+   Types
+---------------------------------- */
+
 export type MyClassItem = {
-  enrollmentId?: string;   // ✅ optional
-  userID?: string;         // ✅ optional
+  enrollmentId?: string;
+  userID?: string;
   classScheduleID: string;
 
   classInfo?: {
@@ -28,6 +32,9 @@ export type MyClassItem = {
   } | null;
 };
 
+/* ----------------------------------
+   Hook
+---------------------------------- */
 
 export function useMyClasses() {
   const [myClasses, setMyClasses] = useState<MyClassItem[]>([]);
@@ -46,19 +53,38 @@ export function useMyClasses() {
     async function load() {
       setLoading(true);
 
-      const q = query(
+      /* 1️⃣ CHECK MEMBER STATUS */
+      const memberSnap = await getDoc(doc(db, "members", user.uid));
+      const status = memberSnap.exists()
+        ? memberSnap.data().status
+        : "Inactive";
+
+      /* 2️⃣ FETCH ENROLLMENTS */
+      const enrollQuery = query(
         collection(db, "enrollments"),
         where("userID", "==", user.uid)
       );
 
-      const snap = await getDocs(q);
+      const enrollSnap = await getDocs(enrollQuery);
+
+      /* 3️⃣ AUTO-UNENROLL IF NOT ACTIVE */
+      if (status !== "Active") {
+        await Promise.all(
+          enrollSnap.docs.map((d) => deleteDoc(d.ref))
+        );
+
+        setMyClasses([]);
+        setLoading(false);
+        return;
+      }
+
+      /* 4️⃣ LOAD CLASSES (ACTIVE ONLY) */
       const arr: MyClassItem[] = [];
 
-      for (const d of snap.docs) {
+      for (const d of enrollSnap.docs) {
         const enrollment = d.data();
         const classScheduleID = enrollment.classScheduleID;
 
-        // Get schedule
         const scheduleSnap = await getDoc(
           doc(db, "classSchedules", classScheduleID)
         );
@@ -67,7 +93,6 @@ export function useMyClasses() {
         const scheduleData = scheduleSnap.data();
         const classID = scheduleData.classID;
 
-        // Get class
         const classSnap = await getDoc(doc(db, "classes", classID));
 
         arr.push({
@@ -86,21 +111,22 @@ export function useMyClasses() {
     load();
   }, [user]);
 
-  // 🔥 UNENROLL
+  /* ----------------------------------
+     MANUAL UNENROLL (STILL WORKS)
+  ---------------------------------- */
+
   const unenroll = async (enrollmentId: string) => {
-  try {
-    await deleteDoc(doc(db, "enrollments", enrollmentId));
+    try {
+      await deleteDoc(doc(db, "enrollments", enrollmentId));
 
-    // Instant UI update
-    setMyClasses((prev) =>
-      prev.filter((c) => c.enrollmentId !== enrollmentId)
-    );
-  } catch (error) {
-    console.error("Failed to unenroll:", error);
-    alert("Failed to unenroll. Please try again.");
-  }
+      setMyClasses((prev) =>
+        prev.filter((c) => c.enrollmentId !== enrollmentId)
+      );
+    } catch (error) {
+      console.error("Failed to unenroll:", error);
+      alert("Failed to unenroll. Please try again.");
+    }
   };
-
 
   return { myClasses, loading, unenroll };
 }

@@ -41,10 +41,10 @@ export interface TodoData {
 }
 
 export interface MemberData {
-  status: string;
-  membershipType: string;
+  status: "Active" | "Inactive" | "Expired";
+  membershipType?: string; // ✅ optional
   dob: string | Timestamp;
-  validUntil: string;
+  validUntil?: string; // ✅ optional
   goals: string[];
   health: HealthData;
   classes: ClassData[];
@@ -115,8 +115,9 @@ export function useMemberProfile(memberUid?: string) {
 
     const load = async () => {
       try {
-        /* 1️⃣ FETCH MEMBER BASE DATA */
-        const memberSnap = await getDoc(doc(db, "members", uid));
+        /* 1️⃣ FETCH MEMBER */
+        const memberRef = doc(db, "members", uid);
+        const memberSnap = await getDoc(memberRef);
 
         if (!memberSnap.exists()) {
           setMember(null);
@@ -131,16 +132,13 @@ export function useMemberProfile(memberUid?: string) {
           currentWeight: raw.health?.currentWeight ?? 0,
           goalWeight: raw.health?.goalWeight ?? 0,
           height: raw.health?.height ?? 0,
-          age: 0,
-          bmiValue: 0,
-          bmiCategory: "N/A",
+          age: calculateAge(raw.dob),
+          ...calculateBMI(
+            raw.health?.currentWeight ?? 0,
+            raw.health?.height ?? 0
+          ),
           medicalConditions: raw.health?.medicalConditions ?? "",
         };
-
-        health.age = calculateAge(raw.dob);
-        const bmi = calculateBMI(health.currentWeight, health.height);
-        health.bmiValue = bmi.bmiValue;
-        health.bmiCategory = bmi.bmiCategory;
 
         /* 3️⃣ APPLICATION = SOURCE OF TRUTH */
         const appQuery = query(
@@ -151,12 +149,13 @@ export function useMemberProfile(memberUid?: string) {
 
         const appSnap = await getDocs(appQuery);
 
-        let status = "Inactive";
-        let membershipType = "—";
-        let validUntil = "";
+        let status: MemberData["status"] = "Inactive";
+        let membershipType: string | undefined;
+        let validUntil: string | undefined;
 
         if (!appSnap.empty) {
-          const app = appSnap.docs[0].data();
+          const appDoc = appSnap.docs[0];
+          const app = appDoc.data();
 
           const appliedAt =
             app.appliedAt instanceof Timestamp
@@ -170,29 +169,40 @@ export function useMemberProfile(memberUid?: string) {
             const now = new Date();
             const isActive = now <= expiry;
 
-            status = isActive ? "Active" : "Expired";
-            validUntil = expiry.toISOString().split("T")[0];
+            if (isActive) {
+              status = "Active";
+              validUntil = expiry.toISOString().split("T")[0];
+
+              membershipType =
+                app.packageID === "starter-package"
+                  ? "Starter Package"
+                  : app.packageID === "pro-package"
+                  ? "Pro Package"
+                  : app.packageID;
+            } else {
+              // 🔥 AUTO EXPIRE APPLICATION
+              status = "Expired";
+
+              await updateDoc(appDoc.ref, {
+                status: "expired",
+              });
+            }
           }
-
-          membershipType =
-            app.packageID === "starter-package"
-              ? "Starter"
-              : app.packageID ?? "—";
-
-          /* OPTIONAL: cache back to members */
-          await updateDoc(doc(db, "members", uid), {
-            status,
-            membershipType,
-            validUntil,
-          });
         }
 
-        /* 4️⃣ FINAL MEMBER OBJECT */
+        /* 4️⃣ CACHE CLEAN STATE */
+        await updateDoc(memberRef, {
+          status,
+          membershipType: membershipType ?? null,
+          validUntil: validUntil ?? null,
+        });
+
+        /* 5️⃣ FINAL MEMBER OBJECT */
         setMember({
           status,
           membershipType,
-          dob: raw.dob ?? "",
           validUntil,
+          dob: raw.dob ?? "",
           goals: Array.isArray(raw.goals) ? raw.goals : [],
           health,
           classes: Array.isArray(raw.classes) ? raw.classes : [],
