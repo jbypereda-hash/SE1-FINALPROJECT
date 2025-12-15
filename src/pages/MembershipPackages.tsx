@@ -14,6 +14,7 @@ import { auth } from "../firebaseConfig";
 import PackagePaymentDialog from "../components/PackagePaymentDialog";
 import MembershipConfirmationDialog from "../components/MembershipConfirmationDialog";
 import PackageCard from "../components/PackageCard";
+import { useAuthState } from "../context/AuthContext";
 
 export interface PackageData {
   id: string;
@@ -31,6 +32,7 @@ export default function MembershipPackages() {
   );
   const [showPayment, setShowPayment] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const { isLoggedIn } = useAuthState();
 
   const PACKAGE_ORDER: Record<string, number> = {
     "Starter Package": 1,
@@ -66,6 +68,11 @@ export default function MembershipPackages() {
   }, []);
 
   const handleAvail = (pkg: PackageData) => {
+    if (!isLoggedIn) {
+      window.dispatchEvent(new Event("open-login"));
+      return;
+    }
+
     setSelectedPackage(pkg);
     setShowPayment(true);
   };

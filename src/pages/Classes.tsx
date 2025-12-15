@@ -25,6 +25,7 @@ import AddToCartModal from "../components/AddToCartModal";
 import ViewCartModal from "../components/ViewCartModal";
 import CheckoutModal from "../components/CheckoutModal";
 import SuccessModal from "../components/SuccessModal";
+import { useAuthState } from "../context/AuthContext";
 
 // Map image keys
 const CLASS_IMAGES: Record<string, string> = {
@@ -140,6 +141,7 @@ const Classes: React.FC = () => {
   const [enrolledClasses, setEnrolledClasses] = useState<
     { name: string; schedule: string }[]
   >([]);
+  const { isLoggedIn } = useAuthState();
 
   type EnrolledSchedule = {
     id: string;
@@ -269,6 +271,11 @@ const Classes: React.FC = () => {
                 key={c.id}
                 {...c}
                 onAddToCart={(cls) => {
+                  if (!isLoggedIn) {
+                    window.dispatchEvent(new Event("open-login"));
+                    return;
+                  }
+
                   setSelectedClass(cls);
                   setShowAddToCartModal(true);
                 }}

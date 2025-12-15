@@ -50,9 +50,9 @@ export default function PackageCard({ data, onClick }: PackageCardProps) {
         <div className="mt-auto flex justify-center">
           <button
             onClick={onClick}
-            className="shrek-btn font-bold w-[150px]"
+            className="shrek-btn font-bold w-[170px]"
           >
-            AVAIL
+            APPLY
           </button>
         </div>
       </div>
